@@ -2,7 +2,7 @@
 #include "game.hpp"
 #include <iostream>
 #define main SDL_main
-
+yeet
 int main(int argv, char** args)
 {
     Game pokemon;
