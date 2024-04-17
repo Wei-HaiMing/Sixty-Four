@@ -8,6 +8,7 @@ int main(int argv, char** args)
     Game pokemon;
     while(pokemon.getRunning())
     {
+        cout << "Hello";
         pokemon.displayFPS();
         pokemon.update();
         pokemon.input();
