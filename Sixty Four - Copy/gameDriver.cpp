@@ -15,4 +15,5 @@ int main(int argv, char** args)
     }
     pokemon.kill();
 
+
 }
