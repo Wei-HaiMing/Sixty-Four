@@ -3,22 +3,27 @@
 #include <iostream>
 
 
-
+int Game::lastTime = 0;
 // constructors
 Game::Game()
 {
     setRunning(true);
     setFullscreen(0);
-    setLastTime(0);
+    // setLastTime(0);
 
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0) std:: cout << "Failed at SDL_Init()" << std:: endl;
+    if(!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) std::cout << "Failed to initialize SDL_image for PNG files: " << IMG_GetError() << std::endl; 
     if(SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer) < 0) std::cout << "Failed at SDL_CreateWindowAndRenderer()" << std::endl;
     SDL_SetWindowTitle(window, "SDL2 Window");
     SDL_ShowCursor(1);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 
-    setSurface(SDL_LoadBMP("pokemonBattleBacground.bmp"));
+    setSurface(IMG_Load("res/pokemonBattleBacground.png"));
+    // setSprite(IMG_Load("aaron.png"));
+    // setSurface2(IMG_Load("res/tux.png"));
     setTexture(SDL_CreateTextureFromSurface(renderer, image));
+    // SDL_CreateTextureFromSurface(renderer, image);
+    // setTexture2(SDL_CreateTextureFromSurface(renderer, image2));
 }
 
 
@@ -47,9 +52,9 @@ int Game::getFps()const
 {
     return fps;
 }
-int Game::getLastTime()const
+static int getLastTime() 
 {
-    return lastTime;
+    return Game::lastTime;
 }
 SDL_Surface* Game::getSurface()const
 {
@@ -59,8 +64,16 @@ SDL_Texture* Game::getTexture()const
 {
     return texture;
 }
+SDL_Surface* Game::getSprite()const
+{
+    return sprite;
+}
 
 // setters
+// void Game::setSurface2(SDL_Surface *image2)
+// {
+//     this->image2 = image2;
+// }
 void Game::setRunning(bool running)
 {
     this->running = running;
@@ -85,7 +98,7 @@ void Game::setFps(int fps)
 {
     this->fps = fps;
 }
-void Game::setSurface(SDL_Surface *image)
+void Game::setSurface(SDL_Surface* image)
 {
     this->image = image;
 
@@ -94,18 +107,26 @@ void Game::setTexture(SDL_Texture* texture)
 {
     this->texture = texture;
 }
+void Game::setSprite(SDL_Surface* sprite)
+{
+    this->sprite = SDL_ConvertSurface(sprite, NULL, 0);
+}
+// void Game::setTexture2(SDL_Texture* texture2)
+// {
+//     this->texture2 = texture2;
+// }
 void Game::setLastTime(int lastTime)
 {
-    this->lastTime = lastTime;
+    Game::lastTime = lastTime;
 }
 
 // member methods
 void Game::displayFPS()
 {
     lastFrame = SDL_GetTicks();
-    if(lastFrame >= (lastTime + 1000))
+    if(lastFrame >= (Game::lastTime + 1000))
     {
-        lastTime = lastFrame;
+        Game::lastTime = lastFrame;
         fps = frameCount;
         frameCount = 0;
     }
@@ -128,6 +149,7 @@ void Game::input()
     const Uint8 *keystates = SDL_GetKeyboardState(NULL);
     if(keystates[SDL_SCANCODE_ESCAPE]) running = false;
     if(keystates[SDL_SCANCODE_F11]) fullscreen = !fullscreen;
+    
 
 }
 void Game::draw()
