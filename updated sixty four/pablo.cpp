@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h> // include the main SDL header file
+// #include <SDL2/SDL_image.h>
 #include <iostream>
 
 #define main SDL_main

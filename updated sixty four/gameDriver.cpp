@@ -15,10 +15,4 @@ int main(int argv, char** args)
     }
     pokemon.kill();
 
-    
-
-// yeetle
-
-
-// balls
 }

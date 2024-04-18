@@ -1,11 +1,14 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
 
 
 class Game
 {
     public:
+        static int lastTime;
         // constructors
         Game();
         // getters
@@ -17,7 +20,8 @@ class Game
         int getFps()const;
         SDL_Surface* getSurface()const;
         SDL_Texture* getTexture()const;
-        int getLastTime()const;
+        static int getLastTime();
+        SDL_Surface* getSprite()const;
         // setters
         void setRunning(bool running);
         void setFullscreen(bool fullscreen);
@@ -28,6 +32,10 @@ class Game
         void setSurface(SDL_Surface* image);
         void setTexture(SDL_Texture* texture);
         void setLastTime(int lastTime);
+        void setSurface2(SDL_Surface* image);
+        void setTexture2(SDL_Texture* texture2);
+        void setSprite(SDL_Surface* sprite);
+
         // member methods
         void update();
         void input();
@@ -41,11 +49,12 @@ class Game
         SDL_Window* window; // a window 
         bool running, fullscreen;
         int frameCount, timerFPS, lastFrame, fps; // variables to print out the frames each millisecond
-        SDL_Surface *image; // image for the background
-        SDL_Texture *texture; // create a texture using the renderer with the desired image
-        int lastTime;
+        SDL_Surface *image, *sprite; // image for the background
+        SDL_Texture *texture, *texture2; // create a texture using the renderer with the desired image
+        SDL_Rect spritePosition;
         #define WIDTH 1280
         #define HEIGHT 720
+        #define SPRITE_SIZE 32
 };  
 
 
