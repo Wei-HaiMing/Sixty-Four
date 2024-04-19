@@ -7,6 +7,7 @@ int Game::lastTime = 0;
 // constructors
 Game::Game()
 {
+    
     setRunning(true);
     setFullscreen(0);
     // setLastTime(0);
@@ -19,11 +20,12 @@ Game::Game()
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 
     setSurface(IMG_Load("res/pokemonBattleBacground.png"));
-    // setSprite(IMG_Load("aaron.png"));
-    // setSurface2(IMG_Load("res/tux.png"));
-    setTexture(SDL_CreateTextureFromSurface(renderer, image));
-    // SDL_CreateTextureFromSurface(renderer, image);
-    // setTexture2(SDL_CreateTextureFromSurface(renderer, image2));
+    texture[0] = SDL_CreateTextureFromSurface(renderer, image);
+
+    setSurface(IMG_Load("res/abra.png"));
+    texture[1] = SDL_CreateTextureFromSurface(renderer, image);
+
+    
 }
 
 
@@ -60,13 +62,13 @@ SDL_Surface* Game::getSurface()const
 {
     return image;
 }
-SDL_Texture* Game::getTexture()const
+SDL_Texture* Game::getTexture()const    // Index for array
 {
-    return texture;
+    return texture[0];
 }
-SDL_Surface* Game::getSprite()const
+SDL_Surface* Game::getSprite()const     // Delete
 {
-    return sprite;
+    return image;
 }
 
 // setters
@@ -103,13 +105,13 @@ void Game::setSurface(SDL_Surface* image)
     this->image = image;
 
 }
-void Game::setTexture(SDL_Texture* texture)
+void Game::setTexture(SDL_Texture* texture) // Index
 {
-    this->texture = texture;
+    this->texture[0] = texture;
 }
-void Game::setSprite(SDL_Surface* sprite)
+void Game::setSprite(SDL_Surface* sprite)   // Delete
 {
-    this->sprite = SDL_ConvertSurface(sprite, NULL, 0);
+    this->image = SDL_ConvertSurface(sprite, NULL, 0);
 }
 // void Game::setTexture2(SDL_Texture* texture2)
 // {
@@ -155,26 +157,30 @@ void Game::input()
 void Game::draw()
 {
     SDL_Rect rect;
-
-    rect.x=rect.y=0;
-    rect.w=WIDTH;
-    rect.h=HEIGHT;
-    SDL_RenderFillRect(renderer, &rect);
+    SDL_Rect spriteRect, rcSrc;
     
+    spriteRect.x = 0;
+    spriteRect.y = 0;
+    spriteRect.w = 96;
+    spriteRect.h = 96;
+    SDL_Rect dstrect = {(WIDTH - SPRITE_SIZE) / 2, (HEIGHT - SPRITE_SIZE) / 2, spriteRect.w, spriteRect.h};
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     frameCount++;
     timerFPS = SDL_GetTicks()-lastFrame;
     if(timerFPS <(1000/60))
     {
         SDL_Delay((1000/60)-timerFPS);
     }
-
-    // SDL_RenderPresent(renderer);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    
+    SDL_RenderCopy(renderer, texture[0], NULL, NULL);
+    SDL_RenderCopy(renderer, texture[1], &spriteRect, &dstrect);
     SDL_RenderPresent(renderer);
 }
 void Game::kill()
 {
-    SDL_DestroyTexture(texture);
+    SDL_DestroyTexture(texture[0]);
+    SDL_DestroyTexture(texture[1]);
     SDL_FreeSurface(image);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

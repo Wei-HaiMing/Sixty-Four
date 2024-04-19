@@ -2,10 +2,13 @@
 #include "game.hpp"
 #include <iostream>
 #define main SDL_main
+#define SPRITE_SIZE 32
+
 
 int main(int argv, char** args)
 {
     Game pokemon;
+
     while(pokemon.getRunning())
     {
         pokemon.displayFPS();

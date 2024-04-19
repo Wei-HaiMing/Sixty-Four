@@ -22,6 +22,7 @@ class Game
         SDL_Texture* getTexture()const;
         static int getLastTime();
         SDL_Surface* getSprite()const;
+
         // setters
         void setRunning(bool running);
         void setFullscreen(bool fullscreen);
@@ -49,8 +50,8 @@ class Game
         SDL_Window* window; // a window 
         bool running, fullscreen;
         int frameCount, timerFPS, lastFrame, fps; // variables to print out the frames each millisecond
-        SDL_Surface *image, *sprite; // image for the background
-        SDL_Texture *texture, *texture2; // create a texture using the renderer with the desired image
+        SDL_Surface *image; // image for the background
+        SDL_Texture *texture[7]; // create a texture using the renderer with the desired image
         SDL_Rect spritePosition;
         #define WIDTH 1280
         #define HEIGHT 720
