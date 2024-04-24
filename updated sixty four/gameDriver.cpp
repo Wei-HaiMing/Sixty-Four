@@ -3,12 +3,15 @@
 #include <iostream>
 #define main SDL_main
 
+
 int main(int argv, char** args)
 {
     Game pokemon;
+    
     while(pokemon.getRunning())
     {
-        pokemon.displayFPS();
+        // pokemon.countFPS();
+        // pokemon.displayFPS();
         pokemon.update();
         pokemon.input();
         pokemon.draw();
