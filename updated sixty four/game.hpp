@@ -58,6 +58,9 @@ class Game
         enum {
             USER_UP = (1 << 0),
             USER_DN = (1 << 1),
+            USER_LT = (1 << 2),
+            USER_RT = (1 << 3),
+            USER_EN = (1 << 4)
         };
 };  
 

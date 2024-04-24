@@ -117,9 +117,31 @@ void Game::update()
 {
     if(fullscreen) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     if(!fullscreen) SDL_SetWindowFullscreen(window, 0);
-
-
-    userInput = 0;
+    if(userInput &= USER_UP) 
+    {
+        std::cout << "UP\n";
+        userInput = 0;
+    }
+    if(userInput &= USER_DN) 
+    {
+        std::cout << "DOWN\n";
+        userInput = 0;
+    }
+    if(userInput &= USER_LT) 
+    {
+        std::cout << "LEFT\n";
+        userInput = 0;
+    }
+    if(userInput &= USER_RT) 
+    {
+        std::cout << "RIGHT\n";
+        userInput = 0;
+    }
+    if(userInput &= USER_EN) 
+    {
+        std::cout << "ENTER\n";
+        userInput = 0;
+    }
 
 }
 void Game::input()
@@ -133,7 +155,11 @@ void Game::input()
     if(keystates[SDL_SCANCODE_ESCAPE]) running = false;
     if(keystates[SDL_SCANCODE_F11]) fullscreen = !fullscreen;
     if(keystates[SDL_SCANCODE_UP]) userInput |= USER_UP;
-    
+    if(keystates[SDL_SCANCODE_DOWN]) userInput |= USER_DN;
+    if(keystates[SDL_SCANCODE_LEFT]) userInput |= USER_LT;
+    if(keystates[SDL_SCANCODE_RIGHT]) userInput |= USER_RT;
+    if(keystates[SDL_SCANCODE_KP_ENTER]) userInput |= USER_EN;
+    SDL_ResetKeyboard();
 
 }
 void Game::draw()
