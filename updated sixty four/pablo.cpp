@@ -83,7 +83,7 @@ void draw(SDL_Surface *image, SDL_Texture *texture)
     rect.x=rect.y=0;
     rect.w=WIDTH;
     rect.h=HEIGHT;
-    SDL_RenderFillRect(renderer, &rect);
+    SDL_RenderFillRect(renderer, &rect); // Fill a rectangle on the current rendering target with the drawing color.
     
     frameCount++;
     int timerFPS = SDL_GetTicks()-lastFrame;
@@ -93,6 +93,6 @@ void draw(SDL_Surface *image, SDL_Texture *texture)
     }
 
     // SDL_RenderPresent(renderer);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
-    SDL_RenderPresent(renderer);
+    SDL_RenderCopy(renderer, texture, NULL, NULL); // Copy a portion of the texture to the current rendering target.
+    SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call.
 }
