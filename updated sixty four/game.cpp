@@ -10,7 +10,7 @@ Game::Game()
     
     setRunning(true);
     setFullscreen(0);
-    // setLastTime(0);
+    userInput = 0;
 
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0) std:: cout << "Failed at SDL_Init()" << std:: endl;
     if(!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) std::cout << "Failed to initialize SDL_image for PNG files: " << IMG_GetError() << std::endl; 
@@ -24,6 +24,7 @@ Game::Game()
 
     setSurface(IMG_Load("res/abra.png"));
     texture[1] = SDL_CreateTextureFromSurface(renderer, image);
+
 
     
 }
@@ -62,20 +63,14 @@ SDL_Surface* Game::getSurface()const
 {
     return image;
 }
-SDL_Texture* Game::getTexture()const    // Index for array
+SDL_Texture* Game::getTexture(int loc)const    // Index for array
 {
-    return texture[0];
-}
-SDL_Surface* Game::getSprite()const     // Delete
-{
-    return image;
+    return texture[loc];
 }
 
+
 // setters
-// void Game::setSurface2(SDL_Surface *image2)
-// {
-//     this->image2 = image2;
-// }
+
 void Game::setRunning(bool running)
 {
     this->running = running;
@@ -105,40 +100,26 @@ void Game::setSurface(SDL_Surface* image)
     this->image = image;
 
 }
-void Game::setTexture(SDL_Texture* texture) // Index
+void Game::setTexture(SDL_Texture* texture, int loc) // Index
 {
-    this->texture[0] = texture;
+    this->texture[loc] = texture;
 }
-void Game::setSprite(SDL_Surface* sprite)   // Delete
-{
-    this->image = SDL_ConvertSurface(sprite, NULL, 0);
-}
-// void Game::setTexture2(SDL_Texture* texture2)
-// {
-//     this->texture2 = texture2;
-// }
+
 void Game::setLastTime(int lastTime)
 {
     Game::lastTime = lastTime;
 }
 
 // member methods
-void Game::displayFPS()
-{
-    lastFrame = SDL_GetTicks();
-    if(lastFrame >= (Game::lastTime + 1000))
-    {
-        Game::lastTime = lastFrame;
-        fps = frameCount;
-        frameCount = 0;
-    }
-    std::cout << fps << std::endl;
-}
+
 
 void Game::update()
 {
     if(fullscreen) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     if(!fullscreen) SDL_SetWindowFullscreen(window, 0);
+
+
+    userInput = 0;
 
 }
 void Game::input()
@@ -151,6 +132,7 @@ void Game::input()
     const Uint8 *keystates = SDL_GetKeyboardState(NULL);
     if(keystates[SDL_SCANCODE_ESCAPE]) running = false;
     if(keystates[SDL_SCANCODE_F11]) fullscreen = !fullscreen;
+    if(keystates[SDL_SCANCODE_UP]) userInput |= USER_UP;
     
 
 }
@@ -161,21 +143,37 @@ void Game::draw()
     
     spriteRect.x = 0;
     spriteRect.y = 0;
-    spriteRect.w = 96;
-    spriteRect.h = 96;
-    SDL_Rect dstrect = {(WIDTH - SPRITE_SIZE) / 2, (HEIGHT - SPRITE_SIZE) / 2, spriteRect.w, spriteRect.h};
+    spriteRect.w = SPRITE_SIZE;
+    spriteRect.h = SPRITE_SIZE;
+    SDL_Rect dstrect = {(WIDTH - SPRITE_SIZE) / 2, (HEIGHT - SPRITE_SIZE) / 2, spriteRect.w * 5, spriteRect.h * 5};
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    
+    
+    SDL_RenderCopy(renderer, texture[0], NULL, NULL);
+    SDL_RenderCopy(renderer, texture[1], &spriteRect, &dstrect);
+    SDL_RenderPresent(renderer);
+}
+
+void Game::displayFPS()
+{
+    lastFrame = SDL_GetTicks();
+    if(lastFrame >= (Game::lastTime + 1000))
+    {
+        Game::lastTime = lastFrame;
+        fps = frameCount;
+        frameCount = 0;
+    }
+    std::cout << fps << std::endl;
+}
+void Game::countFPS()
+{
     frameCount++;
     timerFPS = SDL_GetTicks()-lastFrame;
     if(timerFPS <(1000/60))
     {
         SDL_Delay((1000/60)-timerFPS);
     }
-    
-    SDL_RenderCopy(renderer, texture[0], NULL, NULL);
-    SDL_RenderCopy(renderer, texture[1], &spriteRect, &dstrect);
-    SDL_RenderPresent(renderer);
 }
 void Game::kill()
 {
