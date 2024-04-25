@@ -1,3 +1,6 @@
+/*
+Authors: Armando, Athena, Eduardo, Gabe
+*/
 #include <SDL2/SDL.h>
 #include "game.hpp"
 #include <iostream>
