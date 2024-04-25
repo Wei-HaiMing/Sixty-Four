@@ -25,23 +25,22 @@ Game::Game()
     setSurface(IMG_Load("res/abra.png"));
     texture[1] = SDL_CreateTextureFromSurface(renderer, image);
 
-    setSurface(IMG_Load(""));
-    texture[2]=SDL_CreateTextureFromSurface(renderer,image)
+    setSurface(IMG_Load("res/charmeleon.png"));
+    texture[2]=SDL_CreateTextureFromSurface(renderer,image);
 
-    setSurface(IMG_Load(""));
-    texture[3]=SDL_CreateTextureFromSurface(renderer,image)
+   setSurface(IMG_Load("res/dragonair.png"));
+    texture[3]=SDL_CreateTextureFromSurface(renderer,image);
 
-    setSurface(IMG_Load(""));
-    texture[4]=SDL_CreateTextureFromSurface(renderer,image)
+    setSurface(IMG_Load("res/jynx-back.png"));
+    texture[4]=SDL_CreateTextureFromSurface(renderer,image);
 
-    setSurface(IMG_Load(""));
-    texture[5]=SDL_CreateTextureFromSurface(renderer,image)
+    setSurface(IMG_Load("res/nidorino-back.png"));
+    texture[5]=SDL_CreateTextureFromSurface(renderer,image);
 
-    setSurface(IMG_Load(""));
-    texture[6]=SDL_CreateTextureFromSurface(renderer,image)
+    setSurface(IMG_Load("res/hitmonchan-back.png"));
+    texture[6]=SDL_CreateTextureFromSurface(renderer,image);
 
-    setSurface(IMG_Load(""));
-    texture[7]=SDL_CreateTextureFromSurface(renderer,image)
+
 
     
 }
@@ -191,26 +190,21 @@ void Game::draw()
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     
     
-    SDL_RenderCopy(renderer, texture[0], NULL, NULL);
-    SDL_RenderCopy(renderer, texture[1], &spriteRect, &dstrect);
-    SDL_RenderPresent(renderer);
+    SDL_RenderCopy(renderer, texture[0], NULL, NULL); // background render
+    SDL_RenderCopy(renderer, texture[1], &spriteRect, &dstrect); // player 2 pokemon render
 
 
 
 
-     SDL_Rect spriteRect1, rcSrc1;
+    SDL_Rect spriteRect1, rcSrc1;
     
     spriteRect1.x = 0;
     spriteRect1.y = 0;
     spriteRect1.w = SPRITE_SIZE;
     spriteRect1.h = SPRITE_SIZE;
-    SDL_Rect dstrect = {(100- SPRITE_SIZE) , (600 - SPRITE_SIZE) , spriteRect.w * 3, spriteRect.h * 3};
+    dstrect = {(350- SPRITE_SIZE) , (500 - SPRITE_SIZE) , spriteRect1.w * 2, spriteRect1.h * 2};
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    
-    
-    SDL_RenderCopy(renderer, texture[0], NULL, NULL);
-    SDL_RenderCopy(renderer, texture[1], &spriteRect, &dstrect);
+    SDL_RenderCopy(renderer, texture[6], &spriteRect1, &dstrect); // player 1 pokemon render
     SDL_RenderPresent(renderer);
 }
 
