@@ -11,7 +11,8 @@ Game::Game()
     setRunning(true);
     setFullscreen(0);
     userInput = 0;
-
+    active1 = 0;
+    active2 = 0;
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0) std:: cout << "Failed at SDL_Init()" << std:: endl;
     if(!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) std::cout << "Failed to initialize SDL_image for PNG files: " << IMG_GetError() << std::endl; 
     if(SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer) < 0) std::cout << "Failed at SDL_CreateWindowAndRenderer()" << std::endl;
@@ -20,10 +21,28 @@ Game::Game()
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 
     setSurface(IMG_Load("res/pokemonBattleBacground.png"));
-    texture[0] = SDL_CreateTextureFromSurface(renderer, image);
+    bgTexture = SDL_CreateTextureFromSurface(renderer, image);
+
+    setSurface(IMG_Load("res/jynx-back.png"));
+    playerOne[0]=SDL_CreateTextureFromSurface(renderer,image);
+
+    setSurface(IMG_Load("res/nidorino-back.png"));
+    playerOne[1]=SDL_CreateTextureFromSurface(renderer,image);
+
+    setSurface(IMG_Load("res/hitmonchan-back.png"));
+    playerOne[2]=SDL_CreateTextureFromSurface(renderer,image);
 
     setSurface(IMG_Load("res/abra.png"));
-    texture[1] = SDL_CreateTextureFromSurface(renderer, image);
+    playerTwo[0] = SDL_CreateTextureFromSurface(renderer, image);
+
+    setSurface(IMG_Load("res/charmeleon.png"));
+    playerTwo[1]=SDL_CreateTextureFromSurface(renderer,image);
+
+    setSurface(IMG_Load("res/dragonair.png"));
+    playerTwo[2]=SDL_CreateTextureFromSurface(renderer,image);
+
+    
+
 
 
     
@@ -63,11 +82,18 @@ SDL_Surface* Game::getSurface()const
 {
     return image;
 }
-SDL_Texture* Game::getTexture(int loc)const    // Index for array
-{
-    return texture[loc];
-}
-
+// SDL_Texture* Game::getP1Text(int loc)const    // Index for array
+// {
+//     return playerOne[loc];
+// }
+// SDL_Texture* Game::getP2Text(int loc)const    // Index for array
+// {
+//     return playerTwo[loc];
+// }
+// SDL_Texture* Game::getBGTexture()const
+// {
+//     return bgTexture;
+// }
 
 // setters
 
@@ -100,10 +126,19 @@ void Game::setSurface(SDL_Surface* image)
     this->image = image;
 
 }
-void Game::setTexture(SDL_Texture* texture, int loc) // Index
+void Game::setP1Text(SDL_Texture* texture, int loc) // Index
 {
-    this->texture[loc] = texture;
+    this->playerOne[loc] = texture;
 }
+void Game::setP2Text(SDL_Texture* texture, int loc)
+{
+    this->playerTwo[loc] = texture;
+}
+void Game::setBGTexture(SDL_Texture* texture)
+{
+    this->bgTexture = texture;
+}
+
 
 void Game::setLastTime(int lastTime)
 {
@@ -163,20 +198,34 @@ void Game::input()
 }
 void Game::draw()
 {
-    SDL_Rect spriteRect;
-    
-    spriteRect.x = 0;
-    spriteRect.y = 0;
-    spriteRect.w = SPRITE_SIZE;
-    spriteRect.h = SPRITE_SIZE;
-    SDL_Rect dstrect = {(800- SPRITE_SIZE) , (475 - SPRITE_SIZE) / 2, spriteRect.w * 3, spriteRect.h * 3};
+    SDL_Rect spriteRect1; // sprite rectangle for player 1's pokemon
+    SDL_RenderCopy(renderer, bgTexture, NULL, NULL); // background render
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // colors something
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    spriteRect1.x = 0; // start at x = 0
+    spriteRect1.y = 0; // start at y = 0
+    spriteRect1.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
+    spriteRect1.h = SPRITE_SIZE;  // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
+    SDL_Rect dstrect = {(350- SPRITE_SIZE) , (500 - SPRITE_SIZE) , spriteRect1.w * 2, spriteRect1.h * 2}; // destination rectangle to position and size sprite rectangle
+
+
+    SDL_RenderCopy(renderer, playerOne[active1], &spriteRect1, &dstrect); // player 1 pokemon render
+    
+    SDL_Rect spriteRect2; // sprite rectangle for player 2's pokemon
+    
+    spriteRect2.x = 0; // start at x = 0
+    spriteRect2.y = 0; // start at y = 0
+    spriteRect2.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
+    spriteRect2.h = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
+    
+    dstrect = {(800- SPRITE_SIZE) , (475 - SPRITE_SIZE) / 2, spriteRect2.w * 3, spriteRect2.h * 3}; // destination rectangle to position and size sprite rectangle
+
     
     
-    SDL_RenderCopy(renderer, texture[0], NULL, NULL);
-    SDL_RenderCopy(renderer, texture[1], &spriteRect, &dstrect);
+    SDL_RenderCopy(renderer, playerTwo[active2], &spriteRect2, &dstrect); // player 2 pokemon render
+
     SDL_RenderPresent(renderer);
+
 }
 
 void Game::displayFPS()
@@ -201,8 +250,17 @@ void Game::countFPS()
 }
 void Game::kill()
 {
-    SDL_DestroyTexture(texture[0]);
-    SDL_DestroyTexture(texture[1]);
+    SDL_DestroyTexture(bgTexture);
+    for(int i = 0; i < 3; i++)
+    {
+        SDL_DestroyTexture(playerOne[i]);
+    }
+    for(int i = 0; i < 3; i++)
+    {
+        SDL_DestroyTexture(playerTwo[i]);
+    }
+    delete playerOne;
+    delete playerTwo;
     SDL_FreeSurface(image);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
