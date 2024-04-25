@@ -17,5 +17,4 @@ int main(int argv, char** args)
         pokemon.draw();
     }
     pokemon.kill();
-//yeet
 }
