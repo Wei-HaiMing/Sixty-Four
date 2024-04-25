@@ -25,6 +25,23 @@ Game::Game()
     setSurface(IMG_Load("res/abra.png"));
     texture[1] = SDL_CreateTextureFromSurface(renderer, image);
 
+    setSurface(IMG_Load(""));
+    texture[2]=SDL_CreateTextureFromSurface(renderer,image)
+
+    setSurface(IMG_Load(""));
+    texture[3]=SDL_CreateTextureFromSurface(renderer,image)
+
+    setSurface(IMG_Load(""));
+    texture[4]=SDL_CreateTextureFromSurface(renderer,image)
+
+    setSurface(IMG_Load(""));
+    texture[5]=SDL_CreateTextureFromSurface(renderer,image)
+
+    setSurface(IMG_Load(""));
+    texture[6]=SDL_CreateTextureFromSurface(renderer,image)
+
+    setSurface(IMG_Load(""));
+    texture[7]=SDL_CreateTextureFromSurface(renderer,image)
 
     
 }
@@ -171,6 +188,24 @@ void Game::draw()
     spriteRect.w = SPRITE_SIZE;
     spriteRect.h = SPRITE_SIZE;
     SDL_Rect dstrect = {(WIDTH - SPRITE_SIZE) / 2, (HEIGHT - SPRITE_SIZE) / 2, spriteRect.w * 5, spriteRect.h * 5};
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    
+    
+    SDL_RenderCopy(renderer, texture[0], NULL, NULL);
+    SDL_RenderCopy(renderer, texture[1], &spriteRect, &dstrect);
+    SDL_RenderPresent(renderer);
+
+
+
+
+     SDL_Rect spriteRect1, rcSrc1;
+    
+    spriteRect1.x = 0;
+    spriteRect1.y = 0;
+    spriteRect1.w = SPRITE_SIZE;
+    spriteRect1.h = SPRITE_SIZE;
+    SDL_Rect dstrect = {(100- SPRITE_SIZE) , (600 - SPRITE_SIZE) , spriteRect.w * 3, spriteRect.h * 3};
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     
