@@ -180,14 +180,13 @@ void Game::input()
 }
 void Game::draw()
 {
-    SDL_Rect rect;
-    SDL_Rect spriteRect, rcSrc;
+    SDL_Rect spriteRect;
     
     spriteRect.x = 0;
     spriteRect.y = 0;
     spriteRect.w = SPRITE_SIZE;
     spriteRect.h = SPRITE_SIZE;
-    SDL_Rect dstrect = {(WIDTH - SPRITE_SIZE) / 2, (HEIGHT - SPRITE_SIZE) / 2, spriteRect.w * 5, spriteRect.h * 5};
+    SDL_Rect dstrect = {(800- SPRITE_SIZE) , (475 - SPRITE_SIZE) / 2, spriteRect.w * 3, spriteRect.h * 3};
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     
