@@ -15,6 +15,7 @@ int main(int argv, char** args)
         pokemon.update();
         pokemon.input();
         pokemon.draw();
+        cout << "ass";
     }
     pokemon.kill();
 
