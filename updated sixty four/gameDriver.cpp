@@ -1,5 +1,6 @@
 /*
 Authors: Armando, Athena, Eduardo, Gabe
+Make File Command: MinGW32-make
 */
 #include <SDL2/SDL.h>
 #include "game.hpp"
