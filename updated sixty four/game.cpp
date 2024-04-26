@@ -13,12 +13,19 @@ Game::Game()
     userInput = 0;
     active1 = 0;
     active2 = 0;
+    
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0) std:: cout << "Failed at SDL_Init()" << std:: endl;
+
     if(!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) std::cout << "Failed to initialize SDL_image for PNG files: " << IMG_GetError() << std::endl; 
     if(SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer) < 0) std::cout << "Failed at SDL_CreateWindowAndRenderer()" << std::endl;
     SDL_SetWindowTitle(window, "SDL2 Window");
     SDL_ShowCursor(1);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+
+    //setSurface(TTF_RenderText_Blended(font, "Hello", (SDL_Color){0, 0, 0, 255}));
+    //fontText = SDL_CreateTextureFromSurface(renderer, image);
+
+    initFont();
 
     setSurface(IMG_Load("res/pokemonBattleBacground.png"));
     bgTexture = SDL_CreateTextureFromSurface(renderer, image);
@@ -224,6 +231,9 @@ void Game::draw()
     
     SDL_RenderCopy(renderer, playerTwo[active2], &spriteRect2, &dstrect); // player 2 pokemon render
 
+    dstrect = {0, 0, textArr[0].w, textArr[0].h};
+    SDL_RenderCopy(renderer, textArr[0].textTex, NULL, &dstrect);
+
     SDL_RenderPresent(renderer);
 
 }
@@ -259,10 +269,27 @@ void Game::kill()
     {
         SDL_DestroyTexture(playerTwo[i]);
     }
-    delete playerOne;
-    delete playerTwo;
+
+    for (int i = 0; i < 34; i++) {
+        SDL_DestroyTexture(textArr[i].textTex);
+    }
+    
     SDL_FreeSurface(image);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+void Game::initFont() {
+    TTF_Init();
+    font = TTF_OpenFont("fonts/FreeSerif.ttf", 40);
+    if(font == NULL) std::cout << "Error Loading Font" << TTF_GetError() << std::endl;
+
+    for (int i = 0; i < 34; i++) {
+        image = TTF_RenderText_Blended(font, strArr[i], (SDL_Color){0, 0, 0, 255});
+        textArr[i].textTex = SDL_CreateTextureFromSurface(renderer, image);
+        if (TTF_SizeText(font, strArr[i], &textArr[i].w, &textArr[i].h) != 0) {
+            std::cout << "Size Fail\n";
+        }  
+    }
 }

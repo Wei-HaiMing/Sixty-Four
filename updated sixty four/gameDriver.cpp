@@ -10,11 +10,13 @@ Authors: Armando, Athena, Eduardo, Gabe
 int main(int argv, char** args)
 {
     Game pokemon;
-    
+    // Mouse mouse;
     while(pokemon.getRunning())
     {
         // pokemon.countFPS();
         // pokemon.displayFPS();
+        // mouse.mouseUpdate();
+        // mouse.mouseDraw();
         pokemon.update();
         pokemon.input();
         pokemon.draw();

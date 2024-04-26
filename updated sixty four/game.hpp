@@ -2,7 +2,9 @@
 #define GAME_HPP
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-
+#include <SDL2/SDL_ttf.h>
+// extern SDL_Renderer* renderer;
+// extern SDL_Window* window;
 
 
 class Game
@@ -45,17 +47,19 @@ class Game
         void displayFPS();
         void kill();
         void countFPS();
+        void initFont();
 
 
-    private:
+    protected:
         SDL_Renderer* renderer; // a struct that handles all rendering, settings to render, can only render things to the tied window
         SDL_Window* window; // a window 
         bool running, fullscreen;
         int active1, active2; // index to identify which pokemon sprite is to be displayed
         int frameCount, timerFPS, lastFrame, fps; // variables to print out the frames each millisecond
         SDL_Surface *image; // image for the background
-        SDL_Texture *bgTexture, *playerOne[3], *playerTwo[3]; // create a texture using the renderer with the desired image, texture[0] is the background image and texture[1:3] are player 1's pokemon and texture[4:] are player 2's pokemon
+        SDL_Texture *bgTexture, *playerOne[3], *playerTwo[3], *fontText; // create a texture using the renderer with the desired image, texture[0] is the background image and texture[1:3] are player 1's pokemon and texture[4:] are player 2's pokemon
         SDL_Rect spritePosition;
+        TTF_Font *font; 
         #define WIDTH 1280
         #define HEIGHT 720
         #define SPRITE_SIZE 96
@@ -67,6 +71,18 @@ class Game
             USER_RT = (1 << 3),
             USER_EN = (1 << 4)
         };
+        enum {
+            HELLO = 0,
+        };
+        struct textData{
+        SDL_Texture* textTex;
+        int w;
+        int h;
+        };
+        textData textArr[34];
+        const char* strArr[34] = {"Hello", "Hello", 
+        "Hello", "Hello", 
+        "Hello", "Hello","Hello", "Hello","Hello", "Hello","Hello", "Hello","Hello", "Hello","Hello", "Hello","Hello", "Hello","Hello", "Hello","Hello", "Hello","Hello", "Hello","Hello", "Hello","Hello", "Hello","Hello", "Hello","Hello", "Hello","Hello", "Hello",};
 };  
 
 
