@@ -52,7 +52,7 @@ class Game
 
 
     protected:
-        Pokemon ;
+        Pokemon team1[3], team2[3];
         SDL_Renderer* renderer;
         SDL_Window* window;
         bool running, fullscreen;

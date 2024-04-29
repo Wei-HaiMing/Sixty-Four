@@ -26,22 +26,22 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     setSurface(IMG_Load("res/pokemonBattleBacground.png"));
     bgTexture = SDL_CreateTextureFromSurface(renderer, image);
 
-    setSurface(IMG_Load("res/jynx-back.png"));
+    setSurface(IMG_Load("res/chikorita-back.png"));
     playerOne[0]=SDL_CreateTextureFromSurface(renderer,image);
 
-    setSurface(IMG_Load("res/nidorino-back.png"));
+    setSurface(IMG_Load("res/totodile-back.png"));
     playerOne[1]=SDL_CreateTextureFromSurface(renderer,image);
 
-    setSurface(IMG_Load("res/hitmonchan-back.png"));
+    setSurface(IMG_Load("res/cyndaquil-back.png"));
     playerOne[2]=SDL_CreateTextureFromSurface(renderer,image);
 
-    setSurface(IMG_Load("res/abra.png"));
+    setSurface(IMG_Load("res/bulbasaur.png"));
     playerTwo[0] = SDL_CreateTextureFromSurface(renderer, image);
 
-    setSurface(IMG_Load("res/charmeleon.png"));
+    setSurface(IMG_Load("res/squirtle.png"));
     playerTwo[1]=SDL_CreateTextureFromSurface(renderer,image);
 
-    setSurface(IMG_Load("res/dragonair.png"));
+    setSurface(IMG_Load("res/charmander.png"));
     playerTwo[2]=SDL_CreateTextureFromSurface(renderer,image);
 
     
