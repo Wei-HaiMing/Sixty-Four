@@ -5,19 +5,15 @@
 
 int Game::lastTime = 0;
 // constructors
-Game::Game()
+Game::Game(SDL_Renderer* renderer, SDL_Window* window)
 {
-    
+    this->renderer = renderer;
+    this->window = window;
     setRunning(true);
     setFullscreen(0);
     userInput = 0;
     active1 = 0;
     active2 = 0;
-    
-    if(SDL_Init(SDL_INIT_EVERYTHING) < 0) std:: cout << "Failed at SDL_Init()" << std:: endl;
-
-    if(!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) std::cout << "Failed to initialize SDL_image for PNG files: " << IMG_GetError() << std::endl; 
-    if(SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer) < 0) std::cout << "Failed at SDL_CreateWindowAndRenderer()" << std::endl;
     SDL_SetWindowTitle(window, "SDL2 Window");
     SDL_ShowCursor(1);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
@@ -281,7 +277,6 @@ void Game::kill()
 }
 
 void Game::initFont() {
-    TTF_Init();
     font = TTF_OpenFont("fonts/FreeSerif.ttf", 40);
     if(font == NULL) std::cout << "Error Loading Font" << TTF_GetError() << std::endl;
 

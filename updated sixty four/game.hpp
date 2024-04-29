@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include "Pokemon.hpp"
 // extern SDL_Renderer* renderer;
 // extern SDL_Window* window;
 
@@ -12,7 +13,7 @@ class Game
     public:
         static int lastTime;
         // constructors
-        Game();
+        Game(SDL_Renderer* renderer, SDL_Window* window);
         // getters
         bool getRunning()const;
         bool getFullscreen()const;
@@ -51,8 +52,9 @@ class Game
 
 
     protected:
-        SDL_Renderer* renderer; // a struct that handles all rendering, settings to render, can only render things to the tied window
-        SDL_Window* window; // a window 
+        Pokemon ;
+        SDL_Renderer* renderer;
+        SDL_Window* window;
         bool running, fullscreen;
         int active1, active2; // index to identify which pokemon sprite is to be displayed
         int frameCount, timerFPS, lastFrame, fps; // variables to print out the frames each millisecond
@@ -75,9 +77,9 @@ class Game
             HELLO = 0,
         };
         struct textData{
-        SDL_Texture* textTex;
-        int w;
-        int h;
+            SDL_Texture* textTex;
+            int w;
+            int h;
         };
         textData textArr[34];
         const char* strArr[34] = {"Hello", "Hello", 
