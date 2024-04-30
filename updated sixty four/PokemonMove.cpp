@@ -5,13 +5,14 @@
 using namespace std;
 
 //Constructor for Pokemon Move class
-Move:: Move()
+Move::Move()
 {
+    
     name = "";
     type = "";
     damage=0;
 }
-Move:: Move(string name, string type, int damage)
+Move::Move(string name, string type, int damage)
 {
     this->name = name;
     this->type = type;
@@ -30,14 +31,14 @@ void  Move :: setDamage(int damage){
     this ->damage = damage;
 }
 
-string Move::getName()const{
+string Move::getName(){
     return name;
 }
  
-string Move::getType() const{
+string Move::getType(){
     return type;
 }
-int Move:: getDamage() const{
+int Move:: getDamage(){
     return damage;
 }
 void Move::printMove()const{

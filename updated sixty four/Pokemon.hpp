@@ -12,29 +12,29 @@ class Pokemon{
     public:
         Pokemon();
         Pokemon(std::string name, std::string poketype, Move movearr[],
-                    SDL_Surface* surface, double resist, int health);
+                    string resist, int health);
         void setName(std::string name);
         void setPokeType(std::string poketype);
         void setMove(Move movearr[]);
-        void setSurf(SDL_Surface* SDL_surface);
-        void setResistance(double resistance);
+        // void setSurf(SDL_Surface* SDL_surface);
+        void setResistance(std::string resistance);
         void setHP(int health);
 
         std::string getName();
         std::string getPokeType();
-        Move getMove();
-        SDL_Surface* getSurf();
-        double getResistance();
+        Move getMove(int loc);
+        // SDL_Surface* getSurf();
+        std::string getResistance();
         int getHP();
 
         void pokeprint()const;
         ~Pokemon();
     private:
         std::string name, poketype;
-        SDL_Surface* pokeSurf;
+        // SDL_Surface* pokeSurf;
         Move movearr[4];
         int health;
-        double resistance;
+        std::string resistance;
 
 };
 

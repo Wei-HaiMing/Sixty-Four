@@ -16,18 +16,18 @@ Pokemon::Pokemon(){
     health = 0;
 }
 
-Pokemon::Pokemon(string name, string poketype, Move movearr[], SDL_Surface* surface, double resist, int health){
+Pokemon::Pokemon(string name, string poketype, Move movearr[], string resist, int health){
     Pokemon::setName(name);
     Pokemon::setPokeType(poketype);
     Pokemon::setMove(movearr);
-    Pokemon::setSurf(surface);
+    // Pokemon::setSurf(surface);
     Pokemon::setResistance(resist);
     Pokemon::setHP(health);
 }
 
 Pokemon::~Pokemon()
 {
-    SDL_FreeSurface(pokeSurf);
+    // SDL_FreeSurface(pokeSurf);
     std::cout << "Pokemon Deconstructor Ran\n";
 }
 
@@ -45,11 +45,11 @@ void Pokemon::setMove(Move movearr[]){
     }
 }
 
-void Pokemon::setSurf(SDL_Surface* surface){
-    this -> pokeSurf = surface;
-}
+// void Pokemon::setSurf(SDL_Surface* surface){
+//     this -> pokeSurf = surface;
+// }
 
-void Pokemon::setResistance(double resist){
+void Pokemon::setResistance(string resist){
     this -> resistance = resist;
 }
 
@@ -65,17 +65,20 @@ string Pokemon::getPokeType(){
     return poketype;
 }
 
-Move Pokemon::getMove(){
-    for(int i = 0; i < 4; i++){
-        return movearr[i];
-    }
-}
+Move Pokemon::getMove(int loc){
+    
+    return movearr[loc];
 
-SDL_Surface* Pokemon::getSurf(){
-    return pokeSurf;
 }
+int Pokemon::getHP()
+{
+    return health;
+}
+// SDL_Surface* Pokemon::getSurf(){
+//     return pokeSurf;
+// }
 
-double Pokemon::getResistance(){
+string Pokemon::getResistance(){
     return resistance;
 }
 
