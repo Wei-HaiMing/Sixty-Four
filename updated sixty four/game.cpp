@@ -5,45 +5,182 @@
 
 int Game::lastTime = 0;
 // constructors
-Game::Game()
+Game::Game(SDL_Renderer* renderer, SDL_Window* window)
 {
-    
+    this->renderer = renderer;
+    this->window = window;
     setRunning(true);
     setFullscreen(0);
     userInput = 0;
     active1 = 0;
     active2 = 0;
-    if(SDL_Init(SDL_INIT_EVERYTHING) < 0) std:: cout << "Failed at SDL_Init()" << std:: endl;
-    if(!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) std::cout << "Failed to initialize SDL_image for PNG files: " << IMG_GetError() << std::endl; 
-    if(SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer) < 0) std::cout << "Failed at SDL_CreateWindowAndRenderer()" << std::endl;
     SDL_SetWindowTitle(window, "SDL2 Window");
     SDL_ShowCursor(1);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 
-    setSurface(IMG_Load("res/pokemonBattleBacground.png"));
-    bgTexture = SDL_CreateTextureFromSurface(renderer, image);
+    //setSurface(TTF_RenderText_Blended(font, "Hello", (SDL_Color){0, 0, 0, 255}));
+    //fontText = SDL_CreateTextureFromSurface(renderer, image);
 
-    setSurface(IMG_Load("res/jynx-back.png"));
-    playerOne[0]=SDL_CreateTextureFromSurface(renderer,image);
+    initFont();
 
-    setSurface(IMG_Load("res/nidorino-back.png"));
-    playerOne[1]=SDL_CreateTextureFromSurface(renderer,image);
+    tackle.setName("Tackle");
+    tackle.setDamage(100);
+    tackle.setType("Normal");
 
-    setSurface(IMG_Load("res/hitmonchan-back.png"));
-    playerOne[2]=SDL_CreateTextureFromSurface(renderer,image);
+    razorLeaf.setName("Razor Leaf");
+    razorLeaf.setDamage(55);
+    razorLeaf.setType("Grass");
 
-    setSurface(IMG_Load("res/abra.png"));
-    playerTwo[0] = SDL_CreateTextureFromSurface(renderer, image);
+    magicalLeaf.setName("Magical Leaf");
+    magicalLeaf.setDamage(60);
+    magicalLeaf.setType("Grass");
+    
+    bodySlam.setName("Body Slam");
+    bodySlam.setDamage(85);
+    bodySlam.setType("Normal");
 
-    setSurface(IMG_Load("res/charmeleon.png"));
-    playerTwo[1]=SDL_CreateTextureFromSurface(renderer,image);
+    ember.setName("Ember");
+    ember.setDamage(40);
+    ember.setType("Fire");
 
-    setSurface(IMG_Load("res/dragonair.png"));
-    playerTwo[2]=SDL_CreateTextureFromSurface(renderer,image);
+    quickAttack.setName("Quick Attack");
+    quickAttack.setDamage(40);
+    quickAttack.setType("Normal");
 
+    flameWheel.setName("Flame Wheel");
+    flameWheel.setDamage(60);
+    flameWheel.setType("Fire");
+
+    scratch.setName("Scratch");
+    scratch.setDamage(40);
+    scratch.setType("Normal");
+
+    waterGun.setName("Water Gun");
+    waterGun.setDamage(40);
+    waterGun.setType("Water");
+
+    aquaTail.setName("Aqua Tail");
+    aquaTail.setDamage(90);
+    aquaTail.setType("Water");
+
+    slash.setName("Slash");
+    slash.setDamage(70);
+    slash.setType("Normal");
+
+    vineWhip.setName("Vine Whip");
+    vineWhip.setDamage(45);
+    vineWhip.setType("Grass");
+
+    waterPulse.setName("Water Pulse");
+    waterPulse.setDamage(60);
+    waterPulse.setType("Water");
+
+    fireFang.setName("Fire Fang");
+    fireFang.setDamage(65);
+    fireFang.setType("Fire");
+
+    flameThrower.setName("Flame Thrower");
+    flameThrower.setDamage(90);
+    flameThrower.setType("Fire");
+
+    chikoritaMoves[0] = tackle;
+    chikoritaMoves[1] = razorLeaf;
+    chikoritaMoves[2] = magicalLeaf;
+    chikoritaMoves[3] = bodySlam;
+
+    totodileMoves[0] = scratch;
+    totodileMoves[1] = waterGun;
+    totodileMoves[2] = slash;
+    totodileMoves[3] = aquaTail;
+
+    cyndaquilMoves[0] = tackle;
+    cyndaquilMoves[1] = ember;
+    cyndaquilMoves[2] = quickAttack;
+    cyndaquilMoves[3] = flameWheel;
+
+    bulbasaurMoves[0] = tackle;
+    bulbasaurMoves[1] = vineWhip;
+    bulbasaurMoves[2] = razorLeaf;
+    bulbasaurMoves[3] = magicalLeaf;
+
+    squirtleMoves[0] = tackle;
+    squirtleMoves[1] = waterGun;
+    squirtleMoves[2] = waterPulse;
+    squirtleMoves[3] = aquaTail;
+
+    charmanderMoves[0] = scratch;
+    charmanderMoves[1] = ember;
+    charmanderMoves[2] = fireFang;
+    charmanderMoves[3] = flameThrower;
+
+    team1[0].setHP(294);
+    team1[0].setMove(chikoritaMoves);
+    team1[0].setName("Chikorita");
+    team1[0].setPokeType("Grass");
+    team1[0].setResistance("Water");
+
+    team1[1].setHP(304);
+    team1[1].setMove(totodileMoves);
+    team1[1].setName("Totodile");
+    team1[1].setPokeType("Water");
+    team1[1].setResistance("Fire");
+
+    team1[2].setHP(282);
+    team1[2].setMove(cyndaquilMoves);
+    team1[2].setName("Cyndaquil");
+    team1[2].setPokeType("Fire");
+    team1[2].setResistance("Grass");
+
+    team2[0].setHP(294);
+    team2[0].setMove(bulbasaurMoves);
+    team2[0].setName("Bulbasaur");
+    team2[0].setPokeType("Grass");
+    team2[0].setResistance("Water");
+    
+    team2[1].setHP(292);
+    team2[1].setMove(squirtleMoves);
+    team2[1].setName("Squirtle");
+    team2[1].setPokeType("Water");
+    team2[1].setResistance("Fire");
+
+    team2[2].setHP(282);
+    team2[2].setMove(charmanderMoves);
+    team2[2].setName("Charmander");
+    team2[2].setPokeType("Fire");
+    team2[2].setResistance("Grass");
+    
     
 
 
+
+    // Pokemon chikorita("Name", "Grass", )
+
+    setSurface(IMG_Load("res/pokemonBattleBacground.png"));
+    bgTexture = SDL_CreateTextureFromSurface(renderer, image);
+
+    setSurface(IMG_Load("res/chikorita-back.png"));
+    playerOne[0]=SDL_CreateTextureFromSurface(renderer,image);
+
+    setSurface(IMG_Load("res/totodile-back.png"));
+    playerOne[1]=SDL_CreateTextureFromSurface(renderer,image);
+
+    setSurface(IMG_Load("res/cyndaquil-back.png"));
+    playerOne[2]=SDL_CreateTextureFromSurface(renderer,image);
+
+    setSurface(IMG_Load("res/bulbasaur.png"));
+    playerTwo[0] = SDL_CreateTextureFromSurface(renderer, image);
+
+    setSurface(IMG_Load("res/squirtle.png"));
+    playerTwo[1]=SDL_CreateTextureFromSurface(renderer,image);
+
+    setSurface(IMG_Load("res/charmander.png"));
+    playerTwo[2]=SDL_CreateTextureFromSurface(renderer,image);
+
+    setSurface(IMG_Load("res/pointer_arrow.png"));
+    arrowText = SDL_CreateTextureFromSurface(renderer, image);
+
+    setSurface(IMG_Load("res/trans_menu.png"));
+    menuText = SDL_CreateTextureFromSurface(renderer, image);
 
     
 }
@@ -155,6 +292,7 @@ void Game::update()
     if(userInput == USER_UP) 
     {
         std::cout << "UP\n";
+        
         userInput = 0;
     } 
     if(userInput == USER_DN) 
@@ -224,6 +362,24 @@ void Game::draw()
     
     SDL_RenderCopy(renderer, playerTwo[active2], &spriteRect2, &dstrect); // player 2 pokemon render
 
+
+    // menu
+    SDL_Rect menu = {0, 0, 313 + 990, 93 + 110};
+    dstrect = {0, 517, menu.w, menu.h};
+    SDL_RenderCopy(renderer, menuText, &menu, &dstrect);
+
+    // text
+    dstrect = {0, 0, textArr[0].w, textArr[0].h};
+    SDL_RenderCopy(renderer, textArr[0].textTex, NULL, &dstrect);
+
+    // arrow sprite
+    SDL_Rect arrow = {0, 0, 750, 750};
+    dstrect = {580, 555, arrow.w/12, arrow.h/9};
+    SDL_RenderCopy(renderer, arrowText, &arrow, &dstrect);
+
+
+
+
     SDL_RenderPresent(renderer);
 
 }
@@ -259,10 +415,31 @@ void Game::kill()
     {
         SDL_DestroyTexture(playerTwo[i]);
     }
-    delete playerOne;
-    delete playerTwo;
+
+    for (int i = 0; i < 34; i++) {
+        SDL_DestroyTexture(textArr[i].textTex);
+    }
+    // for(int i = 0; i < 3; i++)
+    // {
+
+    // }
     SDL_FreeSurface(image);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+void Game::initFont() {
+    font = TTF_OpenFont("fonts/FreeSerif.ttf", 40);
+    if(font == NULL) std::cout << "Error Loading Font" << TTF_GetError() << std::endl;
+    
+    for (int i = 0; i < 34; i++) {
+        image = TTF_RenderText_Blended(font, strArr[i], (SDL_Color){0, 0, 0, 255});
+
+        textArr[i].textTex = SDL_CreateTextureFromSurface(renderer, image);
+
+        if (TTF_SizeText(font, strArr[i], &textArr[i].w, &textArr[i].h) != 0) {
+            std::cout << "Size Fail\n";
+        }  
+    }
 }
