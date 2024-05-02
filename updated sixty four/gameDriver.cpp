@@ -12,6 +12,13 @@ SDL_Window* window; // a window
 
 int main(int argv, char** args)
 {
+
+    const int FPS= 60;
+    const int FrameDelay= 1000/FPS;
+    Uint32 frameStart;
+    int frameTime;
+
+
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0) std:: cout << "Failed at SDL_Init()" << std:: endl;
 
     if(!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) std::cout << "Failed to initialize SDL_image for PNG files: " << IMG_GetError() << std::endl; 
@@ -28,10 +35,16 @@ int main(int argv, char** args)
         // pokemon.displayFPS();
         // mouse.mouseUpdate();
         // mouse.mouseDraw();
+        frameStart = SDL_GetTicks();
+
         pokemon.update();
         pokemon.input();
         pokemon.draw();
-
+        frameTime= SDL_GetTicks() - frameStart;
+        if(FrameDelay > frameTime)
+        {
+            SDL_Delay(FrameDelay - frameTime);
+        }
     }
     pokemon.kill();
 }
