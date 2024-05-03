@@ -15,23 +15,43 @@ int main(int argv, char** args)
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0) std:: cout << "Failed at SDL_Init()" << std:: endl;
 
     if(!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) std::cout << "Failed to initialize SDL_image for PNG files: " << IMG_GetError() << std::endl; 
-    if(SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer) < 0) std::cout << "Failed at SDL_CreateWindowAndRenderer()" << std::endl;
+    //if(SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer) < 0) std::cout << "Failed at SDL_CreateWindowAndRenderer()" << std::endl;
+    window = SDL_CreateWindow("SDL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, 0);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     TTF_Init();
     
     Game pokemon(renderer, window);
 
     
     // Mouse mouse;
+    float delta, acc, lastFrame, currFrame;
+    acc = 0;
+    lastFrame = SDL_GetTicks();
+    Uint64 start, end;
     while(pokemon.getRunning())
     {
-        // pokemon.countFPS();
-        // pokemon.displayFPS();
+         //pokemon.countFPS();
+        //pokemon.displayFPS();
         // mouse.mouseUpdate();
         // mouse.mouseDraw();
-        pokemon.update();
+        start = SDL_GetPerformanceCounter();
+        currFrame = SDL_GetTicks();
+        delta = currFrame - lastFrame;
+        lastFrame = currFrame;
+        acc += delta;
         pokemon.input();
+
+        //while (acc > 1000.0/60.0) {
+        pokemon.update();
+          //  acc -= 1000.0/60.0;
+        //}
         pokemon.draw();
 
+        Uint64 end = SDL_GetPerformanceCounter();
+        float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
+        cout << "Current FPS: " << to_string(1.0f / elapsed) << endl;
     }
     pokemon.kill();
+    
+    return 0;
 }

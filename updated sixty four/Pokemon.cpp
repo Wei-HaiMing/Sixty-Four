@@ -14,21 +14,28 @@ Pokemon::Pokemon(){
     // SDL_surface = "";
     resistance = 0.0;
     health = 0;
+    dead = false;
 }
 
-Pokemon::Pokemon(string name, string poketype, Move movearr[], string resist, int health){
+Pokemon::Pokemon(string name, string poketype, Move movearr[], string resist, int health, bool dead){
     Pokemon::setName(name);
     Pokemon::setPokeType(poketype);
     Pokemon::setMove(movearr);
     // Pokemon::setSurf(surface);
     Pokemon::setResistance(resist);
     Pokemon::setHP(health);
+    setDead(dead);
 }
 
 Pokemon::~Pokemon()
 {
     // SDL_FreeSurface(pokeSurf);
     std::cout << "Pokemon Deconstructor Ran\n";
+}
+
+void Pokemon::setDead(bool dead)
+{
+    this->dead = dead;
 }
 
 void Pokemon::setName(string name){
@@ -69,6 +76,10 @@ Move Pokemon::getMove(int loc){
     
     return movearr[loc];
 
+}
+bool Pokemon::getDead()
+{
+    return dead;
 }
 int Pokemon::getHP()
 {
