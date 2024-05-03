@@ -662,6 +662,8 @@ void Game::draw()
         dstrect.h = textArr[SODA_POPS1].h / 2;
         SDL_RenderCopy(renderer, textArr[SODA_POPS1].textTex, NULL, &dstrect);
     }
+
+    // IM WORKING ON THIS PART vvvv
     if(active1 == 0 && turn == "P1") // chikorita
     {   
         dstrect.x = 500;
@@ -670,7 +672,7 @@ void Game::draw()
         dstrect.h = textArr[TACKLE].h;
         SDL_RenderCopy(renderer, textArr[TACKLE].textTex, NULL, &dstrect);
     }
-
+    // IM WORKING ON THIS PART ^^^^
     // pokemon moves
 
 
