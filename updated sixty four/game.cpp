@@ -8,13 +8,22 @@ int Game::lastTime = 0;
 Game::Game(SDL_Renderer* renderer, SDL_Window* window)
 {
     timer = 0;
+    arrowShiftLt = 0;
+    arrowShiftRt = 0;
+    arrowShiftDn = 0;
+    arrowShiftUp = 0;
+    arrowShiftX = 0;
+    arrowShiftY = 0;
+    arrowXPos = 580;
+    arrowYPos = 555;
+    controlMenu = "res/trans_menu.png";
     this->renderer = renderer;
     this->window = window;
     setRunning(true);
     setFullscreen(0);
     userInput = 0;
-    active1 = 0;
-    active2 = 0;
+    active1 = 1;
+    active2 = 1;
     p1Choice = "deciding";
     p2Choice = "deciding";
     menuState = "start";
@@ -22,9 +31,6 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     SDL_SetWindowTitle(window, "SDL2 Window");
     SDL_ShowCursor(1);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
-
-    //setSurface(TTF_RenderText_Blended(font, "Hello", (SDL_Color){0, 0, 0, 255}));
-    //fontText = SDL_CreateTextureFromSurface(renderer, image);
 
     inventory1.setFullRestores(1);
     inventory1.setPotions(3);
@@ -45,71 +51,108 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     strArr[SODA_POPS1] = temp3.c_str();
 
     std::string aint = ("x" + to_string(inventory2.getPotions()) + " Potions");
-    strArr[POTIONS1] = aint.c_str();
+    strArr[POTIONS2] = aint.c_str();
     std::string doin = ("x" + to_string(inventory2.getFullRestores()) + " Full Restores");
-    strArr[FULL_RESTORES1] = doin.c_str();
+    strArr[FULL_RESTORES2] = doin.c_str();
     std::string again = ("x" + std::to_string(inventory2.getSodaPops()) + " Soda Pops");
-    strArr[SODA_POPS1] = again.c_str();
+    strArr[SODA_POPS2] = again.c_str();
 
-    tackle.setName("Tackle");
+    tackle.setName("Tackle: ");
     tackle.setDamage(100);
     tackle.setType("Normal");
 
-    razorLeaf.setName("Razor Leaf");
+    razorLeaf.setName("Razor Leaf: ");
     razorLeaf.setDamage(55);
     razorLeaf.setType("Grass");
 
-    magicalLeaf.setName("Magical Leaf");
+    magicalLeaf.setName("Magical Leaf: ");
     magicalLeaf.setDamage(60);
     magicalLeaf.setType("Grass");
     
-    bodySlam.setName("Body Slam");
+    bodySlam.setName("Body Slam: ");
     bodySlam.setDamage(85);
     bodySlam.setType("Normal");
 
-    ember.setName("Ember");
+    ember.setName("Ember: ");
     ember.setDamage(40);
     ember.setType("Fire");
 
-    quickAttack.setName("Quick Attack");
+    quickAttack.setName("Quick Attack: ");
     quickAttack.setDamage(40);
     quickAttack.setType("Normal");
 
-    flameWheel.setName("Flame Wheel");
+    flameWheel.setName("Flame Wheel: ");
     flameWheel.setDamage(60);
     flameWheel.setType("Fire");
 
-    scratch.setName("Scratch");
+    scratch.setName("Scratch: ");
     scratch.setDamage(40);
     scratch.setType("Normal");
 
-    waterGun.setName("Water Gun");
+    waterGun.setName("Water Gun: ");
     waterGun.setDamage(40);
     waterGun.setType("Water");
 
-    aquaTail.setName("Aqua Tail");
+    aquaTail.setName("Aqua Tail: ");
     aquaTail.setDamage(90);
     aquaTail.setType("Water");
 
-    slash.setName("Slash");
+    slash.setName("Slash: ");
     slash.setDamage(70);
     slash.setType("Normal");
 
-    vineWhip.setName("Vine Whip");
+    vineWhip.setName("Vine Whip: ");
     vineWhip.setDamage(45);
     vineWhip.setType("Grass");
 
-    waterPulse.setName("Water Pulse");
+    waterPulse.setName("Water Pulse: ");
     waterPulse.setDamage(60);
     waterPulse.setType("Water");
 
-    fireFang.setName("Fire Fang");
+    fireFang.setName("Fire Fang: ");
     fireFang.setDamage(65);
     fireFang.setType("Fire");
 
-    flameThrower.setName("Flame Thrower");
+    flameThrower.setName("Flame Thrower: ");
     flameThrower.setDamage(90);
     flameThrower.setType("Fire");
+
+    doubleEdge.setName("Double-Edge: ");
+    doubleEdge.setDamage(120);
+    doubleEdge.setType("Normal");
+
+    takeDown.setName("Take Down: ");
+    takeDown.setDamage(90);
+    takeDown.setType("Normal");
+
+    powerWhip.setName("Power Whip: ");
+    powerWhip.setDamage(120);
+    powerWhip.setType("Grass");
+
+    facade.setName("Facade: ");
+    facade.setDamage(70);
+    facade.setType("Normal");
+
+    rapidSpin.setName("Rapid Spin: ");
+    rapidSpin.setDamage(50);
+    rapidSpin.setType("Normal");
+
+    hydroPump.setName("Hydro Pump: ");
+    hydroPump.setDamage(110);
+    hydroPump.setType("Water");
+
+    aquaJet.setName("Aqua Jet: ");
+    aquaJet.setDamage(40);
+    aquaJet.setType("Water");
+
+    falseSwipe.setName("False Swipe: ");
+    falseSwipe.setDamage(40);
+    falseSwipe.setType("Normal");
+
+    flareBlitz.setName("Flare Blitz: ");
+    flareBlitz.setDamage(120);
+    flareBlitz.setType("Fire");
+
 
     chikoritaMoves[0] = tackle;
     chikoritaMoves[1] = razorLeaf;
@@ -121,23 +164,23 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     totodileMoves[2] = slash;
     totodileMoves[3] = aquaTail;
 
-    cyndaquilMoves[0] = tackle;
+    cyndaquilMoves[0] = doubleEdge;
     cyndaquilMoves[1] = ember;
     cyndaquilMoves[2] = quickAttack;
     cyndaquilMoves[3] = flameWheel;
 
-    bulbasaurMoves[0] = tackle;
+    bulbasaurMoves[0] = takeDown;
     bulbasaurMoves[1] = vineWhip;
-    bulbasaurMoves[2] = razorLeaf;
-    bulbasaurMoves[3] = magicalLeaf;
+    bulbasaurMoves[2] = powerWhip;
+    bulbasaurMoves[3] = facade;
 
-    squirtleMoves[0] = tackle;
-    squirtleMoves[1] = waterGun;
+    squirtleMoves[0] = rapidSpin;
+    squirtleMoves[1] = hydroPump;
     squirtleMoves[2] = waterPulse;
-    squirtleMoves[3] = aquaTail;
+    squirtleMoves[3] = aquaJet;
 
-    charmanderMoves[0] = scratch;
-    charmanderMoves[1] = ember;
+    charmanderMoves[0] = falseSwipe;
+    charmanderMoves[1] = flareBlitz;
     charmanderMoves[2] = fireFang;
     charmanderMoves[3] = flameThrower;
 
@@ -215,61 +258,80 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     std::string temp15 = to_string(team2[2].getHP());
     strArr[CHARMANDER_NAME] = temp15.c_str();
 
-    // setting types
-    // temp = "Grass";
-    // strArr[GRASS] = temp.c_str();
-    // temp = "Water";
-    // strArr[WATER] = temp.c_str();
-    // temp = "Fire";
-    // strArr[FIRE] = temp.c_str();
-    // temp = "Normal";
-    // strArr[NORMAL] = temp.c_str();
-
     // setting moves
-    std::string temp16 = team1[0].getMove(0).getName();
+    std::string temp16 = team1[0].getMove(0).getName() + "Normal";
     strArr[TACKLE] = temp16.c_str();
-    std::string temp17 = team1[0].getMove(1).getName();
+
+    std::string temp17 = team1[0].getMove(1).getName() + "Grass";
     strArr[RAZOR_LEAF] = temp17.c_str();
-    std::string temp18 = team1[0].getMove(2).getName();
+
+    std::string temp18 = team1[0].getMove(2).getName() + "Grass";
     strArr[MAGICAL_LEAF] = temp18.c_str();
-    std::string temp19 = team1[0].getMove(3).getName();
+
+    std::string temp19 = team1[0].getMove(3).getName() + "Normal";
     strArr[BODY_SLAM] = temp19.c_str();
-    std::string temp20 = team1[1].getMove(0).getName();
+
+    std::string temp20 = team1[1].getMove(0).getName() + "Normal";
     strArr[SCRATCH] = temp20.c_str();
-    std::string temp21 = team1[1].getMove(1).getName();
+
+    std::string temp21 = team1[1].getMove(1).getName() + "Water";
     strArr[WATER_GUN] = temp21.c_str();
-    std::string temp22 = team1[1].getMove(2).getName();
+
+    std::string temp22 = team1[1].getMove(2).getName() + "Normal";
     strArr[SLASH] = temp22.c_str();
-    std::string temp23 = team1[1].getMove(3).getName();
+
+    std::string temp23 = team1[1].getMove(3).getName() + "Water";
     strArr[AQUA_TAIL] = temp23.c_str();
-    std::string temp24 = team1[2].getMove(1).getName();
+
+    std::string temp24 = team1[2].getMove(1).getName() + "Fire";
     strArr[EMBER] = temp24.c_str();
-    std::string temp25 = team1[2].getMove(2).getName();
+
+    std::string temp25 = team1[2].getMove(2).getName() + "Normal";
     strArr[QUICK_ATTACK] = temp25.c_str();
-    std::string temp26 = team1[2].getMove(3).getName();
+
+    std::string temp26 = team1[2].getMove(3).getName() + "Fire";
     strArr[FLAME_WHEEL] = temp26.c_str();
-    std::string temp27 = team2[0].getMove(1).getName();
+
+    std::string temp27 = team2[0].getMove(1).getName() + "Grass";
     strArr[VINE_WHIP] = temp27.c_str();
-    std::string temp28 = team2[1].getMove(2).getName();
+
+    std::string temp28 = team2[1].getMove(2).getName() + "Water";
     strArr[WATER_PULSE] = temp28.c_str();
-    std::string temp29 = team2[2].getMove(2).getName();
+
+    std::string temp29 = team2[2].getMove(2).getName() + "Fire";
     strArr[FIRE_FANG] = temp29.c_str();
-    std::string temp30 = team2[2].getMove(3).getName();
+
+    std::string temp30 = team2[2].getMove(3).getName() + "Fire";
     strArr[FLAMETHROWER] = temp30.c_str();
 
-    // // how effective each move was
-    // temp = "It's super effective!";
-    // strArr[SUPER_EFFECTIVE] = temp.c_str();
-    // temp = "It's not very effective...";
-    // strArr[NOT_EFFECTIVE] = temp.c_str();
 
-    // // prompt each player
-    // temp = "Player 1, what will you do?";
-    // strArr[PROMPT_P1] = temp.c_str();
-    // temp = "Player 2, what will you do?";
-    // strArr[PROMPT_P2] = temp.c_str();
+    std::string temp31 = team1[2].getMove(0).getName() + "Normal";
+    strArr[DOUBLE_EDGE] = temp31.c_str();
+    
+    std::string temp32 = team2[0].getMove(0).getName() + "Normal";
+    strArr[TAKE_DOWN] = temp32.c_str();
 
-    // Pokemon chikorita("Name", "Grass", )
+    std::string temp33 = team2[0].getMove(2).getName() + "Grass";
+    strArr[POWER_WHIP] = temp33.c_str();
+
+    std::string temp34 = team2[0].getMove(3).getName() + "Normal";
+    strArr[FACADE] = temp34.c_str();
+
+    std::string temp35 = team2[1].getMove(0).getName() + "Normal";
+    strArr[RAPID_SPIN] = temp35.c_str();
+
+    std::string temp36 = team2[1].getMove(1).getName() + "Water";
+    strArr[HYDRO_PUMP] = temp36.c_str();
+
+    std::string temp37 = team2[1].getMove(3).getName() + "Water";
+    strArr[AQUA_JET] = temp37.c_str();
+
+    std::string temp38 = team2[2].getMove(0).getName() + "Normal";
+    strArr[FALSE_SWIPE] = temp38.c_str();
+
+    std::string temp39 = team2[2].getMove(1).getName() + "Fire";
+    strArr[FLARE_BLITZ] = temp39.c_str();
+
 
     setSurface(IMG_Load("res/pokemonBattleBacground.png"));
     bgTexture = SDL_CreateTextureFromSurface(renderer, image);
@@ -304,10 +366,13 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     itemText[1] = SDL_CreateTextureFromSurface(renderer, image);
     setSurface(IMG_Load("res/soda_pop.png"));
     itemText[2] = SDL_CreateTextureFromSurface(renderer, image);
-    // for(int i = 35; i < 39; i++)
-    // {
-    //     std::cout << strArr[i] << std::endl;
-    // }
+
+    setSurface(IMG_Load("res/empty-start-menu.png"));
+    emptyMenuText = SDL_CreateTextureFromSurface(renderer, image);
+    for(int i = 0; i < 49; i++)
+    {
+        std::cout << strArr[i] << " " << (i + 1) << std::endl;
+    }
     initFont();
     
 
@@ -363,18 +428,6 @@ std::string Game::getTurn()const
 {
     return turn;
 }
-// SDL_Texture* Game::getP1Text(int loc)const    // Index for array
-// {
-//     return playerOne[loc];
-// }
-// SDL_Texture* Game::getP2Text(int loc)const    // Index for array
-// {
-//     return playerTwo[loc];
-// }
-// SDL_Texture* Game::getBGTexture()const
-// {
-//     return bgTexture;
-// }
 
 // setters
 
@@ -449,53 +502,235 @@ void Game::update()
         timer = 0;
     if(fullscreen) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     if(!fullscreen) SDL_SetWindowFullscreen(window, 0);
-    if(userInput == USER_UP) 
+    // if(turn == "P1")
+    // {
+    if(menuState == "start") // start menu functionality
+    {    
+        if(userInput == USER_UP) 
+        {
+            std::cout << "UP\n";
+            arrowXPos = 580;
+            arrowYPos = 555;
+            userInput = 0;
+        } 
+        if(userInput == USER_DN) 
+        {
+            std::cout << "DOWN\n";
+            arrowXPos = 580;
+            arrowYPos = 620;
+            userInput = 0;
+        }
+        if(userInput == USER_LT) 
+        {
+            std::cout << "LEFT\n";
+            arrowXPos = 580;
+            arrowYPos = 555;
+            userInput = 0;
+        }
+        if(userInput == USER_RT) 
+        {
+            std::cout << "RIGHT\n";
+            arrowXPos = 970;
+            arrowYPos = 555;
+            userInput = 0;
+        }
+        if(userInput == USER_EN) 
+        {
+            std::cout << "ENTER\n";
+            if(p1Choice == "fight" || p2Choice == "fight")
+            {
+                menuState = "fightMenu";
+                arrowXPos = 85;
+                arrowYPos = 545;
+                // p1Choice = "deciding";
+                // p2Choice = "deciding";
+            }
+            if(p1Choice == "items" || p2Choice == "items")
+            {
+                menuState = "itemMenu";
+                arrowXPos = 70;
+                arrowYPos = 545;
+                // p1Choice = "deciding";
+                // p2Choice = "deciding";
+            }
+            if(p1Choice == "swap" || p2Choice == "swap")
+            {
+                menuState = "swapMenu";
+                arrowXPos = 970;
+                arrowYPos = 555;
+                // p1Choice = "deciding";
+                // p2Choice = "deciding";
+            }
+            userInput = 0;
+
+        }
+    }
+    if(menuState == "fightMenu")
     {
-        std::cout << "UP\n";
-        userInput = 0;
+        // (85, 545) (285, 545)
+        // (85, 590) (285, 590)
+        if(userInput == USER_UP) 
+        {
+            std::cout << "UP\n";
+            if(arrowYPos - 45 >= 545)
+            {
+                arrowShiftY = -45;
+                arrowYPos += arrowShiftY;
+            }
+            // arrowXPos = 85;
+            // arrowYPos = 545;
+            userInput = 0;
+        } 
+        if(userInput == USER_DN) 
+        {
+            std::cout << "DOWN\n";
+            if(arrowYPos + 45 <= 590)
+            {
+                arrowShiftY = 45;
+                arrowYPos += arrowShiftY;
+            }
+            // arrowXPos = 580;
+            // arrowYPos = 620;
+            userInput = 0;
+        }
+        if(userInput == USER_LT) 
+        {
+            std::cout << "LEFT\n";
+            if(arrowXPos - 200 >= 85)
+            {
+                arrowShiftX = -200;
+                arrowXPos += arrowShiftX;
+
+            }
+            // arrowXPos = 580;
+            // arrowYPos = 555;
+            userInput = 0;
+        }
+        if(userInput == USER_RT) 
+        {
+            std::cout << "RIGHT\n";
+            if(arrowXPos + 200 <= 285)
+            {
+                arrowShiftX = 200;
+                arrowXPos += arrowShiftX;
+
+            }
+            // arrowXPos = 970;
+            // arrowYPos = 555;
+            userInput = 0;
+        }
+        if(userInput == USER_EN) 
+        {
+            // Move choices
+
+            userInput = 0;
+
+        }
+        if(userInput == USER_BK)
+        {
+            arrowXPos = 580;
+            arrowYPos = 555;
+            menuState = "start";
+            userInput = 0;
+            p1Choice = "deciding";
+            p2Choice = "deciding";
+        }
+    }
+    if(menuState == "itemMenu")
+    {
+        // (70, 545) (275, 545)
+        // (85, 570) (285, 570)
+        if(userInput == USER_UP) 
+        {
+            std::cout << "UP\n";
+            arrowXPos = 70;
+            arrowYPos = 545;
+            userInput = 0;
+        } 
+        if(userInput == USER_DN) 
+        {
+            std::cout << "DOWN\n";
+            arrowXPos = 70;
+            arrowYPos = 570;
+            userInput = 0;
+        }
+        if(userInput == USER_LT) 
+        {
+            std::cout << "LEFT\n";
+            arrowXPos = 70;
+            arrowYPos = 545;
+            userInput = 0;
+        }
+        if(userInput == USER_RT) 
+        {
+            std::cout << "RIGHT\n";
+            arrowXPos = 265;
+            arrowYPos = 545;
+            userInput = 0;
+        }
+        if(userInput == USER_EN) 
+        {
+            std::cout << "ENTER\n";
+            userInput = 0;
+        }
+        if(userInput == USER_BK)
+        {
+            arrowXPos = 580;
+            arrowYPos = 555;
+            menuState = "start";
+            userInput = 0;
+            p1Choice = "deciding";
+            p2Choice = "deciding";
+        }
+    }
+    if(menuState == "swapMenu")
+    {
+        // (70, 545) (275, 545)
+        // (85, 570) (285, 570)
+        if(userInput == USER_UP) 
+        {
+            std::cout << "UP\n";
+            arrowXPos = 70;
+            arrowYPos = 545;
+            userInput = 0;
+        } 
+        if(userInput == USER_DN) 
+        {
+            std::cout << "DOWN\n";
+            arrowXPos = 70;
+            arrowYPos = 570;
+            userInput = 0;
+        }
+        if(userInput == USER_LT) 
+        {
+            std::cout << "LEFT\n";
+            arrowXPos = 70;
+            arrowYPos = 545;
+            userInput = 0;
+        }
+        if(userInput == USER_RT) 
+        {
+            std::cout << "RIGHT\n";
+            arrowXPos = 265;
+            arrowYPos = 545;
+            userInput = 0;
+        }
+        if(userInput == USER_EN) 
+        {
+            std::cout << "ENTER\n";
+            userInput = 0;
+        }
+        if(userInput == USER_BK)
+        {
+            arrowXPos = 580;
+            arrowYPos = 555;
+            menuState = "start";
+            userInput = 0;
+            p1Choice = "deciding";
+            p2Choice = "deciding";
+        }
     } 
-    if(userInput == USER_DN) 
-    {
-        std::cout << "DOWN\n";
-        userInput = 0;
-    }
-    if(userInput == USER_LT) 
-    {
-        std::cout << "LEFT\n";
-        userInput = 0;
-    }
-    if(userInput == USER_RT) 
-    {
-        std::cout << "RIGHT\n";
-        userInput = 0;
-    }
-    if(userInput == USER_EN) 
-    {
-        std::cout << "ENTER\n";
-        // if(p1Choice == "fight" || p2Choice == "fight")
-        // {
-        //     setSurface(IMG_Load("res/empty-start-menu.png"));
-        //     menuText = SDL_CreateTextureFromSurface(renderer, image);
-        //     p1Choice == "deciding";
-        //     p2Choice == "deciding";
-        //     menuState = "fightMenu";
-
-        // }
-        // if(p1Choice == "items" || p2Choice == "items")
-        // {
-        //     setSurface(IMG_Load("res/empty-start-menu.png"));
-        //     menuText = SDL_CreateTextureFromSurface(renderer, image);
-        //     strArr[POTIONS] = ("x" + to_string(inventory1.getPotions()) + " Potions").c_str();
-        //     strArr[FULL_RESTORES] = ("x" + to_string(inventory1.getFullRestores()) + " Full Restores").c_str();
-        //     strArr[SODA_POPS] = ("x" + to_string(inventory1.getSodaPops()) + " Soda Pops").c_str();
-        //     p1Choice == "deciding";
-        //     p2Choice == "deciding";
-        //     menuState = "itemMenu";
-        // }
-
-        userInput = 0;
-    }
-
+ 
 }
 void Game::input()
 {
@@ -507,33 +742,101 @@ void Game::input()
     const Uint8 *keystates = SDL_GetKeyboardState(NULL);
     if(keystates[SDL_SCANCODE_ESCAPE]) running = false;
     if(keystates[SDL_SCANCODE_F11]) fullscreen = !fullscreen;
-    if(keystates[SDL_SCANCODE_UP]) 
+    if(menuState == "start")
     {
-        userInput |= USER_UP;
-        if(turn == "P1")
+        if(keystates[SDL_SCANCODE_UP]) 
         {
-            p1Choice = "fight";
+            userInput |= USER_UP;
+            if(turn == "P1")
+            {
+                p1Choice = "fight";
+            }
+            else
+            {
+                p2Choice = "fight";
+            }
         }
-        else
+        if(keystates[SDL_SCANCODE_DOWN]) 
+        {    
+            userInput |= USER_DN;
+            if(turn == "P1")
+            {
+                p1Choice = "items";
+            }
+            else
+            {
+                p2Choice = "items";
+            }
+        }
+        if(keystates[SDL_SCANCODE_LEFT])
         {
-            p2Choice = "fight";
+            userInput |= USER_LT;
+            if(turn == "P1")
+            {
+                p1Choice = "fight";
+            }
+            else
+            {
+                p2Choice = "fight";
+            }
+        } 
+        if(keystates[SDL_SCANCODE_RIGHT]) 
+        {
+            userInput |= USER_RT;
+            if(turn == "P1")
+            {
+                p1Choice = "swap";
+            }
+            else
+            {
+                p2Choice = "swap";
+            }
         }
     }
-    if(keystates[SDL_SCANCODE_DOWN]) 
-    {    
-        userInput |= USER_DN;
-        if(turn == "P1")
+    if(menuState == "fightMenu")
+    {
+        // p1Choice = "deciding";
+        // p2Choice = "deciding";
+        if(keystates[SDL_SCANCODE_UP]) 
         {
-            p1Choice = "items";
+            userInput |= USER_UP;
         }
-        else
+        if(keystates[SDL_SCANCODE_DOWN]) 
+        {    
+            userInput |= USER_DN;
+        }
+        if(keystates[SDL_SCANCODE_LEFT])
         {
-            p2Choice = "items";
+            userInput |= USER_LT;
+        } 
+        if(keystates[SDL_SCANCODE_RIGHT]) 
+        {
+            userInput |= USER_RT;
         }
     }
-    if(keystates[SDL_SCANCODE_LEFT]) userInput |= USER_LT;
-    if(keystates[SDL_SCANCODE_RIGHT]) userInput |= USER_RT;
+    if(menuState == "itemMenu")
+    {
+        // p1Choice = "deciding";
+        // p2Choice = "deciding";
+        if(keystates[SDL_SCANCODE_UP]) 
+        {
+            userInput |= USER_UP;
+        }
+        if(keystates[SDL_SCANCODE_DOWN]) 
+        {    
+            userInput |= USER_DN;
+        }
+        if(keystates[SDL_SCANCODE_LEFT])
+        {
+            userInput |= USER_LT;
+        } 
+        if(keystates[SDL_SCANCODE_RIGHT]) 
+        {
+            userInput |= USER_RT;
+        }
+    }
     if(keystates[SDL_SCANCODE_RETURN]) userInput |= USER_EN;
+    if(keystates[SDL_SCANCODE_BACKSPACE]) userInput |= USER_BK;
     SDL_ResetKeyboard();
 }
 void Game::draw()
@@ -583,8 +886,14 @@ void Game::draw()
     dstrect.y = 517;
     dstrect.w = menu.w;
     dstrect.h = menu.h;
-    SDL_RenderCopy(renderer, menuText, &menu, &dstrect);
-
+    if(menuState == "start")
+    {
+        SDL_RenderCopy(renderer, menuText, &menu, &dstrect);
+    }
+    else
+    {
+        SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
+    }
 
     // left text
     dstrect.x = 0;
@@ -600,8 +909,11 @@ void Game::draw()
     arrow.w = 750;
     arrow.h = 750;
 
-    dstrect.x = 580;
-    dstrect.y = 555;
+    dstrect.x = arrowXPos;// 580, 970
+                    // 85 
+    
+    dstrect.y = arrowYPos; // 555, 620
+                           // 545
     dstrect.w = arrow.w / 12;
     dstrect.h = arrow.h / 9;
     SDL_RenderCopy(renderer, arrowText, &arrow, &dstrect);
@@ -663,34 +975,166 @@ void Game::draw()
         SDL_RenderCopy(renderer, textArr[SODA_POPS1].textTex, NULL, &dstrect);
     }
 
-    // IM WORKING ON THIS PART vvvv
-    if(active1 == 0 && turn == "P1") // chikorita
+    // IM pretty sure this works now vvvv
+    if(active1 == 0 && turn == "P1" && menuState == "fightMenu") // chikorita Moves
     {   
-        dstrect.x = 500;
-        dstrect.y = 500;
-        dstrect.w = textArr[TACKLE].w;
-        dstrect.h = textArr[TACKLE].h;
+        dstrect.x = 150;
+        dstrect.y = 575;
+        dstrect.w = textArr[TACKLE].w / 3;
+        dstrect.h = textArr[TACKLE].h / 3;
         SDL_RenderCopy(renderer, textArr[TACKLE].textTex, NULL, &dstrect);
+
+        dstrect.x = 350;
+        dstrect.y = 575;
+        dstrect.w = textArr[RAZOR_LEAF].w / 3;
+        dstrect.h = textArr[RAZOR_LEAF].h / 3;
+        SDL_RenderCopy(renderer, textArr[RAZOR_LEAF].textTex, NULL, &dstrect);
+
+        dstrect.x = 150;
+        dstrect.y = 625;
+        dstrect.w = textArr[MAGICAL_LEAF].w / 3;
+        dstrect.h = textArr[MAGICAL_LEAF].h / 3;
+        SDL_RenderCopy(renderer, textArr[MAGICAL_LEAF].textTex, NULL, &dstrect);
+
+        dstrect.x = 350;
+        dstrect.y = 625;
+        dstrect.w = textArr[BODY_SLAM].w / 3;
+        dstrect.h = textArr[BODY_SLAM].h / 3;
+        SDL_RenderCopy(renderer, textArr[BODY_SLAM].textTex, NULL, &dstrect);
+        
     }
-    // IM WORKING ON THIS PART ^^^^
-    // pokemon moves
+    if(active1 == 1 && turn == "P1" && menuState == "fightMenu") // Totodile Moves
+    {   
+        dstrect.x = 150;
+        dstrect.y = 575;
+        dstrect.w = textArr[SCRATCH].w / 3;
+        dstrect.h = textArr[SCRATCH].h / 3;
+        SDL_RenderCopy(renderer, textArr[SCRATCH].textTex, NULL, &dstrect);
 
+        dstrect.x = 350;
+        dstrect.y = 575;
+        dstrect.w = textArr[WATER_GUN].w / 3;
+        dstrect.h = textArr[WATER_GUN].h / 3;
+        SDL_RenderCopy(renderer, textArr[WATER_GUN].textTex, NULL, &dstrect);
 
-    // dstrect.x = 400;
-    // dstrect.y = 575;
-    // dstrect.w = textArr[SODA_POPS].w / 2;
-    // dstrect.h = textArr[SODA_POPS].h / 2;
-    // SDL_RenderCopy(renderer, textArr[SODA_POPS].textTex, NULL, &dstrect);
+        dstrect.x = 150;
+        dstrect.y = 625;
+        dstrect.w = textArr[SLASH].w / 3;
+        dstrect.h = textArr[SLASH].h / 3;
+        SDL_RenderCopy(renderer, textArr[SLASH].textTex, NULL, &dstrect);
 
+        dstrect.x = 350;
+        dstrect.y = 625;
+        dstrect.w = textArr[AQUA_TAIL].w / 3;
+        dstrect.h = textArr[AQUA_TAIL].h / 3;
+        SDL_RenderCopy(renderer, textArr[AQUA_TAIL].textTex, NULL, &dstrect);
+    }
+    if(active1 == 2 && turn == "P1" && menuState == "fightMenu") // Cyndaquil Moves
+    {   
+        dstrect.x = 150;
+        dstrect.y = 575;
+        dstrect.w = textArr[EMBER].w / 3;
+        dstrect.h = textArr[EMBER].h / 3;
+        SDL_RenderCopy(renderer, textArr[EMBER].textTex, NULL, &dstrect);
 
+        dstrect.x = 350;
+        dstrect.y = 575;
+        dstrect.w = textArr[QUICK_ATTACK].w / 3;
+        dstrect.h = textArr[QUICK_ATTACK].h / 3;
+        SDL_RenderCopy(renderer, textArr[QUICK_ATTACK].textTex, NULL, &dstrect);
+
+        dstrect.x = 150;
+        dstrect.y = 625;
+        dstrect.w = textArr[FLAME_WHEEL].w / 3;
+        dstrect.h = textArr[FLAME_WHEEL].h / 3;
+        SDL_RenderCopy(renderer, textArr[FLAME_WHEEL].textTex, NULL, &dstrect);
+
+        dstrect.x = 350;
+        dstrect.y = 625;
+        dstrect.w = textArr[DOUBLE_EDGE].w / 3;
+        dstrect.h = textArr[DOUBLE_EDGE].h / 3;
+        SDL_RenderCopy(renderer, textArr[DOUBLE_EDGE].textTex, NULL, &dstrect);
+    }
+    if(active2 == 0 && turn == "P2" && menuState == "fightMenu") // Bulbasaur Moves
+    {   
+        dstrect.x = 150;
+        dstrect.y = 575;
+        dstrect.w = textArr[VINE_WHIP].w / 3;
+        dstrect.h = textArr[VINE_WHIP].h / 3;
+        SDL_RenderCopy(renderer, textArr[VINE_WHIP].textTex, NULL, &dstrect);
+
+        dstrect.x = 350;
+        dstrect.y = 575;
+        dstrect.w = textArr[TAKE_DOWN].w / 3;
+        dstrect.h = textArr[TAKE_DOWN].h / 3;
+        SDL_RenderCopy(renderer, textArr[TAKE_DOWN].textTex, NULL, &dstrect);
+
+        dstrect.x = 150;
+        dstrect.y = 625;
+        dstrect.w = textArr[POWER_WHIP].w / 3;
+        dstrect.h = textArr[POWER_WHIP].h / 3;
+        SDL_RenderCopy(renderer, textArr[POWER_WHIP].textTex, NULL, &dstrect);
+
+        dstrect.x = 350;
+        dstrect.y = 625;
+        dstrect.w = textArr[FACADE].w / 3;
+        dstrect.h = textArr[FACADE].h / 3;
+        SDL_RenderCopy(renderer, textArr[FACADE].textTex, NULL, &dstrect);
+    }
+    if(active2 == 1 && turn == "P2" && menuState == "fightMenu") // Squirtle Moves
+    {   
+        dstrect.x = 150;
+        dstrect.y = 575;
+        dstrect.w = textArr[RAPID_SPIN].w / 3;
+        dstrect.h = textArr[RAPID_SPIN].h / 3;
+        SDL_RenderCopy(renderer, textArr[RAPID_SPIN].textTex, NULL, &dstrect);
+
+        dstrect.x = 350;
+        dstrect.y = 575;
+        dstrect.w = textArr[WATER_PULSE].w / 3;
+        dstrect.h = textArr[WATER_PULSE].h / 3;
+        SDL_RenderCopy(renderer, textArr[WATER_PULSE].textTex, NULL, &dstrect);
+
+        dstrect.x = 150;
+        dstrect.y = 625;
+        dstrect.w = textArr[HYDRO_PUMP].w / 3;
+        dstrect.h = textArr[HYDRO_PUMP].h / 3;
+        SDL_RenderCopy(renderer, textArr[HYDRO_PUMP].textTex, NULL, &dstrect);
+
+        dstrect.x = 350;
+        dstrect.y = 625;
+        dstrect.w = textArr[AQUA_JET].w / 3;
+        dstrect.h = textArr[AQUA_JET].h / 3;
+        SDL_RenderCopy(renderer, textArr[AQUA_JET].textTex, NULL, &dstrect);
+    }
+    if(active2 == 2 && turn == "P2" && menuState == "fightMenu") // Charmander Moves
+    {   
+        dstrect.x = 150;
+        dstrect.y = 575;
+        dstrect.w = textArr[FIRE_FANG].w / 3;
+        dstrect.h = textArr[FIRE_FANG].h / 3;
+        SDL_RenderCopy(renderer, textArr[FIRE_FANG].textTex, NULL, &dstrect);
+
+        dstrect.x = 350;
+        dstrect.y = 575;
+        dstrect.w = textArr[FLAMETHROWER].w / 3;
+        dstrect.h = textArr[FLAMETHROWER].h / 3;
+        SDL_RenderCopy(renderer, textArr[FLAMETHROWER].textTex, NULL, &dstrect);
+
+        dstrect.x = 150;
+        dstrect.y = 625;
+        dstrect.w = textArr[FALSE_SWIPE].w / 3;
+        dstrect.h = textArr[FALSE_SWIPE].h / 3;
+        SDL_RenderCopy(renderer, textArr[FALSE_SWIPE].textTex, NULL, &dstrect);
+
+        dstrect.x = 350;
+        dstrect.y = 625;
+        dstrect.w = textArr[FLARE_BLITZ].w / 3;
+        dstrect.h = textArr[FLARE_BLITZ].h / 3;
+        SDL_RenderCopy(renderer, textArr[FLARE_BLITZ].textTex, NULL, &dstrect);
+    }
+    // IM pretty sure this works now ^^^^
     SDL_RenderPresent(renderer);
-  /*  int *count, *extent;
-    TTF_MeasureText(font, strArr[FULL_RESTORES], 15, extent, count);
-    std::cout << "Extent: " << *extent << std::endl;
-    std::cout << "Count: " << *count << std::endl;
-*/
-    // std::cout << strArr[FULL_RESTORES] << std::endl;
-    // std::cout << to_string(inventory1.getFullRestores()).c_str() << std::endl; 
 }
 
 void Game::displayFPS()
@@ -725,7 +1169,7 @@ void Game::kill()
         SDL_DestroyTexture(playerTwo[i]);
     }
 
-    for (int i = 0; i < 36; i++) {
+    for (int i = 0; i < 73; i++) {
         SDL_DestroyTexture(textArr[i].textTex);
     }
     for(int i = 0; i < 3; i++)
@@ -736,6 +1180,8 @@ void Game::kill()
     {
         SDL_DestroyTexture(itemFontText[i]);
     }
+    SDL_DestroyTexture(backButton);
+    SDL_DestroyTexture(emptyMenuText);
     SDL_DestroyTexture(moveMenu);
     SDL_DestroyTexture(menuText);
     SDL_DestroyTexture(arrowText);
@@ -753,9 +1199,9 @@ void Game::initFont() {
     font = TTF_OpenFont("fonts/FreeSerif.ttf", 40);
     if(font == NULL) std::cout << "Error Loading Font" << TTF_GetError() << std::endl;
     
-    for (int i = 0; i < 38; i++) {
+    for (int i = 0; i < 49; i++) {
         image = TTF_RenderText_Blended(font, strArr[i], (SDL_Color){0, 0, 0, 255});
-        std::cout << strArr[i] << std::endl;
+        // std::cout << strArr[i] << std::endl;
         textArr[i].textTex = SDL_CreateTextureFromSurface(renderer, image);
         // std::cout << textArr[i].w << std::endl;
         if (TTF_SizeText(font, strArr[i], &textArr[i].w, &textArr[i].h) != 0) {
