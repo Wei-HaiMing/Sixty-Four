@@ -62,6 +62,7 @@ int main(int argv, char** args)
 
         Uint64 end = SDL_GetPerformanceCounter();
         float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
+
         cout << "Current FPS: " << to_string(1.0f / elapsed) << endl;
 
     }

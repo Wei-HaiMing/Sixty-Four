@@ -64,8 +64,10 @@ class Game
 
 
     protected:
+        int arrowXPos, arrowYPos;
+        int arrowShiftRt, arrowShiftLt, arrowShiftUp, arrowShiftDn, arrowShiftX, arrowShiftY;
 
-        std::string p1Choice, p2Choice, menuState, turn;
+        std::string p1Choice, p2Choice, menuState, turn, controlMenu;
         SDL_Rect spriteRect1; // sprite rectangle for player 1's pokemon
         SDL_Rect spriteRect2; // sprite rectangle for player 2's pokemon
         SDL_Rect dstrect;
@@ -73,7 +75,7 @@ class Game
         SDL_Rect arrow;
         SDL_Rect potion, fullRestore, sodaPop;
         Items inventory1, inventory2;
-        Move tackle, razorLeaf, magicalLeaf, bodySlam, ember, quickAttack, flameWheel, scratch, waterGun, aquaTail, slash, vineWhip, waterPulse, fireFang, flameThrower;
+        Move tackle, razorLeaf, magicalLeaf, bodySlam, ember, quickAttack, flameWheel, scratch, waterGun, aquaTail, slash, vineWhip, waterPulse, fireFang, flameThrower, doubleEdge, takeDown, powerWhip, facade, rapidSpin, hydroPump, aquaJet, falseSwipe, flareBlitz;
         Move chikoritaMoves[4], totodileMoves[4], cyndaquilMoves[4], bulbasaurMoves[4], squirtleMoves[4], charmanderMoves[4];
         // Pokemon chikorita("Chikorita", "Grass", );
         Pokemon team1[3], team2[3];
@@ -83,7 +85,7 @@ class Game
         int active1, active2; // index to identify which pokemon sprite is to be displayed
         int frameCount, timerFPS, lastFrame, fps; // variables to print out the frames each millisecond
         SDL_Surface *image;
-        SDL_Texture *bgTexture, *playerOne[3], *playerTwo[3], *fontText, *arrowText, *menuText, *itemText[3], *itemFontText[3], *moveMenu; // create a texture using the renderer with the desired image, texture[0] is the background image and texture[1:3] are player 1's pokemon and texture[4:] are player 2's pokemon
+        SDL_Texture *bgTexture, *playerOne[3], *playerTwo[3], *fontText, *arrowText, *menuText,  *emptyMenuText, *itemText[3], *itemFontText[3], *moveMenu, *backButton; // create a texture using the renderer with the desired image, texture[0] is the background image and texture[1:3] are player 1's pokemon and texture[4:] are player 2's pokemon
         SDL_Rect spritePosition;
         TTF_Font *font; 
         int timer;
@@ -96,7 +98,8 @@ class Game
             USER_DN = (1 << 1),
             USER_LT = (1 << 2),
             USER_RT = (1 << 3),
-            USER_EN = (1 << 4)
+            USER_EN = (1 << 4),
+            USER_BK = (1 << 5)
         };
         enum {
             CHIKORITA_NAME = 0,
@@ -111,35 +114,43 @@ class Game
             BULBASAUR_HP = 9,
             SQUIRTLE_HP = 10,
             CHARMANDER_HP = 11,
-            GRASS = 12,
-            WATER = 13,
-            FIRE = 14,
-            NORMAL = 15,
-            TACKLE = 16,
-            RAZOR_LEAF = 17,
-            MAGICAL_LEAF = 18,
-            BODY_SLAM = 19,
-            SCRATCH = 20,
-            WATER_GUN = 21,
-            SLASH = 22,
-            AQUA_TAIL = 23,
-            EMBER = 24,
-            QUICK_ATTACK = 25,
-            FLAME_WHEEL = 26,
-            VINE_WHIP = 27,
-            WATER_PULSE = 28,
-            FIRE_FANG = 29,
-            FLAMETHROWER = 30,
-            SUPER_EFFECTIVE = 31,
-            NOT_EFFECTIVE = 32,
-            PROMPT_P1 = 33,
-            PROMPT_P2 = 34,
-            POTIONS1 = 35,
-            FULL_RESTORES1 = 36,
-            SODA_POPS1 = 37,
-            POTIONS2 = 38,
-            FULL_RESTORES2 = 39,
-            SODA_POPS2 = 40
+            TACKLE = 12,
+            RAZOR_LEAF = 13,
+            MAGICAL_LEAF = 14,
+            BODY_SLAM = 15,
+            SCRATCH = 16,
+            WATER_GUN = 17,
+            SLASH = 18,
+            AQUA_TAIL = 19,
+            EMBER = 20,
+            QUICK_ATTACK = 21,
+            FLAME_WHEEL = 22,
+            VINE_WHIP = 23,
+            WATER_PULSE = 24,
+            FIRE_FANG = 25,
+            FLAMETHROWER = 26,
+            SUPER_EFFECTIVE = 27,
+            NOT_EFFECTIVE = 28,
+            PROMPT_P1 = 29,
+            PROMPT_P2 = 30,
+            POTIONS1 = 31,
+            FULL_RESTORES1 = 32,
+            SODA_POPS1 = 33,
+            POTIONS2 = 34,
+            FULL_RESTORES2 = 35,
+            SODA_POPS2 = 36,
+            GRASS = 37,
+            WATER = 38,
+            FIRE = 39,
+            DOUBLE_EDGE = 40,
+            TAKE_DOWN = 41,
+            POWER_WHIP = 42,
+            FACADE = 43,
+            RAPID_SPIN = 44,
+            HYDRO_PUMP = 45,
+            AQUA_JET = 46,
+            FALSE_SWIPE = 47,
+            FLARE_BLITZ = 48,
 
 
         };
@@ -148,19 +159,21 @@ class Game
             int w;
             int h;
         };
-        textData textArr[41];
-        const char* strArr[41] = {team1[0].getName().c_str(), team1[1].getName().c_str(), 
+        textData textArr[49];
+        const char* strArr[49] = {team1[0].getName().c_str(), team1[1].getName().c_str(), 
                 team1[2].getName().c_str(), team2[0].getName().c_str(), 
                 team2[1].getName().c_str(), team2[2].getName().c_str(), std::to_string(team1[0].getHP()).c_str(), 
                 std::to_string(team1[1].getHP()).c_str(), std::to_string(team1[2].getHP()).c_str(), std::to_string(team2[0].getHP()).c_str(),
-                std::to_string(team2[1].getHP()).c_str(), std::to_string(team2[2].getHP()).c_str(), "Grass", 
-                "Water","Fire", "Normal",
+                std::to_string(team2[1].getHP()).c_str(), std::to_string(team2[2].getHP()).c_str(), 
                 team1[0].getMove(0).getName().c_str(), team1[0].getMove(1).getName().c_str(), team1[0].getMove(2).getName().c_str(), 
                 team1[0].getMove(3).getName().c_str(), team1[1].getMove(0).getName().c_str(), team1[1].getMove(1).getName().c_str(), team1[1].getMove(2).getName().c_str(), 
                 team1[1].getMove(3).getName().c_str(), team1[2].getMove(1).getName().c_str(), team1[2].getMove(2).getName().c_str(), team1[2].getMove(3).getName().c_str(), 
                 team2[0].getMove(1).getName().c_str(), team2[1].getMove(2).getName().c_str(), team2[2].getMove(2).getName().c_str(), team2[2].getMove(3).getName().c_str(), 
                 "It's super effective!","It's not very effective...", "Player 1, what will you do?", "Player 2, what will you do?", 
-                "", "", "", "", "", ""
+                "", "", "", "", "", "", "Grass", "Water", "Fire",
+                team1[2].getMove(0).getName().c_str(), team2[0].getMove(0).getName().c_str(), team2[0].getMove(2).getName().c_str(), team2[0].getMove(3).getName().c_str(), 
+                team2[1].getMove(0).getName().c_str(), team2[1].getMove(1).getName().c_str(), team2[1].getMove(3).getName().c_str(), team2[2].getMove(0).getName().c_str(), 
+                team2[2].getMove(1).getName().c_str()
         };
         // const std::string strArr[38] = {team1[0].getName().c_str(), team1[1].getName().c_str(), 
         //         team1[2].getName().c_str(), team2[0].getName().c_str(), 
