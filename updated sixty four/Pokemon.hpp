@@ -12,7 +12,7 @@ class Pokemon{
     public:
         Pokemon();
         Pokemon(std::string name, std::string poketype, Move movearr[],
-                    string resist, int health, bool dead);
+                    std::string resist, int health, bool dead, bool isActive);
         void setName(std::string name);
         void setPokeType(std::string poketype);
         void setMove(Move movearr[]);
@@ -20,7 +20,9 @@ class Pokemon{
         void setResistance(std::string resistance);
         void setHP(int health);
         void setDead(bool dead);
+        void setIsActive(bool isActive);
 
+        bool getIsActive();
         std::string getName();
         std::string getPokeType();
         Move getMove(int loc);
@@ -32,11 +34,12 @@ class Pokemon{
         ~Pokemon();
     private:
         std::string name, poketype;
+
         // SDL_Surface* pokeSurf;
         Move movearr[4];
         int health;
         std::string resistance;
-        bool dead;
+        bool dead, isActive;
 
 };
 

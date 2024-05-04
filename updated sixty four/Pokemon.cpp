@@ -15,9 +15,10 @@ Pokemon::Pokemon(){
     resistance = 0.0;
     health = 0;
     dead = false;
+    isActive = false;
 }
 
-Pokemon::Pokemon(string name, string poketype, Move movearr[], string resist, int health, bool dead){
+Pokemon::Pokemon(string name, string poketype, Move movearr[], string resist, int health, bool dead, bool isActive){
     Pokemon::setName(name);
     Pokemon::setPokeType(poketype);
     Pokemon::setMove(movearr);
@@ -25,12 +26,18 @@ Pokemon::Pokemon(string name, string poketype, Move movearr[], string resist, in
     Pokemon::setResistance(resist);
     Pokemon::setHP(health);
     setDead(dead);
+    setIsActive(isActive);
 }
 
 Pokemon::~Pokemon()
 {
     // SDL_FreeSurface(pokeSurf);
     std::cout << "Pokemon Deconstructor Ran\n";
+}
+
+void Pokemon::setIsActive(bool isActive)
+{
+    this->isActive = isActive;
 }
 
 void Pokemon::setDead(bool dead)
@@ -85,6 +92,10 @@ int Pokemon::getHP()
 {
     return health;
 }
+bool Pokemon::getIsActive()
+{
+    return isActive;
+}
 // SDL_Surface* Pokemon::getSurf(){
 //     return pokeSurf;
 // }
@@ -98,8 +109,9 @@ void Pokemon::pokeprint()const{
     cout << "Type: " << poketype << endl;
     cout << "Moves: ";
     for(int i = 0; i < 4; i++){
-        cout << movearr[i] << endl;
+        cout << movearr[i] << " ";
         //Overloaded operator used here definied in PokemonMove.hpp
     }
-    cout << "Resistance: " << resistance << endl;
+    cout << endl << "Resistance: " << resistance << endl;
+    cout << "Is Active: " << isActive << endl;
 }

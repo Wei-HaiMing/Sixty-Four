@@ -22,8 +22,8 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     setRunning(true);
     setFullscreen(0);
     userInput = 0;
-    active1 = 1;
-    active2 = 1;
+    active1 = 0;
+    active2 = 0;
     p1Choice = "deciding";
     p2Choice = "deciding";
     menuState = "start";
@@ -190,6 +190,8 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     team1[0].setPokeType("Grass");
     team1[0].setResistance("Water");
     team1[0].setDead(false);
+    team1[0].setIsActive(false);
+    team1[0].pokeprint();
 
     team1[1].setHP(304);
     team1[1].setMove(totodileMoves);
@@ -197,6 +199,8 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     team1[1].setPokeType("Water");
     team1[1].setResistance("Fire");
     team1[1].setDead(false);
+    team1[1].setIsActive(true);
+    team1[1].pokeprint();
 
     team1[2].setHP(282);
     team1[2].setMove(cyndaquilMoves);
@@ -204,6 +208,8 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     team1[2].setPokeType("Fire");
     team1[2].setResistance("Grass");
     team1[2].setDead(false);
+    team1[2].setIsActive(false);
+    team1[2].pokeprint();
 
     team2[0].setHP(294);
     team2[0].setMove(bulbasaurMoves);
@@ -211,6 +217,8 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     team2[0].setPokeType("Grass");
     team2[0].setResistance("Water");
     team2[0].setDead(false);
+    team2[0].setIsActive(true);
+    team2[0].pokeprint();
 
     team2[1].setHP(292);
     team2[1].setMove(squirtleMoves);
@@ -218,6 +226,8 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     team2[1].setPokeType("Water");
     team2[1].setResistance("Fire");
     team2[1].setDead(false);
+    team2[1].setIsActive(false);
+    team2[1].pokeprint();
 
     team2[2].setHP(282);
     team2[2].setMove(charmanderMoves);
@@ -225,6 +235,9 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     team2[2].setPokeType("Fire");
     team2[2].setResistance("Grass");
     team2[2].setDead(false);
+    team2[2].setIsActive(false);
+    team2[2].pokeprint();
+
 
     // setting team 1 names 
     std::string temp4 = team1[0].getName();
@@ -685,40 +698,52 @@ void Game::update()
     }
     if(menuState == "swapMenu")
     {
-        // (70, 545) (275, 545)
-        // (85, 570) (285, 570)
-        if(userInput == USER_UP) 
+        // if(turn == "P1")
+        // {
+        std::cout << menuState << std::endl;
+        std::cout << p1Choice << std::endl;
+        std::cout << (userInput > 0) << std::endl;
+        if(!team1[1].getIsActive())
         {
-            std::cout << "UP\n";
-            arrowXPos = 70;
-            arrowYPos = 545;
-            userInput = 0;
-        } 
-        if(userInput == USER_DN) 
-        {
-            std::cout << "DOWN\n";
-            arrowXPos = 70;
-            arrowYPos = 570;
-            userInput = 0;
+            std::cout << "one" << std::endl;
+            if(userInput == USER_DN) 
+            {
+                std::cout << "DOWN\n";
+                arrowXPos = 430;
+                arrowYPos = 620;
+                userInput = 0;
+            }
         }
-        if(userInput == USER_LT) 
+        if(!team1[0].getIsActive())
         {
-            std::cout << "LEFT\n";
-            arrowXPos = 70;
-            arrowYPos = 545;
-            userInput = 0;
+            std::cout << "balls" << std::endl;
+            if(userInput == USER_LT) 
+            {
+                std::cout << "two" << std::endl;
+                std::cout << "LEFT\n";
+                arrowXPos = 290;
+                arrowYPos = 565;
+                userInput = 0;
+            }
         }
-        if(userInput == USER_RT) 
+        if(!team1[2].getIsActive())
         {
-            std::cout << "RIGHT\n";
-            arrowXPos = 265;
-            arrowYPos = 545;
-            userInput = 0;
+            std::cout << "yeet" << std::endl;
+            if(userInput == USER_RT) 
+            {
+                std::cout << "three" << std::endl;
+                std::cout << "RIGHT\n";
+                arrowXPos = 550;
+                arrowYPos = 565;
+                userInput = 0;
+            }
         }
         if(userInput == USER_EN) 
         {
             std::cout << "ENTER\n";
+            // swap functionality
             userInput = 0;
+        }
         }
         if(userInput == USER_BK)
         {
@@ -729,7 +754,8 @@ void Game::update()
             p1Choice = "deciding";
             p2Choice = "deciding";
         }
-    } 
+        userInput = 0;
+    // } 
  
 }
 void Game::input()
@@ -835,8 +861,30 @@ void Game::input()
             userInput |= USER_RT;
         }
     }
+    if(menuState == "swapMenu")
+    {
+        // p1Choice = "deciding";
+        // p2Choice = "deciding";
+        // if(keystates[SDL_SCANCODE_UP]) 
+        // {
+        //     userInput |= USER_UP;
+        // }
+        if(keystates[SDL_SCANCODE_DOWN]) 
+        {    
+            userInput |= USER_DN;
+        }
+        if(keystates[SDL_SCANCODE_LEFT])
+        {
+            userInput |= USER_LT;
+        } 
+        if(keystates[SDL_SCANCODE_RIGHT]) 
+        {
+            userInput |= USER_RT;
+        }
+    }
     if(keystates[SDL_SCANCODE_RETURN]) userInput |= USER_EN;
     if(keystates[SDL_SCANCODE_BACKSPACE]) userInput |= USER_BK;
+    
     SDL_ResetKeyboard();
 }
 void Game::draw()
@@ -1134,6 +1182,33 @@ void Game::draw()
         SDL_RenderCopy(renderer, textArr[FLARE_BLITZ].textTex, NULL, &dstrect);
     }
     // IM pretty sure this works now ^^^^
+
+    // swap menu
+    if(menuState == "swapMenu" && turn == "P1")
+    {
+        dstrect.x = 350;
+        dstrect.y = 575;
+        dstrect.w = textArr[CHIKORITA_NAME].w / 1;
+        dstrect.h = textArr[CHIKORITA_NAME].h / 1;
+        SDL_RenderCopy(renderer, textArr[CHIKORITA_NAME].textTex, NULL, &dstrect);
+
+        dstrect.x = 500;
+        dstrect.y = 630;
+        dstrect.w = textArr[TOTODILE_NAME].w / 1;
+        dstrect.h = textArr[TOTODILE_NAME].h / 1;
+        SDL_RenderCopy(renderer, textArr[TOTODILE_NAME].textTex, NULL, &dstrect);
+
+        dstrect.x = 620;
+        dstrect.y = 575;
+        dstrect.w = textArr[CYNDAQUIL_NAME].w / 1;
+        dstrect.h = textArr[CYNDAQUIL_NAME].h / 1;
+        SDL_RenderCopy(renderer, textArr[CYNDAQUIL_NAME].textTex, NULL, &dstrect);
+    }
+
+
+
+
+
     SDL_RenderPresent(renderer);
 }
 
