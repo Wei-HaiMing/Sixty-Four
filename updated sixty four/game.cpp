@@ -8,6 +8,8 @@ int Game::lastTime = 0;
 Game::Game(SDL_Renderer* renderer, SDL_Window* window)
 {
     timer = 0;
+    p1SwapTo = -1;
+    p2SwapTo = -1;
     arrowShiftLt = 0;
     arrowShiftRt = 0;
     arrowShiftDn = 0;
@@ -27,10 +29,13 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     p1Choice = "deciding";
     p2Choice = "deciding";
     menuState = "start";
+    p1Done = false;
+    p2Done = false;
     turn = "P1";
     SDL_SetWindowTitle(window, "SDL2 Window");
     SDL_ShowCursor(1);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+    font = TTF_OpenFont("fonts/FreeSerif.ttf", 40);
 
     inventory1.setFullRestores(1);
     inventory1.setPotions(3);
@@ -184,25 +189,28 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     charmanderMoves[2] = fireFang;
     charmanderMoves[3] = flameThrower;
 
-    team1[0].setHP(294);
+    team1[0].setHP(200);
+    team1[0].setFullHealth(294);
     team1[0].setMove(chikoritaMoves);
     team1[0].setName("Chikorita");
     team1[0].setPokeType("Grass");
     team1[0].setResistance("Water");
     team1[0].setDead(false);
-    team1[0].setIsActive(false);
+    team1[0].setIsActive(true);
     team1[0].pokeprint();
 
     team1[1].setHP(304);
+    team1[1].setFullHealth(304);
     team1[1].setMove(totodileMoves);
     team1[1].setName("Totodile");
     team1[1].setPokeType("Water");
     team1[1].setResistance("Fire");
     team1[1].setDead(false);
-    team1[1].setIsActive(true);
+    team1[1].setIsActive(false);
     team1[1].pokeprint();
 
     team1[2].setHP(282);
+    team1[2].setFullHealth(282);
     team1[2].setMove(cyndaquilMoves);
     team1[2].setName("Cyndaquil");
     team1[2].setPokeType("Fire");
@@ -212,6 +220,7 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     team1[2].pokeprint();
 
     team2[0].setHP(294);
+    team2[0].setFullHealth(294);
     team2[0].setMove(bulbasaurMoves);
     team2[0].setName("Bulbasaur");
     team2[0].setPokeType("Grass");
@@ -221,6 +230,7 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     team2[0].pokeprint();
 
     team2[1].setHP(292);
+    team2[1].setFullHealth(292);
     team2[1].setMove(squirtleMoves);
     team2[1].setName("Squirtle");
     team2[1].setPokeType("Water");
@@ -230,6 +240,7 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     team2[1].pokeprint();
 
     team2[2].setHP(282);
+    team2[2].setFullHealth(282);
     team2[2].setMove(charmanderMoves);
     team2[2].setName("Charmander");
     team2[2].setPokeType("Fire");
@@ -265,11 +276,11 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
 
     // setting team 2 hp
     std::string temp13 = to_string(team2[0].getHP());
-    strArr[BULBASAUR_NAME] = temp13.c_str();
+    strArr[BULBASAUR_HP] = temp13.c_str();
     std::string temp14 = to_string(team2[1].getHP());
-    strArr[SQUIRTLE_NAME] = temp14.c_str();
+    strArr[SQUIRTLE_HP] = temp14.c_str();
     std::string temp15 = to_string(team2[2].getHP());
-    strArr[CHARMANDER_NAME] = temp15.c_str();
+    strArr[CHARMANDER_HP] = temp15.c_str();
 
     // setting moves
     std::string temp16 = team1[0].getMove(0).getName() + "Normal";
@@ -382,10 +393,10 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
 
     setSurface(IMG_Load("res/empty-start-menu.png"));
     emptyMenuText = SDL_CreateTextureFromSurface(renderer, image);
-    for(int i = 0; i < 49; i++)
-    {
-        std::cout << strArr[i] << " " << (i + 1) << std::endl;
-    }
+    // for(int i = 0; i < 49; i++)
+    // {
+    //     std::cout << strArr[i] << " " << (i + 1) << std::endl;
+    // }
     initFont();
     
 
@@ -508,15 +519,59 @@ void Game::setTurn(std::string turn)
 }
 // member methods
 
+void Game::heal(std::string whomst)
+{
+    if(whomst == "P1")
+    {
+        if(p1Choice == "potion")
+        {
+            team1[active1].setHP(team1[active1].getHP() + 40);
+        }
+        if(p1Choice == "restore")
+        {
+            team1[active1].setHP(team1[active1].getFullHealth());
+        }
+        if(p1Choice == "soda")
+        {
+            team1[active1].setHP(team1[active1].getHP() + 20);
+        }
+    }
+    if(whomst == "P2")
+    {
+        if(p2Choice == "potion")
+        {
+            team2[active2].setHP(team2[active2].getHP() + 40);
+        }
+        if(p2Choice == "restore")
+        {
+            team2[active2].setHP(team2[active2].getFullHealth());
+        }
+        if(p2Choice == "soda")
+        {
+            team2[active2].setHP(team2[active2].getHP() + 20);
+        }
+    }
+}
+void Game::attack()
+{
+    if(turn == "P1")
+    {
+        
+    }
+}
+void Game::swap()
+{
+
+}
 
 void Game::update()
 {
-    if(timer++ == 50)
-        timer = 0;
+    // if(p1Done && p2Done)
+    // {    
+    //     
+    // }
     if(fullscreen) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     if(!fullscreen) SDL_SetWindowFullscreen(window, 0);
-    // if(turn == "P1")
-    // {
     if(menuState == "start") // start menu functionality
     {    
         if(userInput == USER_UP) 
@@ -563,6 +618,8 @@ void Game::update()
                 menuState = "itemMenu";
                 arrowXPos = 70;
                 arrowYPos = 545;
+                if(turn == "P1") p1Choice = "potion";
+                else p2Choice = "potion";
                 // p1Choice = "deciding";
                 // p2Choice = "deciding";
             }
@@ -635,6 +692,28 @@ void Game::update()
         if(userInput == USER_EN) 
         {
             // Move choices
+            // (85, 545) (285, 545)
+            // (85, 590) (285, 590)
+            if(turn == "P1")
+            {
+                if(arrowXPos == 85 && arrowYPos == 545) p1Choice = "move1";
+                if(arrowXPos == 285 && arrowYPos == 545) p1Choice = "move2";
+                if(arrowXPos == 85 && arrowYPos == 590) p1Choice = "move3";
+                if(arrowXPos == 285 && arrowYPos == 590) p1Choice = "move4";
+                menuState = "start";
+                p1Done = true;
+                turn = "P2";
+            }
+            else if(turn == "P2")
+            {
+                if(arrowXPos == 85 && arrowYPos == 545) p2Choice = "move1";
+                if(arrowXPos == 285 && arrowYPos == 545) p2Choice = "move2";
+                if(arrowXPos == 85 && arrowYPos == 590) p2Choice = "move3";
+                if(arrowXPos == 285 && arrowYPos == 590) p2Choice = "move4";
+                menuState = "start";
+                p2Done = true;
+                turn = "P1";
+            }
 
             userInput = 0;
 
@@ -645,14 +724,21 @@ void Game::update()
             arrowYPos = 555;
             menuState = "start";
             userInput = 0;
-            p1Choice = "deciding";
-            p2Choice = "deciding";
+            if(turn == "P1")
+            {
+                p1Choice = "deciding";
+            }
+            if(turn == "P2")
+            {
+                p2Choice = "deciding";
+            }
         }
     }
     if(menuState == "itemMenu")
     {
         // (70, 545) (275, 545)
         // (85, 570) (285, 570)
+
         if(userInput == USER_UP) 
         {
             std::cout << "UP\n";
@@ -684,7 +770,142 @@ void Game::update()
         if(userInput == USER_EN) 
         {
             std::cout << "ENTER\n";
+            if(turn == "P1")
+            {
+                if(p1Choice == "potion" && (inventory1.getPotions() != 0))
+                {
+                    std::cout << "potion 1\n";
+                    inventory1.setPotions(inventory1.getPotions() - 1);
+                    std::string temp1 = ("x" + to_string(inventory1.getPotions()) + " Potions");
+                    strArr[POTIONS1] = temp1.c_str();
+                
+                    image = TTF_RenderText_Blended(font, strArr[POTIONS1], (SDL_Color){0, 0, 0, 255});
+                    textArr[POTIONS1].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[POTIONS1], &textArr[POTIONS1].w, &textArr[POTIONS1].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    p1Done = true;
+                    turn = "P2";
+                    menuState = "start";
+                    // p1Done = true;
+                    // turn = "P2";
+                    // menuState = "start";
+                    // for(int i = 0; i < 49; i++)
+                    // {
+                    //     std::cout << strArr[i] << std::endl;
+                    // }
+                    // initFont();
+                }
+                if(p1Choice == "soda" && (inventory1.getSodaPops() != 0))
+                {   
+                    inventory1.setSodaPops(inventory1.getSodaPops() - 1);
+                    std::string temp3 = ("x" + std::to_string(inventory1.getSodaPops()) + " Soda Pops");
+                    strArr[SODA_POPS1] = temp3.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[SODA_POPS1], (SDL_Color){0, 0, 0, 255});
+                    textArr[SODA_POPS1].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[SODA_POPS1], &textArr[SODA_POPS1].w, &textArr[SODA_POPS1].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    p1Done = true;
+                    turn = "P2";
+                    menuState = "start";
+                    // p1Done = true;
+                    // turn = "P2";
+                    // menuState = "start";
+
+                    // initFont();
+                }
+                if(p1Choice == "restore" && (inventory1.getFullRestores() != 0))
+                {
+                    inventory1.setFullRestores(inventory1.getFullRestores() - 1);
+                    std::string temp2 = ("x" + to_string(inventory1.getFullRestores()) + " Full Restores");
+                    strArr[FULL_RESTORES1] = temp2.c_str();
+
+                    image = TTF_RenderText_Blended(font, strArr[FULL_RESTORES1], (SDL_Color){0, 0, 0, 255});
+                    textArr[FULL_RESTORES1].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[FULL_RESTORES1], &textArr[FULL_RESTORES1].w, &textArr[FULL_RESTORES1].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    p1Done = true;
+                    turn = "P2";
+                    menuState = "start";
+                    // p1Done = true;
+                    // turn = "P2";
+                    // menuState = "start";
+
+                    // initFont();
+                }
+                std::cout << "P2 has (" << inventory2.getPotions() << ", " << inventory2.getFullRestores() << ", " << inventory2.getSodaPops() << std::endl;
+
+            }
+            else if(turn == "P2")
+            {
+                if(p2Choice == "potion" && (inventory2.getPotions() != 0))
+                {
+                    std::cout << "potion 2\n";
+                    inventory2.setPotions(inventory2.getPotions() - 1);
+                    std::string temp1 = ("x" + to_string(inventory2.getPotions()) + " Potions");
+                    strArr[POTIONS2] = temp1.c_str();
+
+                    image = TTF_RenderText_Blended(font, strArr[POTIONS2], (SDL_Color){0, 0, 0, 255});
+                    textArr[POTIONS2].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[POTIONS2], &textArr[POTIONS2].w, &textArr[POTIONS2].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    p2Done = true;
+                    turn = "P1";
+                    menuState = "start";
+                    // p2Done = true;
+                    // turn = "P1";
+                    // menuState = "start";
+
+                    // initFont();
+                }
+                if(p2Choice == "soda" && (inventory2.getSodaPops() != 0))
+                {
+                    inventory2.setSodaPops(inventory2.getSodaPops() - 1);
+                    std::string temp3 = ("x" + std::to_string(inventory2.getSodaPops()) + " Soda Pops");
+                    strArr[SODA_POPS2] = temp3.c_str();
+
+                    image = TTF_RenderText_Blended(font, strArr[SODA_POPS2], (SDL_Color){0, 0, 0, 255});
+                    textArr[SODA_POPS2].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[SODA_POPS2], &textArr[SODA_POPS2].w, &textArr[SODA_POPS2].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    p2Done = true;
+                    turn = "P1";
+                    menuState = "start";
+                    // p2Done = true;
+                    // turn = "P1";
+                    // menuState = "start";
+
+                    // initFont();
+                }
+                if(p2Choice == "restore" && (inventory2.getFullRestores() != 0))
+                {
+                    inventory2.setFullRestores(inventory2.getFullRestores() - 1);
+                    std::string temp2 = ("x" + to_string(inventory2.getFullRestores()) + " Full Restores");
+                    strArr[FULL_RESTORES2] = temp2.c_str();
+
+                    image = TTF_RenderText_Blended(font, strArr[FULL_RESTORES2], (SDL_Color){0, 0, 0, 255});
+                    textArr[FULL_RESTORES2].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[FULL_RESTORES2], &textArr[FULL_RESTORES2].w, &textArr[FULL_RESTORES2].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    p2Done = true;
+                    turn = "P1";
+                    menuState = "start";
+                    // p2Done = true;
+                    // turn = "P1";
+                    // menuState = "start";
+
+                    // initFont();
+                }
+                std::cout << "P1 has (" << inventory1.getPotions() << ", " << inventory1.getFullRestores() << ", " << inventory1.getSodaPops() << std::endl;
+            }
             userInput = 0;
+
+           
         }
         if(userInput == USER_BK)
         {
@@ -692,8 +913,14 @@ void Game::update()
             arrowYPos = 555;
             menuState = "start";
             userInput = 0;
-            p1Choice = "deciding";
-            p2Choice = "deciding";
+            if(turn == "P1")
+            {
+                p1Choice = "deciding";
+            }
+            if(turn == "P2")
+            {
+                p2Choice = "deciding";
+            }
         }
     }
     if(menuState == "swapMenu")
@@ -703,47 +930,139 @@ void Game::update()
         std::cout << menuState << std::endl;
         std::cout << p1Choice << std::endl;
         std::cout << (userInput > 0) << std::endl;
-        if(!team1[1].getIsActive())
+        if(turn == "P1")
         {
-            std::cout << "one" << std::endl;
-            if(userInput == USER_DN) 
+            if(!team1[1].getIsActive())
             {
-                std::cout << "DOWN\n";
-                arrowXPos = 430;
-                arrowYPos = 620;
+                std::cout << "one" << std::endl;
+                if(userInput == USER_DN) 
+                {
+                    std::cout << "DOWN\n";
+                    arrowXPos = 430;
+                    arrowYPos = 620;
+                    userInput = 0;
+                }
+            }
+            if(!team1[0].getIsActive())
+            {
+                std::cout << "balls" << std::endl;
+                if(userInput == USER_LT) 
+                {
+                    std::cout << "two" << std::endl;
+                    std::cout << "LEFT\n";
+                    arrowXPos = 290;
+                    arrowYPos = 565;
+                    userInput = 0;
+                }
+            }
+            if(!team1[2].getIsActive())
+            {
+                std::cout << "yeet" << std::endl;
+                if(userInput == USER_RT) 
+                {
+                    std::cout << "three" << std::endl;
+                    std::cout << "RIGHT\n";
+                    arrowXPos = 550;
+                    arrowYPos = 565;
+                    userInput = 0;
+                }
+            }
+            if(userInput == USER_EN) 
+            {
+                std::cout << "ENTER\n";
+                // if(turn == "P1")
+                // {
+                if(arrowXPos == 430 && arrowYPos == 620)
+                {
+                    p1SwapTo = 1;
+                    p1Done = true;
+                    turn = "P2";
+                }
+                if(arrowXPos == 290 && arrowYPos == 565)
+                {
+                    p1SwapTo = 0;
+                    p1Done = true;
+                    turn = "P2";
+                }
+                if(arrowXPos == 550 && arrowYPos == 565)
+                {
+                    p1SwapTo = 2;
+                    p1Done = true;
+                    turn = "P2";
+                }
+                // swap functionality
                 userInput = 0;
+                menuState = "start";
             }
         }
-        if(!team1[0].getIsActive())
+        if(turn == "P2")
         {
-            std::cout << "balls" << std::endl;
-            if(userInput == USER_LT) 
+            if(!team2[1].getIsActive())
             {
-                std::cout << "two" << std::endl;
-                std::cout << "LEFT\n";
-                arrowXPos = 290;
-                arrowYPos = 565;
-                userInput = 0;
+                std::cout << "one" << std::endl;
+                if(userInput == USER_DN) 
+                {
+                    std::cout << "DOWN\n";
+                    arrowXPos = 430;
+                    arrowYPos = 620;
+                    userInput = 0;
+                }
             }
-        }
-        if(!team1[2].getIsActive())
-        {
-            std::cout << "yeet" << std::endl;
-            if(userInput == USER_RT) 
+            if(!team2[0].getIsActive())
             {
-                std::cout << "three" << std::endl;
-                std::cout << "RIGHT\n";
-                arrowXPos = 550;
-                arrowYPos = 565;
-                userInput = 0;
+                std::cout << "balls" << std::endl;
+                if(userInput == USER_LT) 
+                {
+                    std::cout << "two" << std::endl;
+                    std::cout << "LEFT\n";
+                    arrowXPos = 290;
+                    arrowYPos = 565;
+                    userInput = 0;
+                }
             }
-        }
-        if(userInput == USER_EN) 
-        {
-            std::cout << "ENTER\n";
-            // swap functionality
-            userInput = 0;
-        }
+            if(!team2[2].getIsActive())
+            {
+                std::cout << "yeet" << std::endl;
+                if(userInput == USER_RT) 
+                {
+                    std::cout << "three" << std::endl;
+                    std::cout << "RIGHT\n";
+                    arrowXPos = 550;
+                    arrowYPos = 565;
+                    userInput = 0;
+                }
+            }
+            if(userInput == USER_EN) 
+            {
+                std::cout << "ENTER\n";
+                // swap functionality
+                if(arrowXPos == 430 && arrowYPos == 620)
+                {
+                    p2SwapTo = 1;
+                    p2Done = true;
+                    turn = "P1";
+                    // menuState = "start";
+
+                }
+                if(arrowXPos == 290 && arrowYPos == 565)
+                {
+                    p2SwapTo = 0;
+                    p2Done = true;
+                    turn = "P1";
+                    // menuState = "start";
+
+                }
+                if(arrowXPos == 550 && arrowYPos == 565)
+                {
+                    p2SwapTo = 2;
+                    p2Done = true;
+                    turn = "P1";
+                    // menuState = "start";
+
+                }
+                userInput = 0;
+                menuState = "start";
+            }
         }
         if(userInput == USER_BK)
         {
@@ -751,12 +1070,17 @@ void Game::update()
             arrowYPos = 555;
             menuState = "start";
             userInput = 0;
-            p1Choice = "deciding";
-            p2Choice = "deciding";
+            if(turn == "P1")
+            {
+                p1Choice = "deciding";
+            }
+            if(turn == "P2")
+            {
+                p2Choice = "deciding";
+            }
         }
         userInput = 0;
-    // } 
- 
+    }
 }
 void Game::input()
 {
@@ -847,18 +1171,74 @@ void Game::input()
         if(keystates[SDL_SCANCODE_UP]) 
         {
             userInput |= USER_UP;
+            if(turn == "P1")
+            {
+                // if(inventory1.getPotions() != 0)
+                // {
+                    p1Choice = "potion";
+            //     }
+            }
+            else
+            {
+                // if(inventory2.getPotions() != 0)
+                // {
+                    p2Choice = "potion";
+                // }
+            }
         }
         if(keystates[SDL_SCANCODE_DOWN]) 
-        {    
+        {   
             userInput |= USER_DN;
+            if(turn == "P1")
+            {
+                // if(inventory1.getSodaPops() != 0)
+                // {
+                    p1Choice = "soda";
+                // }
+            }
+            else
+            {
+                // if(inventory2.getSodaPops() != 0)
+                // {
+                    p2Choice = "soda";
+                // }
+            } 
         }
         if(keystates[SDL_SCANCODE_LEFT])
         {
             userInput |= USER_LT;
+            if(turn == "P1")
+            {
+                // if(inventory1.getPotions() != 0)
+                // {
+                    p1Choice = "potion";
+                // }
+            }
+            else
+            {
+                // if(inventory2.getPotions() != 0)
+                // {
+                    p2Choice = "potion";
+                // }
+            }
         } 
         if(keystates[SDL_SCANCODE_RIGHT]) 
         {
             userInput |= USER_RT;
+            if(turn == "P1")
+            {
+                // if(inventory1.getFullRestores() != 0)
+                // {
+                    p1Choice = "restore";
+                // }
+            }
+            else
+            {
+                // if(inventory2.getFullRestores() != 0)
+                // {
+                    p2Choice = "restore";
+                // }
+            }
         }
     }
     if(menuState == "swapMenu")
@@ -889,322 +1269,516 @@ void Game::input()
 }
 void Game::draw()
 {
-    SDL_RenderCopy(renderer, bgTexture, NULL, NULL); // background render
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // colors something
+    
+        SDL_RenderCopy(renderer, bgTexture, NULL, NULL); // background render
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // colors something
 
-    
-    spriteRect1.x = 0; // start at x = 0
-    spriteRect1.y = 0; // start at y = 0
-    spriteRect1.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
-    spriteRect1.h = SPRITE_SIZE;  // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
-    
-    // destination rectangle to position and size sprite rectangle
-    dstrect.x = 350 - SPRITE_SIZE;
-    dstrect.y = 500 - SPRITE_SIZE;
-    dstrect.w = spriteRect1.w * 2;
-    dstrect.h = spriteRect1.h * 2;
+        if(p1SwapTo != active1)
+        {
+            spriteRect1.x = 0; // start at x = 0
+            spriteRect1.y = 0; // start at y = 0
+            spriteRect1.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
+            spriteRect1.h = SPRITE_SIZE;  // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
+            
+            // destination rectangle to position and size sprite rectangle
+            dstrect.x = 350 - SPRITE_SIZE;
+            dstrect.y = 500 - SPRITE_SIZE;
+            dstrect.w = spriteRect1.w * 2;
+            dstrect.h = spriteRect1.h * 2;
 
-    if (timer != 0)
-        SDL_RenderCopy(renderer, playerOne[active1], &spriteRect1, &dstrect); // player 1 pokemon render
-    
-    
-    
-    spriteRect2.x = 0; // start at x = 0
-    spriteRect2.y = 0; // start at y = 0
-    spriteRect2.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
-    spriteRect2.h = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
-    
-    // destination rectangle to position and size sprite rectangle
-    dstrect.x = 800 - SPRITE_SIZE;
-    dstrect.y = (475 - SPRITE_SIZE) / 2;
-    dstrect.w = spriteRect2.w * 3;
-    dstrect.h = spriteRect2.h * 3;
-    
-    
-    SDL_RenderCopy(renderer, playerTwo[active2], &spriteRect2, &dstrect); // player 2 pokemon render
+            // if (timer != 0)
+            SDL_RenderCopy(renderer, playerOne[active1], &spriteRect1, &dstrect); // player 1 pokemon render
+        }  
+        if(p2SwapTo != active2)
+        {    
+            spriteRect2.x = 0; // start at x = 0
+            spriteRect2.y = 0; // start at y = 0
+            spriteRect2.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
+            spriteRect2.h = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
+            
+            // destination rectangle to position and size sprite rectangle
+            dstrect.x = 800 - SPRITE_SIZE;
+            dstrect.y = (475 - SPRITE_SIZE) / 2;
+            dstrect.w = spriteRect2.w * 3;
+            dstrect.h = spriteRect2.h * 3;
+            
+            
+            SDL_RenderCopy(renderer, playerTwo[active2], &spriteRect2, &dstrect); // player 2 pokemon render
+        }
+        // menu
+        menu.x = 0;
+        menu.y = 0;
+        menu.w = 313 + 990;
+        menu.h = 93 + 110;
 
-
-    // menu
-    menu.x = 0;
-    menu.y = 0;
-    menu.w = 313 + 990;
-    menu.h = 93 + 110;
-
-    dstrect.x = 0;
-    dstrect.y = 517;
-    dstrect.w = menu.w;
-    dstrect.h = menu.h;
-    if(menuState == "start")
+        dstrect.x = 0;
+        dstrect.y = 517;
+        dstrect.w = menu.w;
+        dstrect.h = menu.h;
+    if(p1Done && p2Done)
     {
-        SDL_RenderCopy(renderer, menuText, &menu, &dstrect);
+        SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
+        if(p1Choice == "swap")
+        {
+            if(timer++ == 200) timer = 0;
+
+            active1 = p1SwapTo;
+            spriteRect1.x = 0; // start at x = 0
+            spriteRect1.y = 0; // start at y = 0
+            spriteRect1.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
+            spriteRect1.h = SPRITE_SIZE;  // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
+            
+            // destination rectangle to position and size sprite rectangle
+            dstrect.x = 350 - SPRITE_SIZE;
+            dstrect.y = 500 - SPRITE_SIZE;
+            dstrect.w = spriteRect1.w * 2;
+            dstrect.h = spriteRect1.h * 2;
+
+            // if (timer != 0)
+            SDL_RenderCopy(renderer, playerOne[active1], &spriteRect1, &dstrect); // player 1 pokemon render
+            if(timer != 0)
+            {
+                dstrect.x = 120;
+                dstrect.y = 565;
+                dstrect.w = textArr[P1_SWAP].w;
+                dstrect.h = textArr[P1_SWAP].h;
+                SDL_RenderCopy(renderer, textArr[P1_SWAP].textTex, NULL, &dstrect);
+            }
+            else
+            { 
+                p1Choice = "deciding";
+                p1SwapTo = -1;
+            }
+        }
+        if(p1Choice == "potion" || p1Choice == "restore" || p1Choice == "soda")
+        {
+            if(timer++ == 200) timer = 0;
+            if(timer != 0)
+            {
+                dstrect.x = 120;
+                dstrect.y = 565;
+                dstrect.w = textArr[P1_HEAL].w;
+                dstrect.h = textArr[P1_HEAL].h;
+                SDL_RenderCopy(renderer, textArr[P1_HEAL].textTex, NULL, &dstrect);
+            }
+            else
+            {
+                std::cout << "P1 Health Before: " << team1[active1].getHP() << std::endl;
+                heal("P1");
+                std::cout << "P1 Health After: " << team1[active1].getHP() << std::endl;
+                p1Choice = "deciding";
+            }
+        }
+        if(p1Choice == "move1" || p1Choice == "move2" || p1Choice == "move3" || p1Choice == "move4")
+        {
+            if(timer++ == 200) timer = 0;
+            if(timer != 0)
+            {
+                dstrect.x = 120;
+                dstrect.y = 565;
+                dstrect.w = textArr[P1_HEAL].w;
+                dstrect.h = textArr[P1_HEAL].h;
+                SDL_RenderCopy(renderer, textArr[P1_HEAL].textTex, NULL, &dstrect);
+            }
+        }
+        if(p2Choice == "swap" && (p1Choice == "deciding"))
+        {
+            if(timer++ == 200) timer = 0;
+
+            // SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
+            active2 = p2SwapTo;
+            spriteRect2.x = 0; // start at x = 0
+            spriteRect2.y = 0; // start at y = 0
+            spriteRect2.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
+            spriteRect2.h = SPRITE_SIZE;  // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
+            
+            // destination rectangle to position and size sprite rectangle
+            dstrect.x = 800 - SPRITE_SIZE;
+            dstrect.y = (475 - SPRITE_SIZE) / 2;
+            dstrect.w = spriteRect2.w * 3;
+            dstrect.h = spriteRect2.h * 3;
+
+            // if (timer != 0)
+            SDL_RenderCopy(renderer, playerTwo[active2], &spriteRect1, &dstrect); // player 1 pokemon render
+            if(timer != 0)
+            {
+                dstrect.x = 120;
+                dstrect.y = 565;
+                dstrect.w = textArr[P2_SWAP].w;
+                dstrect.h = textArr[P2_SWAP].h;
+                SDL_RenderCopy(renderer, textArr[P2_SWAP].textTex, NULL, &dstrect);
+            }
+            else
+            { 
+                p2Choice = "deciding";
+                p2SwapTo = -1;
+                p1Done = false;
+                p2Done = false;
+                menuState = "start";
+            }
+        }
+        if((p2Choice == "potion" || p2Choice == "restore" || p2Choice == "soda") && (p1Choice == "deciding"))
+        {
+            if(timer++ == 200) timer = 0;
+            if(timer != 0)
+            {
+                dstrect.x = 120;
+                dstrect.y = 565;
+                dstrect.w = textArr[P2_HEAL].w;
+                dstrect.h = textArr[P2_HEAL].h;
+                SDL_RenderCopy(renderer, textArr[P2_HEAL].textTex, NULL, &dstrect);
+            }
+            else
+            {
+                std::cout << "P2 Health Before: " << team1[active2].getHP() << std::endl;
+                heal("P2");
+                std::cout << "P2 Health After: " << team1[active2].getHP() << std::endl;
+                p2Choice = "deciding";
+                p1Done = false;
+                p2Done = false;
+                menuState = "start";
+
+            }
+        }
     }
     else
     {
-        SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
-    }
+        // left text
+        if(menuState == "start")
+        {
+            SDL_RenderCopy(renderer, menuText, &menu, &dstrect);
+        }
+        else
+        {
+            SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
+        }
+        // arrow sprite
+        arrow.x = 0;
+        arrow.y = 0;
+        arrow.w = 750;
+        arrow.h = 750;
 
-    // left text
-    dstrect.x = 0;
-    dstrect.y = 0;
-    dstrect.w = textArr[0].w;
-    dstrect.h = textArr[0].h;
-    SDL_RenderCopy(renderer, textArr[0].textTex, NULL, &dstrect);
-
-
-    // arrow sprite
-    arrow.x = 0;
-    arrow.y = 0;
-    arrow.w = 750;
-    arrow.h = 750;
-
-    dstrect.x = arrowXPos;// 580, 970
-                    // 85 
-    
-    dstrect.y = arrowYPos; // 555, 620
-                           // 545
-    dstrect.w = arrow.w / 12;
-    dstrect.h = arrow.h / 9;
-    SDL_RenderCopy(renderer, arrowText, &arrow, &dstrect);
-    
-    if(menuState == "itemMenu")
-    {
-    
-        // item sprites
-        potion.x = 0;
-        potion.y = 0;
-        potion.w = 24;
-        potion.h = 24;
-
-        dstrect.x = 125;
-        dstrect.y = 575;
-        dstrect.w = potion.w;
-        dstrect.h = potion.h;
-        SDL_RenderCopy(renderer, itemText[0], &potion, &dstrect);
-
-        fullRestore.x = 0;
-        fullRestore.y = 0;
-        fullRestore.w = 24;
-        fullRestore.h = 24;
-
-        dstrect.x = 325;
-        dstrect.y = 575;
-        dstrect.w = fullRestore.w;
-        dstrect.h = fullRestore.h;
-        SDL_RenderCopy(renderer, itemText[1], &fullRestore, &dstrect);
-
-        sodaPop.x = 0;
-        sodaPop.y = 0;
-        sodaPop.w = 24;
-        sodaPop.h = 24;
-
-        dstrect.x = 125;
-        dstrect.y = 600;
-        dstrect.w = sodaPop.w;
-        dstrect.h = sodaPop.h;
-        SDL_RenderCopy(renderer, itemText[2], &sodaPop, &dstrect);
-
-        // item fonts
-        dstrect.x = 160;
-        dstrect.y = 575;
-        dstrect.w = textArr[POTIONS1].w / 2;
-        dstrect.h = textArr[POTIONS1].h / 2;
-        SDL_RenderCopy(renderer, textArr[POTIONS1].textTex, NULL, &dstrect);
+        dstrect.x = arrowXPos;// 580, 970
+                        // 85 
         
-        dstrect.x = 350;
-        dstrect.y = 575;
-        dstrect.w = textArr[FULL_RESTORES1].w / 2; 
-        dstrect.h = textArr[FULL_RESTORES1].h / 2;
-        SDL_RenderCopy(renderer, textArr[FULL_RESTORES1].textTex, NULL, &dstrect);
+        dstrect.y = arrowYPos; // 555, 620
+                            // 545
+        dstrect.w = arrow.w / 12;
+        dstrect.h = arrow.h / 9;
+        SDL_RenderCopy(renderer, arrowText, &arrow, &dstrect);
 
-        dstrect.x = 160;
-        dstrect.y = 600;
-        dstrect.w = textArr[SODA_POPS1].w / 2;
-        dstrect.h = textArr[SODA_POPS1].h / 2;
-        SDL_RenderCopy(renderer, textArr[SODA_POPS1].textTex, NULL, &dstrect);
+        // prompt text
+        if(turn == "P1" && menuState == "start")
+        {
+            dstrect.x = 90;
+            dstrect.y = 565;
+            dstrect.w = textArr[PROMPT_P1].w;
+            dstrect.h = textArr[PROMPT_P1].h;
+            SDL_RenderCopy(renderer, textArr[PROMPT_P1].textTex, NULL, &dstrect);
+        }
+        else if(turn == "P2" && menuState == "start")
+        {
+            dstrect.x = 90;
+            dstrect.y = 565;
+            dstrect.w = textArr[PROMPT_P2].w;
+            dstrect.h = textArr[PROMPT_P2].h;
+            SDL_RenderCopy(renderer, textArr[PROMPT_P2].textTex, NULL, &dstrect);
+        }
+        if(menuState == "itemMenu")
+        {
+            // item sprites
+            potion.x = 0;
+            potion.y = 0;
+            potion.w = 24;
+            potion.h = 24;
+
+            dstrect.x = 125;
+            dstrect.y = 575;
+            dstrect.w = potion.w;
+            dstrect.h = potion.h;
+            SDL_RenderCopy(renderer, itemText[0], &potion, &dstrect);
+
+            fullRestore.x = 0;
+            fullRestore.y = 0;
+            fullRestore.w = 24;
+            fullRestore.h = 24;
+
+            dstrect.x = 325;
+            dstrect.y = 575;
+            dstrect.w = fullRestore.w;
+            dstrect.h = fullRestore.h;
+            SDL_RenderCopy(renderer, itemText[1], &fullRestore, &dstrect);
+
+            sodaPop.x = 0;
+            sodaPop.y = 0;
+            sodaPop.w = 24;
+            sodaPop.h = 24;
+
+            dstrect.x = 125;
+            dstrect.y = 600;
+            dstrect.w = sodaPop.w;
+            dstrect.h = sodaPop.h;
+            SDL_RenderCopy(renderer, itemText[2], &sodaPop, &dstrect);
+            if(turn == "P1")
+            {
+                // item fonts
+                dstrect.x = 160;
+                dstrect.y = 575;
+                dstrect.w = textArr[POTIONS1].w / 2;
+                dstrect.h = textArr[POTIONS1].h / 2;
+                SDL_RenderCopy(renderer, textArr[POTIONS1].textTex, NULL, &dstrect);
+                
+                dstrect.x = 350;
+                dstrect.y = 575;
+                dstrect.w = textArr[FULL_RESTORES1].w / 2; 
+                dstrect.h = textArr[FULL_RESTORES1].h / 2;
+                SDL_RenderCopy(renderer, textArr[FULL_RESTORES1].textTex, NULL, &dstrect);
+
+                dstrect.x = 160;
+                dstrect.y = 600;
+                dstrect.w = textArr[SODA_POPS1].w / 2;
+                dstrect.h = textArr[SODA_POPS1].h / 2;
+                SDL_RenderCopy(renderer, textArr[SODA_POPS1].textTex, NULL, &dstrect);
+            }
+            if(turn == "P2")
+            {
+                // item fonts
+                dstrect.x = 160;
+                dstrect.y = 575;
+                dstrect.w = textArr[POTIONS2].w / 2;
+                dstrect.h = textArr[POTIONS2].h / 2;
+                SDL_RenderCopy(renderer, textArr[POTIONS2].textTex, NULL, &dstrect);
+                
+                dstrect.x = 350;
+                dstrect.y = 575;
+                dstrect.w = textArr[FULL_RESTORES2].w / 2; 
+                dstrect.h = textArr[FULL_RESTORES2].h / 2;
+                SDL_RenderCopy(renderer, textArr[FULL_RESTORES2].textTex, NULL, &dstrect);
+
+                dstrect.x = 160;
+                dstrect.y = 600;
+                dstrect.w = textArr[SODA_POPS2].w / 2;
+                dstrect.h = textArr[SODA_POPS2].h / 2;
+                SDL_RenderCopy(renderer, textArr[SODA_POPS2].textTex, NULL, &dstrect);
+            }
+        }
+
+        // IM pretty sure this works now vvvv
+        if(active1 == 0 && turn == "P1" && menuState == "fightMenu") // chikorita Moves
+        {   
+            dstrect.x = 150;
+            dstrect.y = 575;
+            dstrect.w = textArr[TACKLE].w / 3;
+            dstrect.h = textArr[TACKLE].h / 3;
+            SDL_RenderCopy(renderer, textArr[TACKLE].textTex, NULL, &dstrect);
+
+            dstrect.x = 350;
+            dstrect.y = 575;
+            dstrect.w = textArr[RAZOR_LEAF].w / 3;
+            dstrect.h = textArr[RAZOR_LEAF].h / 3;
+            SDL_RenderCopy(renderer, textArr[RAZOR_LEAF].textTex, NULL, &dstrect);
+
+            dstrect.x = 150;
+            dstrect.y = 625;
+            dstrect.w = textArr[MAGICAL_LEAF].w / 3;
+            dstrect.h = textArr[MAGICAL_LEAF].h / 3;
+            SDL_RenderCopy(renderer, textArr[MAGICAL_LEAF].textTex, NULL, &dstrect);
+
+            dstrect.x = 350;
+            dstrect.y = 625;
+            dstrect.w = textArr[BODY_SLAM].w / 3;
+            dstrect.h = textArr[BODY_SLAM].h / 3;
+            SDL_RenderCopy(renderer, textArr[BODY_SLAM].textTex, NULL, &dstrect);
+            
+        }
+        if(active1 == 1 && turn == "P1" && menuState == "fightMenu") // Totodile Moves
+        {   
+            dstrect.x = 150;
+            dstrect.y = 575;
+            dstrect.w = textArr[SCRATCH].w / 3;
+            dstrect.h = textArr[SCRATCH].h / 3;
+            SDL_RenderCopy(renderer, textArr[SCRATCH].textTex, NULL, &dstrect);
+
+            dstrect.x = 350;
+            dstrect.y = 575;
+            dstrect.w = textArr[WATER_GUN].w / 3;
+            dstrect.h = textArr[WATER_GUN].h / 3;
+            SDL_RenderCopy(renderer, textArr[WATER_GUN].textTex, NULL, &dstrect);
+
+            dstrect.x = 150;
+            dstrect.y = 625;
+            dstrect.w = textArr[SLASH].w / 3;
+            dstrect.h = textArr[SLASH].h / 3;
+            SDL_RenderCopy(renderer, textArr[SLASH].textTex, NULL, &dstrect);
+
+            dstrect.x = 350;
+            dstrect.y = 625;
+            dstrect.w = textArr[AQUA_TAIL].w / 3;
+            dstrect.h = textArr[AQUA_TAIL].h / 3;
+            SDL_RenderCopy(renderer, textArr[AQUA_TAIL].textTex, NULL, &dstrect);
+        }
+        if(active1 == 2 && turn == "P1" && menuState == "fightMenu") // Cyndaquil Moves
+        {   
+            dstrect.x = 150;
+            dstrect.y = 575;
+            dstrect.w = textArr[EMBER].w / 3;
+            dstrect.h = textArr[EMBER].h / 3;
+            SDL_RenderCopy(renderer, textArr[EMBER].textTex, NULL, &dstrect);
+
+            dstrect.x = 350;
+            dstrect.y = 575;
+            dstrect.w = textArr[QUICK_ATTACK].w / 3;
+            dstrect.h = textArr[QUICK_ATTACK].h / 3;
+            SDL_RenderCopy(renderer, textArr[QUICK_ATTACK].textTex, NULL, &dstrect);
+
+            dstrect.x = 150;
+            dstrect.y = 625;
+            dstrect.w = textArr[FLAME_WHEEL].w / 3;
+            dstrect.h = textArr[FLAME_WHEEL].h / 3;
+            SDL_RenderCopy(renderer, textArr[FLAME_WHEEL].textTex, NULL, &dstrect);
+
+            dstrect.x = 350;
+            dstrect.y = 625;
+            dstrect.w = textArr[DOUBLE_EDGE].w / 3;
+            dstrect.h = textArr[DOUBLE_EDGE].h / 3;
+            SDL_RenderCopy(renderer, textArr[DOUBLE_EDGE].textTex, NULL, &dstrect);
+        }
+        if(active2 == 0 && turn == "P2" && menuState == "fightMenu") // Bulbasaur Moves
+        {   
+            dstrect.x = 150;
+            dstrect.y = 575;
+            dstrect.w = textArr[VINE_WHIP].w / 3;
+            dstrect.h = textArr[VINE_WHIP].h / 3;
+            SDL_RenderCopy(renderer, textArr[VINE_WHIP].textTex, NULL, &dstrect);
+
+            dstrect.x = 350;
+            dstrect.y = 575;
+            dstrect.w = textArr[TAKE_DOWN].w / 3;
+            dstrect.h = textArr[TAKE_DOWN].h / 3;
+            SDL_RenderCopy(renderer, textArr[TAKE_DOWN].textTex, NULL, &dstrect);
+
+            dstrect.x = 150;
+            dstrect.y = 625;
+            dstrect.w = textArr[POWER_WHIP].w / 3;
+            dstrect.h = textArr[POWER_WHIP].h / 3;
+            SDL_RenderCopy(renderer, textArr[POWER_WHIP].textTex, NULL, &dstrect);
+
+            dstrect.x = 350;
+            dstrect.y = 625;
+            dstrect.w = textArr[FACADE].w / 3;
+            dstrect.h = textArr[FACADE].h / 3;
+            SDL_RenderCopy(renderer, textArr[FACADE].textTex, NULL, &dstrect);
+        }
+        if(active2 == 1 && turn == "P2" && menuState == "fightMenu") // Squirtle Moves
+        {   
+            dstrect.x = 150;
+            dstrect.y = 575;
+            dstrect.w = textArr[RAPID_SPIN].w / 3;
+            dstrect.h = textArr[RAPID_SPIN].h / 3;
+            SDL_RenderCopy(renderer, textArr[RAPID_SPIN].textTex, NULL, &dstrect);
+
+            dstrect.x = 350;
+            dstrect.y = 575;
+            dstrect.w = textArr[WATER_PULSE].w / 3;
+            dstrect.h = textArr[WATER_PULSE].h / 3;
+            SDL_RenderCopy(renderer, textArr[WATER_PULSE].textTex, NULL, &dstrect);
+
+            dstrect.x = 150;
+            dstrect.y = 625;
+            dstrect.w = textArr[HYDRO_PUMP].w / 3;
+            dstrect.h = textArr[HYDRO_PUMP].h / 3;
+            SDL_RenderCopy(renderer, textArr[HYDRO_PUMP].textTex, NULL, &dstrect);
+
+            dstrect.x = 350;
+            dstrect.y = 625;
+            dstrect.w = textArr[AQUA_JET].w / 3;
+            dstrect.h = textArr[AQUA_JET].h / 3;
+            SDL_RenderCopy(renderer, textArr[AQUA_JET].textTex, NULL, &dstrect);
+        }
+        if(active2 == 2 && turn == "P2" && menuState == "fightMenu") // Charmander Moves
+        {   
+            dstrect.x = 150;
+            dstrect.y = 575;
+            dstrect.w = textArr[FIRE_FANG].w / 3;
+            dstrect.h = textArr[FIRE_FANG].h / 3;
+            SDL_RenderCopy(renderer, textArr[FIRE_FANG].textTex, NULL, &dstrect);
+
+            dstrect.x = 350;
+            dstrect.y = 575;
+            dstrect.w = textArr[FLAMETHROWER].w / 3;
+            dstrect.h = textArr[FLAMETHROWER].h / 3;
+            SDL_RenderCopy(renderer, textArr[FLAMETHROWER].textTex, NULL, &dstrect);
+
+            dstrect.x = 150;
+            dstrect.y = 625;
+            dstrect.w = textArr[FALSE_SWIPE].w / 3;
+            dstrect.h = textArr[FALSE_SWIPE].h / 3;
+            SDL_RenderCopy(renderer, textArr[FALSE_SWIPE].textTex, NULL, &dstrect);
+
+            dstrect.x = 350;
+            dstrect.y = 625;
+            dstrect.w = textArr[FLARE_BLITZ].w / 3;
+            dstrect.h = textArr[FLARE_BLITZ].h / 3;
+            SDL_RenderCopy(renderer, textArr[FLARE_BLITZ].textTex, NULL, &dstrect);
+        }
+        // IM pretty sure this works now ^^^^
+
+        // swap menu
+        if(menuState == "swapMenu" && turn == "P1")
+        {
+            if(!team1[0].getIsActive() && !team1[0].getDead())
+            {
+                dstrect.x = 350;
+                dstrect.y = 575;
+                dstrect.w = textArr[CHIKORITA_NAME].w / 1;
+                dstrect.h = textArr[CHIKORITA_NAME].h / 1;
+                SDL_RenderCopy(renderer, textArr[CHIKORITA_NAME].textTex, NULL, &dstrect);
+            }
+            if(!team1[1].getIsActive() && !team1[1].getDead())
+            {
+                dstrect.x = 500;
+                dstrect.y = 630;
+                dstrect.w = textArr[TOTODILE_NAME].w / 1;
+                dstrect.h = textArr[TOTODILE_NAME].h / 1;
+                SDL_RenderCopy(renderer, textArr[TOTODILE_NAME].textTex, NULL, &dstrect);
+            }
+            if(!team1[2].getIsActive() && !team1[2].getDead())
+            {
+                dstrect.x = 620;
+                dstrect.y = 575;
+                dstrect.w = textArr[CYNDAQUIL_NAME].w / 1;
+                dstrect.h = textArr[CYNDAQUIL_NAME].h / 1;
+                SDL_RenderCopy(renderer, textArr[CYNDAQUIL_NAME].textTex, NULL, &dstrect);
+            }
+        }
+        if(menuState == "swapMenu" && turn == "P2")
+        {
+            if(!team2[0].getIsActive() && !team2[0].getDead())
+            {
+                dstrect.x = 350;
+                dstrect.y = 575;
+                dstrect.w = textArr[BULBASAUR_NAME].w / 1;
+                dstrect.h = textArr[BULBASAUR_NAME].h / 1;
+                SDL_RenderCopy(renderer, textArr[BULBASAUR_NAME].textTex, NULL, &dstrect);
+            }
+            if(!team2[1].getIsActive() && !team2[1].getDead())
+            {
+                dstrect.x = 500;
+                dstrect.y = 630;
+                dstrect.w = textArr[SQUIRTLE_NAME].w / 1;
+                dstrect.h = textArr[SQUIRTLE_NAME].h / 1;
+                SDL_RenderCopy(renderer, textArr[SQUIRTLE_NAME].textTex, NULL, &dstrect);
+            }
+            if(!team2[2].getIsActive() && !team2[2].getDead())
+            {
+                dstrect.x = 620;
+                dstrect.y = 575;
+                dstrect.w = textArr[CHARMANDER_NAME].w / 1;
+                dstrect.h = textArr[CHARMANDER_NAME].h / 1;
+                SDL_RenderCopy(renderer, textArr[CHARMANDER_NAME].textTex, NULL, &dstrect);
+            }
+        }
     }
-
-    // IM pretty sure this works now vvvv
-    if(active1 == 0 && turn == "P1" && menuState == "fightMenu") // chikorita Moves
-    {   
-        dstrect.x = 150;
-        dstrect.y = 575;
-        dstrect.w = textArr[TACKLE].w / 3;
-        dstrect.h = textArr[TACKLE].h / 3;
-        SDL_RenderCopy(renderer, textArr[TACKLE].textTex, NULL, &dstrect);
-
-        dstrect.x = 350;
-        dstrect.y = 575;
-        dstrect.w = textArr[RAZOR_LEAF].w / 3;
-        dstrect.h = textArr[RAZOR_LEAF].h / 3;
-        SDL_RenderCopy(renderer, textArr[RAZOR_LEAF].textTex, NULL, &dstrect);
-
-        dstrect.x = 150;
-        dstrect.y = 625;
-        dstrect.w = textArr[MAGICAL_LEAF].w / 3;
-        dstrect.h = textArr[MAGICAL_LEAF].h / 3;
-        SDL_RenderCopy(renderer, textArr[MAGICAL_LEAF].textTex, NULL, &dstrect);
-
-        dstrect.x = 350;
-        dstrect.y = 625;
-        dstrect.w = textArr[BODY_SLAM].w / 3;
-        dstrect.h = textArr[BODY_SLAM].h / 3;
-        SDL_RenderCopy(renderer, textArr[BODY_SLAM].textTex, NULL, &dstrect);
-        
-    }
-    if(active1 == 1 && turn == "P1" && menuState == "fightMenu") // Totodile Moves
-    {   
-        dstrect.x = 150;
-        dstrect.y = 575;
-        dstrect.w = textArr[SCRATCH].w / 3;
-        dstrect.h = textArr[SCRATCH].h / 3;
-        SDL_RenderCopy(renderer, textArr[SCRATCH].textTex, NULL, &dstrect);
-
-        dstrect.x = 350;
-        dstrect.y = 575;
-        dstrect.w = textArr[WATER_GUN].w / 3;
-        dstrect.h = textArr[WATER_GUN].h / 3;
-        SDL_RenderCopy(renderer, textArr[WATER_GUN].textTex, NULL, &dstrect);
-
-        dstrect.x = 150;
-        dstrect.y = 625;
-        dstrect.w = textArr[SLASH].w / 3;
-        dstrect.h = textArr[SLASH].h / 3;
-        SDL_RenderCopy(renderer, textArr[SLASH].textTex, NULL, &dstrect);
-
-        dstrect.x = 350;
-        dstrect.y = 625;
-        dstrect.w = textArr[AQUA_TAIL].w / 3;
-        dstrect.h = textArr[AQUA_TAIL].h / 3;
-        SDL_RenderCopy(renderer, textArr[AQUA_TAIL].textTex, NULL, &dstrect);
-    }
-    if(active1 == 2 && turn == "P1" && menuState == "fightMenu") // Cyndaquil Moves
-    {   
-        dstrect.x = 150;
-        dstrect.y = 575;
-        dstrect.w = textArr[EMBER].w / 3;
-        dstrect.h = textArr[EMBER].h / 3;
-        SDL_RenderCopy(renderer, textArr[EMBER].textTex, NULL, &dstrect);
-
-        dstrect.x = 350;
-        dstrect.y = 575;
-        dstrect.w = textArr[QUICK_ATTACK].w / 3;
-        dstrect.h = textArr[QUICK_ATTACK].h / 3;
-        SDL_RenderCopy(renderer, textArr[QUICK_ATTACK].textTex, NULL, &dstrect);
-
-        dstrect.x = 150;
-        dstrect.y = 625;
-        dstrect.w = textArr[FLAME_WHEEL].w / 3;
-        dstrect.h = textArr[FLAME_WHEEL].h / 3;
-        SDL_RenderCopy(renderer, textArr[FLAME_WHEEL].textTex, NULL, &dstrect);
-
-        dstrect.x = 350;
-        dstrect.y = 625;
-        dstrect.w = textArr[DOUBLE_EDGE].w / 3;
-        dstrect.h = textArr[DOUBLE_EDGE].h / 3;
-        SDL_RenderCopy(renderer, textArr[DOUBLE_EDGE].textTex, NULL, &dstrect);
-    }
-    if(active2 == 0 && turn == "P2" && menuState == "fightMenu") // Bulbasaur Moves
-    {   
-        dstrect.x = 150;
-        dstrect.y = 575;
-        dstrect.w = textArr[VINE_WHIP].w / 3;
-        dstrect.h = textArr[VINE_WHIP].h / 3;
-        SDL_RenderCopy(renderer, textArr[VINE_WHIP].textTex, NULL, &dstrect);
-
-        dstrect.x = 350;
-        dstrect.y = 575;
-        dstrect.w = textArr[TAKE_DOWN].w / 3;
-        dstrect.h = textArr[TAKE_DOWN].h / 3;
-        SDL_RenderCopy(renderer, textArr[TAKE_DOWN].textTex, NULL, &dstrect);
-
-        dstrect.x = 150;
-        dstrect.y = 625;
-        dstrect.w = textArr[POWER_WHIP].w / 3;
-        dstrect.h = textArr[POWER_WHIP].h / 3;
-        SDL_RenderCopy(renderer, textArr[POWER_WHIP].textTex, NULL, &dstrect);
-
-        dstrect.x = 350;
-        dstrect.y = 625;
-        dstrect.w = textArr[FACADE].w / 3;
-        dstrect.h = textArr[FACADE].h / 3;
-        SDL_RenderCopy(renderer, textArr[FACADE].textTex, NULL, &dstrect);
-    }
-    if(active2 == 1 && turn == "P2" && menuState == "fightMenu") // Squirtle Moves
-    {   
-        dstrect.x = 150;
-        dstrect.y = 575;
-        dstrect.w = textArr[RAPID_SPIN].w / 3;
-        dstrect.h = textArr[RAPID_SPIN].h / 3;
-        SDL_RenderCopy(renderer, textArr[RAPID_SPIN].textTex, NULL, &dstrect);
-
-        dstrect.x = 350;
-        dstrect.y = 575;
-        dstrect.w = textArr[WATER_PULSE].w / 3;
-        dstrect.h = textArr[WATER_PULSE].h / 3;
-        SDL_RenderCopy(renderer, textArr[WATER_PULSE].textTex, NULL, &dstrect);
-
-        dstrect.x = 150;
-        dstrect.y = 625;
-        dstrect.w = textArr[HYDRO_PUMP].w / 3;
-        dstrect.h = textArr[HYDRO_PUMP].h / 3;
-        SDL_RenderCopy(renderer, textArr[HYDRO_PUMP].textTex, NULL, &dstrect);
-
-        dstrect.x = 350;
-        dstrect.y = 625;
-        dstrect.w = textArr[AQUA_JET].w / 3;
-        dstrect.h = textArr[AQUA_JET].h / 3;
-        SDL_RenderCopy(renderer, textArr[AQUA_JET].textTex, NULL, &dstrect);
-    }
-    if(active2 == 2 && turn == "P2" && menuState == "fightMenu") // Charmander Moves
-    {   
-        dstrect.x = 150;
-        dstrect.y = 575;
-        dstrect.w = textArr[FIRE_FANG].w / 3;
-        dstrect.h = textArr[FIRE_FANG].h / 3;
-        SDL_RenderCopy(renderer, textArr[FIRE_FANG].textTex, NULL, &dstrect);
-
-        dstrect.x = 350;
-        dstrect.y = 575;
-        dstrect.w = textArr[FLAMETHROWER].w / 3;
-        dstrect.h = textArr[FLAMETHROWER].h / 3;
-        SDL_RenderCopy(renderer, textArr[FLAMETHROWER].textTex, NULL, &dstrect);
-
-        dstrect.x = 150;
-        dstrect.y = 625;
-        dstrect.w = textArr[FALSE_SWIPE].w / 3;
-        dstrect.h = textArr[FALSE_SWIPE].h / 3;
-        SDL_RenderCopy(renderer, textArr[FALSE_SWIPE].textTex, NULL, &dstrect);
-
-        dstrect.x = 350;
-        dstrect.y = 625;
-        dstrect.w = textArr[FLARE_BLITZ].w / 3;
-        dstrect.h = textArr[FLARE_BLITZ].h / 3;
-        SDL_RenderCopy(renderer, textArr[FLARE_BLITZ].textTex, NULL, &dstrect);
-    }
-    // IM pretty sure this works now ^^^^
-
-    // swap menu
-    if(menuState == "swapMenu" && turn == "P1")
-    {
-        dstrect.x = 350;
-        dstrect.y = 575;
-        dstrect.w = textArr[CHIKORITA_NAME].w / 1;
-        dstrect.h = textArr[CHIKORITA_NAME].h / 1;
-        SDL_RenderCopy(renderer, textArr[CHIKORITA_NAME].textTex, NULL, &dstrect);
-
-        dstrect.x = 500;
-        dstrect.y = 630;
-        dstrect.w = textArr[TOTODILE_NAME].w / 1;
-        dstrect.h = textArr[TOTODILE_NAME].h / 1;
-        SDL_RenderCopy(renderer, textArr[TOTODILE_NAME].textTex, NULL, &dstrect);
-
-        dstrect.x = 620;
-        dstrect.y = 575;
-        dstrect.w = textArr[CYNDAQUIL_NAME].w / 1;
-        dstrect.h = textArr[CYNDAQUIL_NAME].h / 1;
-        SDL_RenderCopy(renderer, textArr[CYNDAQUIL_NAME].textTex, NULL, &dstrect);
-    }
-
 
 
 
@@ -1244,7 +1818,7 @@ void Game::kill()
         SDL_DestroyTexture(playerTwo[i]);
     }
 
-    for (int i = 0; i < 73; i++) {
+    for (int i = 0; i < 53; i++) {
         SDL_DestroyTexture(textArr[i].textTex);
     }
     for(int i = 0; i < 3; i++)
@@ -1271,10 +1845,8 @@ void Game::kill()
 }
 
 void Game::initFont() {
-    font = TTF_OpenFont("fonts/FreeSerif.ttf", 40);
     if(font == NULL) std::cout << "Error Loading Font" << TTF_GetError() << std::endl;
-    
-    for (int i = 0; i < 49; i++) {
+    for (int i = 0; i < 53; i++) {
         image = TTF_RenderText_Blended(font, strArr[i], (SDL_Color){0, 0, 0, 255});
         // std::cout << strArr[i] << std::endl;
         textArr[i].textTex = SDL_CreateTextureFromSurface(renderer, image);
@@ -1283,6 +1855,7 @@ void Game::initFont() {
             std::cout << "Size Fail\n";
         }  
     }
+    std::cout << "ran" << std::endl;
 }
 // void Game::printArr(const char *arr[], int arr_size)
 // {

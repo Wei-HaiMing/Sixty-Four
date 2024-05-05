@@ -16,9 +16,10 @@ Pokemon::Pokemon(){
     health = 0;
     dead = false;
     isActive = false;
+    fullHealth = 0;
 }
 
-Pokemon::Pokemon(string name, string poketype, Move movearr[], string resist, int health, bool dead, bool isActive){
+Pokemon::Pokemon(string name, string poketype, Move movearr[], string resist, int health, bool dead, bool isActive, int fullHealth){
     Pokemon::setName(name);
     Pokemon::setPokeType(poketype);
     Pokemon::setMove(movearr);
@@ -27,6 +28,7 @@ Pokemon::Pokemon(string name, string poketype, Move movearr[], string resist, in
     Pokemon::setHP(health);
     setDead(dead);
     setIsActive(isActive);
+    setFullHealth(fullHealth);
 }
 
 Pokemon::~Pokemon()
@@ -34,7 +36,10 @@ Pokemon::~Pokemon()
     // SDL_FreeSurface(pokeSurf);
     std::cout << "Pokemon Deconstructor Ran\n";
 }
-
+void Pokemon::setFullHealth(int fullHealth)
+{
+    this->fullHealth = fullHealth;
+}
 void Pokemon::setIsActive(bool isActive)
 {
     this->isActive = isActive;
@@ -102,6 +107,10 @@ bool Pokemon::getIsActive()
 
 string Pokemon::getResistance(){
     return resistance;
+}
+int Pokemon::getFullHealth()
+{
+    return fullHealth;
 }
 
 void Pokemon::pokeprint()const{

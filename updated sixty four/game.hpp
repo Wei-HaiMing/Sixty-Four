@@ -60,13 +60,17 @@ class Game
         void kill();
         void countFPS();
         void initFont();
+        void heal(std::string whomst);
+        void attack();
+        void swap();
         // void printArr(const char*, int);
 
 
     protected:
         int arrowXPos, arrowYPos;
+        int p1SwapTo, p2SwapTo;
         int arrowShiftRt, arrowShiftLt, arrowShiftUp, arrowShiftDn, arrowShiftX, arrowShiftY;
-
+        bool p1Done, p2Done;
         std::string p1Choice, p2Choice, menuState, turn, controlMenu;
         SDL_Rect spriteRect1; // sprite rectangle for player 1's pokemon
         SDL_Rect spriteRect2; // sprite rectangle for player 2's pokemon
@@ -151,16 +155,18 @@ class Game
             AQUA_JET = 46,
             FALSE_SWIPE = 47,
             FLARE_BLITZ = 48,
-
-
+            P1_SWAP = 49,
+            P2_SWAP = 50,
+            P1_HEAL = 51,
+            P2_HEAL = 52
         };
         struct textData{
             SDL_Texture* textTex;
             int w;
             int h;
         };
-        textData textArr[49];
-        const char* strArr[49] = {team1[0].getName().c_str(), team1[1].getName().c_str(), 
+        textData textArr[53];
+        const char* strArr[53] = {team1[0].getName().c_str(), team1[1].getName().c_str(), 
                 team1[2].getName().c_str(), team2[0].getName().c_str(), 
                 team2[1].getName().c_str(), team2[2].getName().c_str(), std::to_string(team1[0].getHP()).c_str(), 
                 std::to_string(team1[1].getHP()).c_str(), std::to_string(team1[2].getHP()).c_str(), std::to_string(team2[0].getHP()).c_str(),
@@ -173,7 +179,7 @@ class Game
                 "", "", "", "", "", "", "Grass", "Water", "Fire",
                 team1[2].getMove(0).getName().c_str(), team2[0].getMove(0).getName().c_str(), team2[0].getMove(2).getName().c_str(), team2[0].getMove(3).getName().c_str(), 
                 team2[1].getMove(0).getName().c_str(), team2[1].getMove(1).getName().c_str(), team2[1].getMove(3).getName().c_str(), team2[2].getMove(0).getName().c_str(), 
-                team2[2].getMove(1).getName().c_str()
+                team2[2].getMove(1).getName().c_str(), "Player 1 switched Pokemon!", "Player 2 switched Pokemon!", "Player 1 healed their active Pokemon!", "Player 2 healed their active Pokemon!"
         };
         // const std::string strArr[38] = {team1[0].getName().c_str(), team1[1].getName().c_str(), 
         //         team1[2].getName().c_str(), team2[0].getName().c_str(), 
