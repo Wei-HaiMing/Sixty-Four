@@ -158,15 +158,39 @@ class Game
             P1_SWAP = 49,
             P2_SWAP = 50,
             P1_HEAL = 51,
-            P2_HEAL = 52
+            P2_HEAL = 52,
+            CHIK_TACKLE_1 = 53,
+            CHIK_RAZOR_2 = 54,
+            CHIK_MAGIC_3 = 55,
+            CHIK_SLAM_4 = 56,
+            TOTO_SCRATCH_1 = 57,
+            TOTO_GUN_2 = 58,
+            TOTO_SLASH_3 = 59,
+            TOTO_TAIL_4 = 60,
+            CYNDA_EMBER_1 = 61,
+            CYNDA_QUICK_2 = 62,
+            CYNDA_WHEEL_3 = 63,
+            CYNDA_EDGE_4 = 64,
+            BULBA_VINE_1 = 65,
+            BULBA_TAKE_2 = 66,
+            BULBA_POWER_3 = 67,
+            BULBA_FACADE_4 = 68,
+            SQUI_SPIN_1 = 69,
+            SQUI_PULSE_2 = 70,
+            SQUI_PUMP_3 = 71,
+            SQUI_JET_4 = 72,
+            CHARM_FANG_1 = 73,
+            CHARM_THROWER_2 = 74,
+            CHARM_SWIPE_3 = 75,
+            CHARM_BLITZ_4 = 76
         };
         struct textData{
             SDL_Texture* textTex;
             int w;
             int h;
         };
-        textData textArr[53];
-        const char* strArr[53] = {team1[0].getName().c_str(), team1[1].getName().c_str(), 
+        textData textArr[77];
+        const char* strArr[77] = {team1[0].getName().c_str(), team1[1].getName().c_str(), 
                 team1[2].getName().c_str(), team2[0].getName().c_str(), 
                 team2[1].getName().c_str(), team2[2].getName().c_str(), std::to_string(team1[0].getHP()).c_str(), 
                 std::to_string(team1[1].getHP()).c_str(), std::to_string(team1[2].getHP()).c_str(), std::to_string(team2[0].getHP()).c_str(),
@@ -179,7 +203,13 @@ class Game
                 "", "", "", "", "", "", "Grass", "Water", "Fire",
                 team1[2].getMove(0).getName().c_str(), team2[0].getMove(0).getName().c_str(), team2[0].getMove(2).getName().c_str(), team2[0].getMove(3).getName().c_str(), 
                 team2[1].getMove(0).getName().c_str(), team2[1].getMove(1).getName().c_str(), team2[1].getMove(3).getName().c_str(), team2[2].getMove(0).getName().c_str(), 
-                team2[2].getMove(1).getName().c_str(), "Player 1 switched Pokemon!", "Player 2 switched Pokemon!", "Player 1 healed their active Pokemon!", "Player 2 healed their active Pokemon!"
+                team2[2].getMove(1).getName().c_str(), "Player 1 switched Pokemon!", "Player 2 switched Pokemon!", "Player 1 healed their active Pokemon!", "Player 2 healed their active Pokemon!",
+                "Chikorita used Tackle!", "Chikorita used Razor Leaf!", "Chikorita used Magical Leaf!", "Chikorita used Body Slam!",
+                "Totodile used Scratch!", "Totodile used Water Gun!", "Totodile used Slash!", "Totodile used Aqua Tail!",
+                "Cyndaquil used Ember!", "Cyndaquil used Quick Attack!", "Cyndaquil used Flame Wheel!", "Cyndaquil used Double Edge!",
+                "Bulbasaur used Vine Whip!", "Bulbasaur used Take Down!", "Bulbasaur used Power Whip!", "Bulbasaur used Facade!",
+                "Squirtle used Rapid Spin!", "Squirtle used Water Pulse!", "Squirtle used Hydro Pump!", "Squirtle used Aqua Jet!",
+                "Charmander used Fire Fang!", "Charmander used Flamethrower!", "Charmander used False Swipe!", "Charmander used Flare Blitz!"
         };
         // const std::string strArr[38] = {team1[0].getName().c_str(), team1[1].getName().c_str(), 
         //         team1[2].getName().c_str(), team2[0].getName().c_str(), 
