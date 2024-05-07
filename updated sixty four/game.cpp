@@ -2275,6 +2275,7 @@ void Game::draw()
                 menuState = "start";
             }
         }
+        // COMMENT THIS OUT IF YOU'RE GOING TO RUN WHAT WE GOT SO FAR vvvvvv
         if(menuState == "swapMenu" && turn == "P1")
         {
             if(!team1[0].getIsActive() && !team1[0].getDead())
@@ -2329,6 +2330,7 @@ void Game::draw()
                 SDL_RenderCopy(renderer, textArr[CHARMANDER_NAME].textTex, NULL, &dstrect);
             }
         }
+        // COMMENT THIS OUT IF YOU'RE GOING TO RUN WHAT WE GOT SO FAR ^^^^^
     }
     else
     {
