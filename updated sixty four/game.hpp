@@ -61,12 +61,14 @@ class Game
         void countFPS();
         void initFont();
         void heal(std::string whomst);
-        void attack();
+        void attack(std::string whomst);
         void swap();
+        void assignWinner();
         // void printArr(const char*, int);
 
 
     protected:
+        bool p1isSuperEffective, p2isSuperEffective, p1isNotVeryEffective, p2isNotVeryEffective;
         int arrowXPos, arrowYPos;
         int p1SwapTo, p2SwapTo;
         int arrowShiftRt, arrowShiftLt, arrowShiftUp, arrowShiftDn, arrowShiftX, arrowShiftY;
@@ -182,15 +184,17 @@ class Game
             CHARM_FANG_1 = 73,
             CHARM_THROWER_2 = 74,
             CHARM_SWIPE_3 = 75,
-            CHARM_BLITZ_4 = 76
+            CHARM_BLITZ_4 = 76,
+            P1_WIN = 77,
+            P2_WIN = 78
         };
         struct textData{
             SDL_Texture* textTex;
             int w;
             int h;
         };
-        textData textArr[77];
-        const char* strArr[77] = {team1[0].getName().c_str(), team1[1].getName().c_str(), 
+        textData textArr[79];
+        const char* strArr[79] = {team1[0].getName().c_str(), team1[1].getName().c_str(), 
                 team1[2].getName().c_str(), team2[0].getName().c_str(), 
                 team2[1].getName().c_str(), team2[2].getName().c_str(), std::to_string(team1[0].getHP()).c_str(), 
                 std::to_string(team1[1].getHP()).c_str(), std::to_string(team1[2].getHP()).c_str(), std::to_string(team2[0].getHP()).c_str(),
@@ -209,7 +213,7 @@ class Game
                 "Cyndaquil used Ember!", "Cyndaquil used Quick Attack!", "Cyndaquil used Flame Wheel!", "Cyndaquil used Double Edge!",
                 "Bulbasaur used Vine Whip!", "Bulbasaur used Take Down!", "Bulbasaur used Power Whip!", "Bulbasaur used Facade!",
                 "Squirtle used Rapid Spin!", "Squirtle used Water Pulse!", "Squirtle used Hydro Pump!", "Squirtle used Aqua Jet!",
-                "Charmander used Fire Fang!", "Charmander used Flamethrower!", "Charmander used False Swipe!", "Charmander used Flare Blitz!"
+                "Charmander used Fire Fang!", "Charmander used Flamethrower!", "Charmander used False Swipe!", "Charmander used Flare Blitz!", "Player 1 won the battle!", "Player 2 won the battle!"
         };
         // const std::string strArr[38] = {team1[0].getName().c_str(), team1[1].getName().c_str(), 
         //         team1[2].getName().c_str(), team2[0].getName().c_str(), 

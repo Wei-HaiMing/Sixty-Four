@@ -23,6 +23,10 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     this->window = window;
     setRunning(true);
     setFullscreen(0);
+    p1isSuperEffective = false;
+    p2isSuperEffective = false;
+    p1isNotVeryEffective = false;
+    p2isNotVeryEffective = false;
     userInput = 0;
     active1 = 0;
     active2 = 0;
@@ -35,7 +39,7 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     SDL_SetWindowTitle(window, "SDL2 Window");
     SDL_ShowCursor(1);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
-    font = TTF_OpenFont("fonts/FreeSerif.ttf", 40);
+    font = TTF_OpenFont("fonts/PokemonGb-RAeo (1).ttf", 30);
 
     inventory1.setFullRestores(1);
     inventory1.setPotions(3);
@@ -169,27 +173,27 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     totodileMoves[2] = slash;
     totodileMoves[3] = aquaTail;
 
-    cyndaquilMoves[0] = doubleEdge;
-    cyndaquilMoves[1] = ember;
-    cyndaquilMoves[2] = quickAttack;
-    cyndaquilMoves[3] = flameWheel;
+    cyndaquilMoves[0] = ember;
+    cyndaquilMoves[1] = quickAttack;
+    cyndaquilMoves[2] = flameWheel;
+    cyndaquilMoves[3] = doubleEdge;
 
-    bulbasaurMoves[0] = takeDown;
-    bulbasaurMoves[1] = vineWhip;
+    bulbasaurMoves[0] = vineWhip;
+    bulbasaurMoves[1] = takeDown;
     bulbasaurMoves[2] = powerWhip;
     bulbasaurMoves[3] = facade;
 
     squirtleMoves[0] = rapidSpin;
-    squirtleMoves[1] = hydroPump;
-    squirtleMoves[2] = waterPulse;
+    squirtleMoves[1] = waterPulse;
+    squirtleMoves[2] = hydroPump;
     squirtleMoves[3] = aquaJet;
 
-    charmanderMoves[0] = falseSwipe;
-    charmanderMoves[1] = flareBlitz;
-    charmanderMoves[2] = fireFang;
-    charmanderMoves[3] = flameThrower;
+    charmanderMoves[0] = fireFang;
+    charmanderMoves[1] = flameThrower;
+    charmanderMoves[2] = falseSwipe;
+    charmanderMoves[3] = flareBlitz;
 
-    team1[0].setHP(200);
+    team1[0].setHP(294);
     team1[0].setFullHealth(294);
     team1[0].setMove(chikoritaMoves);
     team1[0].setName("Chikorita");
@@ -267,19 +271,19 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     strArr[CHARMANDER_NAME] = temp9.c_str();
 
     // setting team 1 hp
-    std::string temp10 = to_string(team1[0].getHP());
+    std::string temp10 = to_string(team1[0].getHP()) + "/" + to_string(team1[0].getFullHealth());
     strArr[CHIKORITA_HP] = temp10.c_str();
-    std::string temp11 = to_string(team1[1].getHP());
+    std::string temp11 = to_string(team1[1].getHP()) + "/" + to_string(team1[1].getFullHealth());
     strArr[TOTODILE_HP] = temp11.c_str();
-    std::string temp12 = to_string(team1[2].getHP());
+    std::string temp12 = to_string(team1[2].getHP()) + "/" + to_string(team1[2].getFullHealth());
     strArr[CYNDAQUIL_HP] = temp12.c_str();
 
     // setting team 2 hp
-    std::string temp13 = to_string(team2[0].getHP());
+    std::string temp13 = to_string(team2[0].getHP()) + "/" + to_string(team2[0].getFullHealth());
     strArr[BULBASAUR_HP] = temp13.c_str();
-    std::string temp14 = to_string(team2[1].getHP());
+    std::string temp14 = to_string(team2[1].getHP()) + "/" + to_string(team2[1].getFullHealth());
     strArr[SQUIRTLE_HP] = temp14.c_str();
-    std::string temp15 = to_string(team2[2].getHP());
+    std::string temp15 = to_string(team2[2].getHP()) + "/" + to_string(team2[2].getFullHealth());
     strArr[CHARMANDER_HP] = temp15.c_str();
 
     // setting moves
@@ -307,32 +311,32 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     std::string temp23 = team1[1].getMove(3).getName() + "Water";
     strArr[AQUA_TAIL] = temp23.c_str();
 
-    std::string temp24 = team1[2].getMove(1).getName() + "Fire";
+    std::string temp24 = team1[2].getMove(0).getName() + "Fire";
     strArr[EMBER] = temp24.c_str();
 
-    std::string temp25 = team1[2].getMove(2).getName() + "Normal";
+    std::string temp25 = team1[2].getMove(1).getName() + "Normal";
     strArr[QUICK_ATTACK] = temp25.c_str();
 
-    std::string temp26 = team1[2].getMove(3).getName() + "Fire";
+    std::string temp26 = team1[2].getMove(2).getName() + "Fire";
     strArr[FLAME_WHEEL] = temp26.c_str();
 
-    std::string temp27 = team2[0].getMove(1).getName() + "Grass";
+    std::string temp27 = team2[0].getMove(0).getName() + "Grass";
     strArr[VINE_WHIP] = temp27.c_str();
 
-    std::string temp28 = team2[1].getMove(2).getName() + "Water";
+    std::string temp28 = team2[1].getMove(1).getName() + "Water";
     strArr[WATER_PULSE] = temp28.c_str();
 
-    std::string temp29 = team2[2].getMove(2).getName() + "Fire";
+    std::string temp29 = team2[2].getMove(0).getName() + "Fire";
     strArr[FIRE_FANG] = temp29.c_str();
 
-    std::string temp30 = team2[2].getMove(3).getName() + "Fire";
+    std::string temp30 = team2[2].getMove(1).getName() + "Fire";
     strArr[FLAMETHROWER] = temp30.c_str();
 
 
-    std::string temp31 = team1[2].getMove(0).getName() + "Normal";
+    std::string temp31 = team1[2].getMove(3).getName() + "Normal";
     strArr[DOUBLE_EDGE] = temp31.c_str();
     
-    std::string temp32 = team2[0].getMove(0).getName() + "Normal";
+    std::string temp32 = team2[0].getMove(1).getName() + "Normal";
     strArr[TAKE_DOWN] = temp32.c_str();
 
     std::string temp33 = team2[0].getMove(2).getName() + "Grass";
@@ -344,16 +348,16 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     std::string temp35 = team2[1].getMove(0).getName() + "Normal";
     strArr[RAPID_SPIN] = temp35.c_str();
 
-    std::string temp36 = team2[1].getMove(1).getName() + "Water";
+    std::string temp36 = team2[1].getMove(2).getName() + "Water";
     strArr[HYDRO_PUMP] = temp36.c_str();
 
     std::string temp37 = team2[1].getMove(3).getName() + "Water";
     strArr[AQUA_JET] = temp37.c_str();
 
-    std::string temp38 = team2[2].getMove(0).getName() + "Normal";
+    std::string temp38 = team2[2].getMove(2).getName() + "Normal";
     strArr[FALSE_SWIPE] = temp38.c_str();
 
-    std::string temp39 = team2[2].getMove(1).getName() + "Fire";
+    std::string temp39 = team2[2].getMove(3).getName() + "Fire";
     strArr[FLARE_BLITZ] = temp39.c_str();
 
 
@@ -519,6 +523,28 @@ void Game::setTurn(std::string turn)
 }
 // member methods
 
+void Game::assignWinner()
+{
+    if(team1[0].getDead() && team1[1].getDead() && team1[2].getDead())
+    {
+        dstrect.x = 0;
+        dstrect.y = 1;
+        dstrect.w = textArr[P1_WIN].w;
+        dstrect.h = textArr[P1_WIN].h;
+
+        SDL_RenderCopy(renderer, textArr[P1_WIN].textTex, NULL, &dstrect);
+    }
+    else if(team2[0].getDead() && team2[1].getDead() && team2[2].getDead())
+    {
+        dstrect.x = 0;
+        dstrect.y = 1;
+        dstrect.w = textArr[P2_WIN].w;
+        dstrect.h = textArr[P2_WIN].h;
+
+        SDL_RenderCopy(renderer, textArr[P2_WIN].textTex, NULL, &dstrect);
+    }
+}
+
 void Game::heal(std::string whomst)
 {
     if(whomst == "P1")
@@ -568,11 +594,296 @@ void Game::heal(std::string whomst)
         }
     }
 }
-void Game::attack()
+void Game::attack(string whomst)
 {
-    if(turn == "P1")
+    if(whomst == "P1")
     {
-        
+        if(p1Choice == "move1")
+        {
+            // Super Effectives
+            if((team1[active1].getMove(0).getType() == "Grass" && team2[active2].getPokeType() == "Water") || (team1[active1].getMove(0).getType() == "Water" && team2[active2].getPokeType() == "Fire") || (team1[active1].getMove(0).getType() == "Fire" && team2[active2].getPokeType() == "Grass"))
+            {
+                if(team2[active2].getHP() - team1[active1].getMove(0).getDamage() * 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team2[active2].setHP(0);
+                    team2[active2].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(0).getDamage() * 2); // super effective damage
+                }
+                p1isSuperEffective = true;
+            }
+            // Not Very Effectives
+            else if((team1[active1].getMove(0).getType() == team2[active2].getResistance()) || (team1[active1].getMove(0).getType() == team2[active2].getResistance()) || (team1[active1].getMove(0).getType() == team2[active2].getResistance()))
+            {
+                if(team2[active2].getHP() - team1[active1].getMove(0).getDamage() / 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team2[active2].setHP(0);
+                    team2[active2].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(0).getDamage() / 2); // resisted damage
+                }
+                p1isNotVeryEffective = true;
+            }
+            else
+            {
+                team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(0).getDamage());
+                std::cout << team2[active2].getHP() << std::endl;
+            }
+        }
+        if(p1Choice == "move2")
+        {
+            // Super Effectives
+            if((team1[active1].getMove(1).getType() == "Grass" && team2[active2].getPokeType() == "Water") || (team1[active1].getMove(1).getType() == "Water" && team2[active2].getPokeType() == "Fire") || (team1[active1].getMove(1).getType() == "Fire" && team2[active2].getPokeType() == "Grass"))
+            {
+                if(team2[active2].getHP() - team1[active1].getMove(1).getDamage() * 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team2[active2].setHP(0);
+                    team2[active2].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(1).getDamage() * 2); // super effective damage
+                }
+                p1isSuperEffective = true;
+            }
+            // Not Very Effectives
+            else if((team1[active1].getMove(1).getType() == team2[active2].getResistance()) || (team1[active1].getMove(1).getType() == team2[active2].getResistance()) || (team1[active1].getMove(1).getType() == team2[active2].getResistance()))
+            {
+                if(team2[active2].getHP() - team1[active1].getMove(1).getDamage() / 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team2[active2].setHP(0);
+                    team2[active2].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(1).getDamage() / 2); // resisted damage
+                }
+                p1isNotVeryEffective = true;
+            }
+            else
+            {
+                team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(1).getDamage());
+            }
+        }
+        if(p1Choice == "move3")
+        {
+            // Super Effectives
+            if((team1[active1].getMove(2).getType() == "Grass" && team2[active2].getPokeType() == "Water") || (team1[active1].getMove(2).getType() == "Water" && team2[active2].getPokeType() == "Fire") || (team1[active1].getMove(2).getType() == "Fire" && team2[active2].getPokeType() == "Grass"))
+            {
+                if(team2[active2].getHP() - team1[active1].getMove(2).getDamage() * 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team2[active2].setHP(0);
+                    team2[active2].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(2).getDamage() * 2); // super effective damage
+                }
+                p1isSuperEffective = true;
+            }
+            // Not Very Effectives
+            else if((team1[active1].getMove(2).getType() == team2[active2].getResistance()) || (team1[active1].getMove(2).getType() == team2[active2].getResistance()) || (team1[active1].getMove(2).getType() == team2[active2].getResistance()))
+            {
+                if(team2[active2].getHP() - team1[active1].getMove(2).getDamage() / 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team2[active2].setHP(0);
+                    team2[active2].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(2).getDamage() / 2); // resisted damage
+                }
+                p1isNotVeryEffective = true;
+            }
+            else
+            {
+                team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(2).getDamage());
+            }
+        }
+        if(p1Choice == "move4")
+        {
+            // Super Effectives
+            if((team1[active1].getMove(3).getType() == "Grass" && team2[active2].getPokeType() == "Water") || (team1[active1].getMove(3).getType() == "Water" && team2[active2].getPokeType() == "Fire") || (team1[active1].getMove(3).getType() == "Fire" && team2[active2].getPokeType() == "Grass"))
+            {
+                if(team2[active2].getHP() - team1[active1].getMove(3).getDamage() * 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team2[active2].setHP(0);
+                    team2[active2].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(3).getDamage() * 2); // super effective damage
+                }
+                p1isSuperEffective = true;
+            }
+            // Not Very Effectives
+            else if((team1[active1].getMove(3).getType() == team2[active2].getResistance()) || (team1[active1].getMove(3).getType() == team2[active2].getResistance()) || (team1[active1].getMove(3).getType() == team2[active2].getResistance()))
+            {
+                if(team2[active2].getHP() - team1[active1].getMove(3).getDamage() / 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team2[active2].setHP(0);
+                    team2[active2].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(3).getDamage() / 2); // resisted damage
+                }
+                p1isNotVeryEffective = true;
+            }
+            else
+            {
+                team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(3).getDamage());
+            }
+        }
+    }
+    if(whomst == "P2")
+    {
+        if(p2Choice == "move1")
+        {
+            // Super Effectives
+            if((team2[active2].getMove(0).getType() == "Grass" && team1[active1].getPokeType() == "Water") || (team2[active2].getMove(0).getType() == "Water" && team1[active1].getPokeType() == "Fire") || (team2[active2].getMove(0).getType() == "Fire" && team1[active1].getPokeType() == "Grass"))
+            {
+                if(team1[active1].getHP() - team2[active2].getMove(0).getDamage() * 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team1[active1].setHP(0);
+                    team1[active1].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(0).getDamage() * 2); // super effective damage
+                    std::cout << "Should not be here\n";
+                }
+                p2isSuperEffective = true;
+            }// --
+            // Not Very Effectives
+            else if((team2[active2].getMove(0).getType() == team1[active1].getResistance()) || (team2[active2].getMove(0).getType() == team1[active1].getResistance()) || (team2[active2].getMove(0).getType() == team1[active1].getResistance()))
+            {
+                if(team1[active1].getHP() - team2[active2].getMove(0).getDamage() / 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team1[active1].setHP(0);
+                    team1[active1].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(0).getDamage() / 2); // resisted damage
+                }
+                p2isNotVeryEffective = true;
+            }
+            else
+            {
+                team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(0).getDamage());
+                std::cout << "Perfection\n";
+            }
+        }
+        if(p2Choice == "move2")
+        {
+            // Super Effectives
+            if((team2[active2].getMove(1).getType() == "Grass" && team1[active1].getPokeType() == "Water") || (team2[active2].getMove(1).getType() == "Water" && team1[active1].getPokeType() == "Fire") || (team2[active2].getMove(1).getType() == "Fire" && team1[active1].getPokeType() == "Grass"))
+            {
+                if(team1[active1].getHP() - team2[active2].getMove(1).getDamage() * 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team1[active1].setHP(0);
+                    team1[active1].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(1).getDamage() * 2); // super effective damage
+                }
+                p2isSuperEffective = true;
+            }
+            // Not Very Effectives
+            else if((team2[active2].getMove(1).getType() == team1[active1].getResistance()) || (team2[active2].getMove(1).getType() == team1[active1].getResistance()) || (team2[active2].getMove(1).getType() == team1[active1].getResistance()))
+            {
+                if(team1[active1].getHP() - team2[active2].getMove(1).getDamage() / 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team1[active1].setHP(0);
+                    team1[active1].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(1).getDamage() / 2); // resisted damage
+                }
+                p2isNotVeryEffective = true;
+            }
+            else
+            {
+                team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(1).getDamage());
+            }
+        }
+        if(p2Choice == "move3")
+        {
+            // Super Effectives
+            if((team2[active2].getMove(2).getType() == "Grass" && team1[active1].getPokeType() == "Water") || (team2[active2].getMove(2).getType() == "Water" && team1[active1].getPokeType() == "Fire") || (team2[active2].getMove(2).getType() == "Fire" && team1[active1].getPokeType() == "Grass"))
+            {
+                if(team1[active1].getHP() - team2[active2].getMove(2).getDamage() * 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team1[active1].setHP(0);
+                    team1[active1].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(2).getDamage() * 2); // super effective damage
+                }
+                p2isSuperEffective = true;
+            }
+            // Not Very Effectives
+            else if((team2[active2].getMove(2).getType() == team1[active1].getResistance()) || (team2[active2].getMove(2).getType() == team1[active1].getResistance()) || (team2[active2].getMove(2).getType() == team1[active1].getResistance()))
+            {
+                if(team1[active1].getHP() - team2[active2].getMove(2).getDamage() / 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team1[active1].setHP(0);
+                    team1[active1].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(2).getDamage() / 2); // resisted damage
+                }
+                p2isNotVeryEffective = true;
+            }
+            else
+            {
+                team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(2).getDamage());
+            }
+        }
+        if(p2Choice == "move4")
+        {
+            // Super Effectives
+            if((team2[active2].getMove(3).getType() == "Grass" && team1[active1].getPokeType() == "Water") || (team2[active2].getMove(3).getType() == "Water" && team1[active1].getPokeType() == "Fire") || (team2[active2].getMove(3).getType() == "Fire" && team1[active1].getPokeType() == "Grass"))
+            {
+                if(team1[active1].getHP() - team2[active2].getMove(3).getDamage() * 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team1[active1].setHP(0);
+                    team1[active1].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(3).getDamage() * 2); // super effective damage
+                }
+                p2isSuperEffective = true;
+            }
+            // Not Very Effectives
+            else if((team2[active2].getMove(3).getType() == team1[active1].getResistance()) || (team2[active2].getMove(3).getType() == team1[active1].getResistance()) || (team2[active2].getMove(3).getType() == team1[active1].getResistance()))
+            {
+                if(team1[active1].getHP() - team2[active2].getMove(3).getDamage() / 2 <= 0) // move 1 kills pokemon 2
+                {
+                    team1[active1].setHP(0);
+                    team1[active1].setDead(true);
+                }
+                else // move 1 damages pokemon 2
+                {
+                    team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(3).getDamage() / 2); // resisted damage
+                }
+                p2isNotVeryEffective = true;
+            }
+            else
+            {
+                team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(3).getDamage());
+            }
+        }
     }
 }
 void Game::swap()
@@ -621,29 +932,53 @@ void Game::update()
         if(userInput == USER_EN) 
         {
             std::cout << "ENTER\n";
-            if(p1Choice == "fight" || p2Choice == "fight")
+            if((p1Choice == "fight" && turn == "P1") || (p2Choice == "fight" && turn == "P2"))
             {
-                menuState = "fightMenu";
                 arrowXPos = 85;
                 arrowYPos = 545;
+                if(turn == "P1")
+                {
+                    menuState = "fightMenu";
+                }
+                else
+                {
+                    menuState = "fightMenu";
+                }
                 // p1Choice = "deciding";
                 // p2Choice = "deciding";
             }
-            else if(p1Choice == "items" || p2Choice == "items")
+            else if((p1Choice == "items" && turn == "P1") || (p2Choice == "items" && turn == "P2"))
             {
-                menuState = "itemMenu";
+                
                 arrowXPos = 70;
                 arrowYPos = 545;
-                if(turn == "P1") p1Choice = "potion";
-                else p2Choice = "potion";
+                if(turn == "P1") 
+                {
+                    menuState = "itemMenu";
+                    p1Choice = "potion";
+                }
+                else 
+                {
+                    menuState = "itemMenu";
+                    p2Choice = "potion";
+                }
                 // p1Choice = "deciding";
                 // p2Choice = "deciding";
             }
-            else if(p1Choice == "swap" || p2Choice == "swap")
+            else if((p1Choice == "swap" && turn == "P1") || (p2Choice == "swap" && turn == "P2"))
             {
-                menuState = "swapMenu";
                 arrowXPos = 970;
                 arrowYPos = 555;
+                if(turn == "P1")
+                {
+                    menuState = "swapMenu";
+                    // p1Choice = "swap";
+                }
+                else 
+                {
+                    menuState = "swapMenu";
+                    // p2Choice = "swap";
+                }
                 // p1Choice = "deciding";
                 // p2Choice = "deciding";
             }
@@ -1110,9 +1445,9 @@ void Game::input()
     if(keystates[SDL_SCANCODE_F11]) fullscreen = !fullscreen;
     if(menuState == "start")
     {
-        std::cout << "P1 choice: " << p1Choice << std::endl;
-        std::cout << "P2 choice: " << p2Choice << std::endl;
-        std::cout << "menuState: " << menuState << std::endl;
+        // std::cout << "P1 choice: " << p1Choice << std::endl;
+        // std::cout << "P2 choice: " << p2Choice << std::endl;
+        // std::cout << "menuState: " << menuState << std::endl;
         if(keystates[SDL_SCANCODE_UP]) 
         {
             userInput |= USER_UP;
@@ -1324,6 +1659,62 @@ void Game::draw()
             
             SDL_RenderCopy(renderer, playerTwo[active2], &spriteRect2, &dstrect); // player 2 pokemon render
         }
+
+        // Active Pokemon health
+        if(active1 == 0)
+        {
+            dstrect.x = 0;
+            dstrect.y = 1;
+            dstrect.w = textArr[CHIKORITA_HP].w;
+            dstrect.h = textArr[CHIKORITA_HP].h;
+
+            SDL_RenderCopy(renderer, textArr[CHIKORITA_HP].textTex, NULL, &dstrect);
+        } 
+        if(active2 == 0)
+        {
+            dstrect.x = WIDTH - textArr[BULBASAUR_HP].w;
+            dstrect.y = 1;
+            dstrect.w = textArr[BULBASAUR_HP].w;
+            dstrect.h = textArr[BULBASAUR_HP].h;
+
+            SDL_RenderCopy(renderer, textArr[BULBASAUR_HP].textTex, NULL, &dstrect);
+        }
+        if(active1 == 1)
+        {
+            dstrect.x = 0;
+            dstrect.y = 1;
+            dstrect.w = textArr[TOTODILE_HP].w;
+            dstrect.h = textArr[TOTODILE_HP].h;
+
+            SDL_RenderCopy(renderer, textArr[TOTODILE_HP].textTex, NULL, &dstrect);
+        } 
+        if(active2 == 1)
+        {
+            dstrect.x = WIDTH - textArr[SQUIRTLE_HP].w;
+            dstrect.y = 1;
+            dstrect.w = textArr[SQUIRTLE_HP].w;
+            dstrect.h = textArr[SQUIRTLE_HP].h;
+
+            SDL_RenderCopy(renderer, textArr[SQUIRTLE_HP].textTex, NULL, &dstrect);
+        }
+        if(active1 == 2)
+        {
+            dstrect.x = 0;
+            dstrect.y = 1;
+            dstrect.w = textArr[CYNDAQUIL_HP].w;
+            dstrect.h = textArr[CYNDAQUIL_HP].h;
+
+            SDL_RenderCopy(renderer, textArr[CYNDAQUIL_HP].textTex, NULL, &dstrect);
+        } 
+        if(active2 == 2)
+        {
+            dstrect.x = WIDTH - textArr[CHARMANDER_HP].w;
+            dstrect.y = 1;
+            dstrect.w = textArr[CHARMANDER_HP].w;
+            dstrect.h = textArr[CHARMANDER_HP].h;
+
+            SDL_RenderCopy(renderer, textArr[CHARMANDER_HP].textTex, NULL, &dstrect);
+        } 
         // menu
         menu.x = 0;
         menu.y = 0;
@@ -1337,38 +1728,6 @@ void Game::draw()
     if(p1Done && p2Done)
     {
         SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
-        if(p1Choice == "swap")
-        {
-            if(timer++ == 200) timer = 0;
-
-            active1 = p1SwapTo;
-            spriteRect1.x = 0; // start at x = 0
-            spriteRect1.y = 0; // start at y = 0
-            spriteRect1.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
-            spriteRect1.h = SPRITE_SIZE;  // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
-            
-            // destination rectangle to position and size sprite rectangle
-            dstrect.x = 350 - SPRITE_SIZE;
-            dstrect.y = 500 - SPRITE_SIZE;
-            dstrect.w = spriteRect1.w * 2;
-            dstrect.h = spriteRect1.h * 2;
-
-            // if (timer != 0)
-            SDL_RenderCopy(renderer, playerOne[active1], &spriteRect1, &dstrect); // player 1 pokemon render
-            if(timer != 0)
-            {
-                dstrect.x = 120;
-                dstrect.y = 565;
-                dstrect.w = textArr[P1_SWAP].w;
-                dstrect.h = textArr[P1_SWAP].h;
-                SDL_RenderCopy(renderer, textArr[P1_SWAP].textTex, NULL, &dstrect);
-            }
-            else
-            { 
-                p1Choice = "deciding";
-                p1SwapTo = -1;
-            }
-        }
         if(p1Choice == "potion" || p1Choice == "restore" || p1Choice == "soda")
         {
             if(timer++ == 200) timer = 0;
@@ -1384,6 +1743,62 @@ void Game::draw()
             {
                 std::cout << "P1 Health Before: " << team1[active1].getHP() << std::endl;
                 heal("P1");
+                // setting team 1 hp
+                if(active1 == 0)
+                {
+                    std::string tempHeal1 = to_string(team1[0].getHP()) + "/" + to_string(team1[0].getHP());
+                    strArr[CHIKORITA_HP] = tempHeal1.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[CHIKORITA_HP], (SDL_Color){0, 0, 0, 255});
+                    textArr[CHIKORITA_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[CHIKORITA_HP], &textArr[CHIKORITA_HP].w, &textArr[CHIKORITA_HP].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    dstrect.x = 0;
+                    dstrect.y = 1;
+                    dstrect.w = textArr[CHIKORITA_HP].w;
+                    dstrect.h = textArr[CHIKORITA_HP].h;
+
+                    SDL_RenderCopy(renderer, textArr[CHIKORITA_HP].textTex, NULL, &dstrect);
+                    
+                } 
+                if(active1 == 1)
+                {
+                    std::string tempHeal2 = to_string(team1[1].getHP()) + "/" + to_string(team1[1].getHP());
+                    strArr[TOTODILE_HP] = tempHeal2.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[TOTODILE_HP], (SDL_Color){0, 0, 0, 255});
+                    textArr[TOTODILE_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[TOTODILE_HP], &textArr[TOTODILE_HP].w, &textArr[TOTODILE_HP].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    dstrect.x = 0;
+                    dstrect.y = 1;
+                    dstrect.w = textArr[TOTODILE_HP].w;
+                    dstrect.h = textArr[TOTODILE_HP].h;
+
+                    SDL_RenderCopy(renderer, textArr[TOTODILE_HP].textTex, NULL, &dstrect);
+                } 
+                if(active1 == 2)
+                {
+                    std::string tempHeal3 = to_string(team1[2].getHP()) + "/" + to_string(team1[2].getHP());
+                    strArr[CYNDAQUIL_HP] = tempHeal3.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[CYNDAQUIL_HP], (SDL_Color){0, 0, 0, 255});
+                    textArr[CYNDAQUIL_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[CYNDAQUIL_HP], &textArr[CYNDAQUIL_HP].w, &textArr[CYNDAQUIL_HP].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    dstrect.x = 0;
+                    dstrect.y = 1;
+                    dstrect.w = textArr[CYNDAQUIL_HP].w;
+                    dstrect.h = textArr[CYNDAQUIL_HP].h;
+
+                    SDL_RenderCopy(renderer, textArr[CYNDAQUIL_HP].textTex, NULL, &dstrect);
+                } 
+                
+                
+                
+                
+                // SDL_RenderCopy(renderer, textArr[CHIKORITA_HP].textTex, NULL, &dstrect);
+                
                 std::cout << "P1 Health After: " << team1[active1].getHP() << std::endl;
                 p1Choice = "deciding";
             }
@@ -1497,17 +1912,339 @@ void Game::draw()
             }
             else
             {
-                attack();
+                attack("P1");
+                if(active2 == 0)
+                {
+                    std::string tempAtt4 = to_string(team2[0].getHP()) + "/" + to_string(team2[0].getFullHealth());
+                    strArr[BULBASAUR_HP] = tempAtt4.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[BULBASAUR_HP], (SDL_Color){0, 0, 0, 255});
+                    textArr[BULBASAUR_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[BULBASAUR_HP], &textArr[BULBASAUR_HP].w, &textArr[BULBASAUR_HP].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    dstrect.x = 0;
+                    dstrect.y = 1;
+                    dstrect.w = textArr[BULBASAUR_HP].w;
+                    dstrect.h = textArr[BULBASAUR_HP].h;
+
+                    SDL_RenderCopy(renderer, textArr[BULBASAUR_HP].textTex, NULL, &dstrect);
+                    
+                } 
+                if(active2 == 1)
+                {
+                    std::string tempAtt5 = to_string(team2[1].getHP()) + "/" + to_string(team2[1].getFullHealth());
+                    strArr[SQUIRTLE_HP] = tempAtt5.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[SQUIRTLE_HP], (SDL_Color){0, 0, 0, 255});
+                    textArr[SQUIRTLE_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[SQUIRTLE_HP], &textArr[SQUIRTLE_HP].w, &textArr[SQUIRTLE_HP].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    dstrect.x = 0;
+                    dstrect.y = 1;
+                    dstrect.w = textArr[SQUIRTLE_HP].w;
+                    dstrect.h = textArr[SQUIRTLE_HP].h;
+
+                    SDL_RenderCopy(renderer, textArr[SQUIRTLE_HP].textTex, NULL, &dstrect);
+                } 
+                if(active2 == 2)
+                {
+                    std::string tempAtt6 = to_string(team2[2].getHP()) + "/" + to_string(team2[2].getFullHealth());
+                    strArr[CHARMANDER_HP] = tempAtt6.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[CHARMANDER_HP], (SDL_Color){0, 0, 0, 255});
+                    textArr[CHARMANDER_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[CHARMANDER_HP], &textArr[CHARMANDER_HP].w, &textArr[CHARMANDER_HP].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    dstrect.x = 0;
+                    dstrect.y = 1;
+                    dstrect.w = textArr[CHARMANDER_HP].w;
+                    dstrect.h = textArr[CHARMANDER_HP].h;
+
+                    SDL_RenderCopy(renderer, textArr[CHARMANDER_HP].textTex, NULL, &dstrect);
+                }
                 p1Choice = "deciding";
             }
         }
         // if(p1Choice == "move1" || p1Choice == "move2" || p1Choice == "move3" || p1Choice == "move4")
+        if((p2Choice == "potion" || p2Choice == "restore" || p2Choice == "soda") && (p1Choice == "deciding"))
+        {
+            if(timer++ == 200) timer = 0;
+            if(timer != 0)
+            {
+                dstrect.x = 120;
+                dstrect.y = 565;
+                dstrect.w = textArr[P2_HEAL].w;
+                dstrect.h = textArr[P2_HEAL].h;
+                SDL_RenderCopy(renderer, textArr[P2_HEAL].textTex, NULL, &dstrect);
+            }
+            else
+            {
+                std::cout << "P2 Health Before: " << team1[active2].getHP() << std::endl;
+                heal("P2");
+                if(active2 == 0)
+                {
+                    // setting team 2 hp
+                    std::string tempHeal4 = to_string(team2[0].getHP()) + "/" + to_string(team2[0].getFullHealth());
+                    strArr[BULBASAUR_HP] = tempHeal4.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[BULBASAUR_HP], (SDL_Color){0, 0, 0, 255});
+                    textArr[BULBASAUR_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[BULBASAUR_HP], &textArr[BULBASAUR_HP].w, &textArr[BULBASAUR_HP].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    dstrect.x = WIDTH - textArr[BULBASAUR_HP].w;
+                    dstrect.y = 1;
+                    dstrect.w = textArr[BULBASAUR_HP].w;
+                    dstrect.h = textArr[BULBASAUR_HP].h;
+
+                    SDL_RenderCopy(renderer, textArr[BULBASAUR_HP].textTex, NULL, &dstrect);
+                }
+                if(active2 == 1)
+                {
+                    std::string tempHeal5 = to_string(team2[1].getHP()) + "/" + to_string(team2[1].getFullHealth());
+                    strArr[SQUIRTLE_HP] = tempHeal5.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[SQUIRTLE_HP], (SDL_Color){0, 0, 0, 255});
+                    textArr[SQUIRTLE_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[SQUIRTLE_HP], &textArr[SQUIRTLE_HP].w, &textArr[SQUIRTLE_HP].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    dstrect.x = WIDTH - textArr[SQUIRTLE_HP].w;
+                    dstrect.y = 1;
+                    dstrect.w = textArr[SQUIRTLE_HP].w;
+                    dstrect.h = textArr[SQUIRTLE_HP].h;
+
+                    SDL_RenderCopy(renderer, textArr[SQUIRTLE_HP].textTex, NULL, &dstrect);
+                }
+                if(active2 == 2)
+                {
+                    std::string tempHeal6 = to_string(team2[2].getHP()) + "/" + to_string(team2[2].getFullHealth());
+                    strArr[CHARMANDER_HP] = tempHeal6.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[CHARMANDER_HP], (SDL_Color){0, 0, 0, 255});
+                    textArr[CHARMANDER_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[CHARMANDER_HP], &textArr[CHARMANDER_HP].w, &textArr[CHARMANDER_HP].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    dstrect.x = WIDTH - textArr[CHARMANDER_HP].w;
+                    dstrect.y = 1;
+                    dstrect.w = textArr[CHARMANDER_HP].w;
+                    dstrect.h = textArr[CHARMANDER_HP].h;
+
+                    SDL_RenderCopy(renderer, textArr[CHARMANDER_HP].textTex, NULL, &dstrect);
+                }
+                
+                std::cout << "P2 Health After: " << team1[active2].getHP() << std::endl;
+                p2Choice = "deciding";
+                p1Done = false;
+                p2Done = false;
+                menuState = "start";
+
+            }
+        }
+        if((p2Choice == "move1" || p2Choice == "move2" || p2Choice == "move3" || p2Choice == "move4") && p1Choice == "deciding")
+        {
+            if(timer++ == 200) timer = 0;
+            if(timer != 0)
+            {
+                // Bulbasaur Actives
+                if(p2Choice == "move1" && active2 == 0)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[BULBA_VINE_1].w;
+                    dstrect.h = textArr[BULBA_VINE_1].h;
+                    SDL_RenderCopy(renderer, textArr[BULBA_VINE_1].textTex, NULL, &dstrect);
+                }
+                else if(p2Choice == "move2" && active2 == 0)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[BULBA_TAKE_2].w;
+                    dstrect.h = textArr[BULBA_TAKE_2].h;
+                    SDL_RenderCopy(renderer, textArr[BULBA_TAKE_2].textTex, NULL, &dstrect);
+                }
+                else if(p2Choice == "move3" && active2 == 0)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[BULBA_POWER_3].w;
+                    dstrect.h = textArr[BULBA_POWER_3].h;
+                    SDL_RenderCopy(renderer, textArr[BULBA_POWER_3].textTex, NULL, &dstrect);
+                }
+                else if(p2Choice == "move4" && active2 == 0)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[BULBA_FACADE_4].w;
+                    dstrect.h = textArr[BULBA_FACADE_4].h;
+                    SDL_RenderCopy(renderer, textArr[BULBA_FACADE_4].textTex, NULL, &dstrect);
+                }
+
+                // Squirtle Actives
+                if(p2Choice == "move1" && active2 == 1)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[SQUI_SPIN_1].w;
+                    dstrect.h = textArr[SQUI_SPIN_1].h;
+                    SDL_RenderCopy(renderer, textArr[SQUI_SPIN_1].textTex, NULL, &dstrect);
+                }
+                else if(p2Choice == "move2" && active2 == 1)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[SQUI_PULSE_2].w;
+                    dstrect.h = textArr[SQUI_PULSE_2].h;
+                    SDL_RenderCopy(renderer, textArr[SQUI_PULSE_2].textTex, NULL, &dstrect);
+                }
+                else if(p2Choice == "move3" && active2 == 1)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[SQUI_PUMP_3].w;
+                    dstrect.h = textArr[SQUI_PUMP_3].h;
+                    SDL_RenderCopy(renderer, textArr[SQUI_PUMP_3].textTex, NULL, &dstrect);
+                }
+                else if(p2Choice == "move4" && active2 == 1)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[SQUI_JET_4].w;
+                    dstrect.h = textArr[SQUI_JET_4].h;
+                    SDL_RenderCopy(renderer, textArr[SQUI_JET_4].textTex, NULL, &dstrect);
+                }
+
+                // Charmander Actives
+                if(p2Choice == "move1" && active2 == 2)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[CHARM_FANG_1].w;
+                    dstrect.h = textArr[CHARM_FANG_1].h;
+                    SDL_RenderCopy(renderer, textArr[CHARM_FANG_1].textTex, NULL, &dstrect);
+                }
+                else if(p2Choice == "move2" && active2 == 2)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[CHARM_THROWER_2].w;
+                    dstrect.h = textArr[CHARM_THROWER_2].h;
+                    SDL_RenderCopy(renderer, textArr[CHARM_THROWER_2].textTex, NULL, &dstrect);
+                }
+                else if(p2Choice == "move3" && active2 == 2)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[CHARM_SWIPE_3].w;
+                    dstrect.h = textArr[CHARM_SWIPE_3].h;
+                    SDL_RenderCopy(renderer, textArr[CHARM_SWIPE_3].textTex, NULL, &dstrect);
+                }
+                else if(p2Choice == "move4" && active2 == 2)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[CHARM_BLITZ_4].w;
+                    dstrect.h = textArr[CHARM_BLITZ_4].h;
+                    SDL_RenderCopy(renderer, textArr[CHARM_BLITZ_4].textTex, NULL, &dstrect);
+                }
+            }
+            else
+            {
+                attack("P2");
+                if(active1 == 0)
+                {
+                    std::string tempAtt1 = to_string(team1[0].getHP()) + "/" + to_string(team1[0].getFullHealth());
+                    strArr[CHIKORITA_HP] = tempAtt1.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[CHIKORITA_HP], (SDL_Color){0, 0, 0, 255});
+                    textArr[CHIKORITA_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[CHIKORITA_HP], &textArr[CHIKORITA_HP].w, &textArr[CHIKORITA_HP].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    dstrect.x = 0;
+                    dstrect.y = 1;
+                    dstrect.w = textArr[CHIKORITA_HP].w;
+                    dstrect.h = textArr[CHIKORITA_HP].h;
+
+                    SDL_RenderCopy(renderer, textArr[CHIKORITA_HP].textTex, NULL, &dstrect);
+                    
+                } 
+                if(active1 == 1)
+                {
+                    std::string tempAtt2 = to_string(team1[1].getHP()) + "/" + to_string(team1[1].getFullHealth());
+                    strArr[TOTODILE_HP] = tempAtt2.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[TOTODILE_HP], (SDL_Color){0, 0, 0, 255});
+                    textArr[TOTODILE_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[TOTODILE_HP], &textArr[TOTODILE_HP].w, &textArr[TOTODILE_HP].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    dstrect.x = 0;
+                    dstrect.y = 1;
+                    dstrect.w = textArr[TOTODILE_HP].w;
+                    dstrect.h = textArr[TOTODILE_HP].h;
+
+                    SDL_RenderCopy(renderer, textArr[TOTODILE_HP].textTex, NULL, &dstrect);
+                } 
+                if(active1 == 2)
+                {
+                    std::string tempAtt3 = to_string(team1[2].getHP()) + "/" + to_string(team1[2].getFullHealth());
+                    strArr[CYNDAQUIL_HP] = tempAtt3.c_str();
+                    image = TTF_RenderText_Blended(font, strArr[CYNDAQUIL_HP], (SDL_Color){0, 0, 0, 255});
+                    textArr[CYNDAQUIL_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                    if (TTF_SizeText(font, strArr[CYNDAQUIL_HP], &textArr[CYNDAQUIL_HP].w, &textArr[CYNDAQUIL_HP].h) != 0) {
+                        std::cout << "Size Fail\n";
+                    }
+                    dstrect.x = 0;
+                    dstrect.y = 1;
+                    dstrect.w = textArr[CYNDAQUIL_HP].w;
+                    dstrect.h = textArr[CYNDAQUIL_HP].h;
+
+                    SDL_RenderCopy(renderer, textArr[CYNDAQUIL_HP].textTex, NULL, &dstrect);
+                }
+                p2Choice = "deciding";
+                p1Done = false;
+                p2Done = false;
+                menuState = "start";
+            }
+        }
+        if(p1Choice == "swap")
+        {
+            if(timer++ == 200) timer = 0;
+            team1[active1].setIsActive(false);
+            active1 = p1SwapTo;
+            team1[active1].setIsActive(true);
+            spriteRect1.x = 0; // start at x = 0
+            spriteRect1.y = 0; // start at y = 0
+            spriteRect1.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
+            spriteRect1.h = SPRITE_SIZE;  // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
+            
+            // destination rectangle to position and size sprite rectangle
+            dstrect.x = 350 - SPRITE_SIZE;
+            dstrect.y = 500 - SPRITE_SIZE;
+            dstrect.w = spriteRect1.w * 2;
+            dstrect.h = spriteRect1.h * 2;
+
+            // if (timer != 0)
+            SDL_RenderCopy(renderer, playerOne[active1], &spriteRect1, &dstrect); // player 1 pokemon render
+            if(timer != 0)
+            {
+                dstrect.x = 120;
+                dstrect.y = 565;
+                dstrect.w = textArr[P1_SWAP].w;
+                dstrect.h = textArr[P1_SWAP].h;
+                SDL_RenderCopy(renderer, textArr[P1_SWAP].textTex, NULL, &dstrect);
+            }
+            else
+            { 
+                p1Choice = "deciding";
+                p1SwapTo = -1;
+            }
+        }
         if(p2Choice == "swap" && (p1Choice == "deciding"))
         {
             if(timer++ == 200) timer = 0;
 
             // SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
+            team2[active2].setIsActive(false);
             active2 = p2SwapTo;
+            team2[active2].setIsActive(true);
             spriteRect2.x = 0; // start at x = 0
             spriteRect2.y = 0; // start at y = 0
             spriteRect2.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
@@ -1538,140 +2275,58 @@ void Game::draw()
                 menuState = "start";
             }
         }
-        if((p2Choice == "potion" || p2Choice == "restore" || p2Choice == "soda") && (p1Choice == "deciding"))
+        if(menuState == "swapMenu" && turn == "P1")
         {
-            if(timer++ == 200) timer = 0;
-            if(timer != 0)
+            if(!team1[0].getIsActive() && !team1[0].getDead())
             {
-                dstrect.x = 120;
-                dstrect.y = 565;
-                dstrect.w = textArr[P2_HEAL].w;
-                dstrect.h = textArr[P2_HEAL].h;
-                SDL_RenderCopy(renderer, textArr[P2_HEAL].textTex, NULL, &dstrect);
+                dstrect.x = 350;
+                dstrect.y = 575;
+                dstrect.w = textArr[CHIKORITA_NAME].w / 1;
+                dstrect.h = textArr[CHIKORITA_NAME].h / 1;
+                SDL_RenderCopy(renderer, textArr[CHIKORITA_NAME].textTex, NULL, &dstrect);
             }
-            else
+            if(!team1[1].getIsActive() && !team1[1].getDead())
             {
-                std::cout << "P2 Health Before: " << team1[active2].getHP() << std::endl;
-                heal("P2");
-                std::cout << "P2 Health After: " << team1[active2].getHP() << std::endl;
-                p2Choice = "deciding";
-                p1Done = false;
-                p2Done = false;
-                menuState = "start";
-
+                dstrect.x = 500;
+                dstrect.y = 630;
+                dstrect.w = textArr[TOTODILE_NAME].w / 1;
+                dstrect.h = textArr[TOTODILE_NAME].h / 1;
+                SDL_RenderCopy(renderer, textArr[TOTODILE_NAME].textTex, NULL, &dstrect);
+            }
+            if(!team1[2].getIsActive() && !team1[2].getDead())
+            {
+                dstrect.x = 620;
+                dstrect.y = 575;
+                dstrect.w = textArr[CYNDAQUIL_NAME].w / 1;
+                dstrect.h = textArr[CYNDAQUIL_NAME].h / 1;
+                SDL_RenderCopy(renderer, textArr[CYNDAQUIL_NAME].textTex, NULL, &dstrect);
             }
         }
-        if(p2Choice == "move1" || p2Choice == "move2" || p2Choice == "move3" || p2Choice == "move4")
+        if(menuState == "swapMenu" && turn == "P2")
         {
-            if(timer++ == 200) timer = 0;
-            if(timer != 0)
+            if(!team2[0].getIsActive() && !team2[0].getDead())
             {
-                // Chikorita Actives
-                if(p2Choice == "move1" && active2 == 0)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CHIK_TACKLE_1].w;
-                    dstrect.h = textArr[CHIK_TACKLE_1].h;
-                    SDL_RenderCopy(renderer, textArr[CHIK_TACKLE_1].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move2" && active2 == 0)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CHIK_RAZOR_2].w;
-                    dstrect.h = textArr[CHIK_RAZOR_2].h;
-                    SDL_RenderCopy(renderer, textArr[CHIK_RAZOR_2].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move3" && active2 == 0)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CHIK_MAGIC_3].w;
-                    dstrect.h = textArr[CHIK_MAGIC_3].h;
-                    SDL_RenderCopy(renderer, textArr[CHIK_MAGIC_3].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move4" && active2 == 0)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CHIK_SLAM_4].w;
-                    dstrect.h = textArr[CHIK_SLAM_4].h;
-                    SDL_RenderCopy(renderer, textArr[CHIK_SLAM_4].textTex, NULL, &dstrect);
-                }
-
-                // Totodile Actives
-                if(p2Choice == "move1" && active2 == 1)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[TOTO_SCRATCH_1].w;
-                    dstrect.h = textArr[TOTO_SCRATCH_1].h;
-                    SDL_RenderCopy(renderer, textArr[TOTO_SCRATCH_1].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move2" && active2 == 1)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[TOTO_GUN_2].w;
-                    dstrect.h = textArr[TOTO_GUN_2].h;
-                    SDL_RenderCopy(renderer, textArr[TOTO_GUN_2].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move3" && active2 == 1)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[TOTO_SLASH_3].w;
-                    dstrect.h = textArr[TOTO_SLASH_3].h;
-                    SDL_RenderCopy(renderer, textArr[TOTO_SLASH_3].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move4" && active2 == 1)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[TOTO_TAIL_4].w;
-                    dstrect.h = textArr[TOTO_TAIL_4].h;
-                    SDL_RenderCopy(renderer, textArr[TOTO_TAIL_4].textTex, NULL, &dstrect);
-                }
-
-                // Cyndaquil Actives
-                if(p2Choice == "move1" && active2 == 2)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CYNDA_EMBER_1].w;
-                    dstrect.h = textArr[CYNDA_EMBER_1].h;
-                    SDL_RenderCopy(renderer, textArr[CYNDA_EMBER_1].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move2" && active2 == 2)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CYNDA_QUICK_2].w;
-                    dstrect.h = textArr[CYNDA_QUICK_2].h;
-                    SDL_RenderCopy(renderer, textArr[CYNDA_QUICK_2].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move3" && active2 == 2)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CYNDA_WHEEL_3].w;
-                    dstrect.h = textArr[CYNDA_WHEEL_3].h;
-                    SDL_RenderCopy(renderer, textArr[CYNDA_WHEEL_3].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move4" && active2 == 2)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CYNDA_EDGE_4].w;
-                    dstrect.h = textArr[CYNDA_EDGE_4].h;
-                    SDL_RenderCopy(renderer, textArr[CYNDA_EDGE_4].textTex, NULL, &dstrect);
-                }
+                dstrect.x = 350;
+                dstrect.y = 575;
+                dstrect.w = textArr[BULBASAUR_NAME].w / 1;
+                dstrect.h = textArr[BULBASAUR_NAME].h / 1;
+                SDL_RenderCopy(renderer, textArr[BULBASAUR_NAME].textTex, NULL, &dstrect);
             }
-            else
+            if(!team2[1].getIsActive() && !team2[1].getDead())
             {
-                attack();
-                p2Choice = "deciding";
+                dstrect.x = 500;
+                dstrect.y = 630;
+                dstrect.w = textArr[SQUIRTLE_NAME].w / 1;
+                dstrect.h = textArr[SQUIRTLE_NAME].h / 1;
+                SDL_RenderCopy(renderer, textArr[SQUIRTLE_NAME].textTex, NULL, &dstrect);
+            }
+            if(!team2[2].getIsActive() && !team2[2].getDead())
+            {
+                dstrect.x = 620;
+                dstrect.y = 575;
+                dstrect.w = textArr[CHARMANDER_NAME].w / 1;
+                dstrect.h = textArr[CHARMANDER_NAME].h / 1;
+                SDL_RenderCopy(renderer, textArr[CHARMANDER_NAME].textTex, NULL, &dstrect);
             }
         }
     }
@@ -2052,7 +2707,7 @@ void Game::kill()
         SDL_DestroyTexture(playerTwo[i]);
     }
 
-    for (int i = 0; i < 77; i++) {
+    for (int i = 0; i < 79; i++) {
         SDL_DestroyTexture(textArr[i].textTex);
     }
     for(int i = 0; i < 3; i++)
@@ -2080,7 +2735,7 @@ void Game::kill()
 
 void Game::initFont() {
     if(font == NULL) std::cout << "Error Loading Font" << TTF_GetError() << std::endl;
-    for (int i = 0; i < 77; i++) {
+    for (int i = 0; i < 79; i++) {
         image = TTF_RenderText_Blended(font, strArr[i], (SDL_Color){0, 0, 0, 255});
         // std::cout << strArr[i] << std::endl;
         textArr[i].textTex = SDL_CreateTextureFromSurface(renderer, image);

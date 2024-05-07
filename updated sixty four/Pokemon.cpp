@@ -12,7 +12,7 @@ Pokemon::Pokemon(){
     movearr[3] = Move("placeholder", "placeholder", 0); 
     // Move array initialized to empty move objects.
     // SDL_surface = "";
-    resistance = 0.0;
+    resistance = "";
     health = 0;
     dead = false;
     isActive = false;
