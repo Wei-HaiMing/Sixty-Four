@@ -8,6 +8,7 @@ int Game::lastTime = 0;
 Game::Game(SDL_Renderer* renderer, SDL_Window* window)
 {
     timer = 0;
+    hold = "";
     p1SwapTo = -1;
     p2SwapTo = -1;
     arrowShiftLt = 0;
@@ -18,9 +19,11 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     arrowShiftY = 0;
     arrowXPos = 580;
     arrowYPos = 555;
+    death = "yeet";
     controlMenu = "res/trans_menu.png";
     this->renderer = renderer;
     this->window = window;
+    winner = "none";
     setRunning(true);
     setFullscreen(0);
     p1isSuperEffective = false;
@@ -233,7 +236,7 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     team2[0].setIsActive(true);
     team2[0].pokeprint();
 
-    team2[1].setHP(292);
+    team2[1].setHP(292); // 292
     team2[1].setFullHealth(292);
     team2[1].setMove(squirtleMoves);
     team2[1].setName("Squirtle");
@@ -243,7 +246,7 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
     team2[1].setIsActive(false);
     team2[1].pokeprint();
 
-    team2[2].setHP(282);
+    team2[2].setHP(282); // 282
     team2[2].setFullHealth(282);
     team2[2].setMove(charmanderMoves);
     team2[2].setName("Charmander");
@@ -527,22 +530,25 @@ void Game::assignWinner()
 {
     if(team1[0].getDead() && team1[1].getDead() && team1[2].getDead())
     {
-        dstrect.x = 0;
-        dstrect.y = 1;
-        dstrect.w = textArr[P1_WIN].w;
-        dstrect.h = textArr[P1_WIN].h;
-
-        SDL_RenderCopy(renderer, textArr[P1_WIN].textTex, NULL, &dstrect);
-    }
-    else if(team2[0].getDead() && team2[1].getDead() && team2[2].getDead())
-    {
-        dstrect.x = 0;
-        dstrect.y = 1;
+        dstrect.x = 120;
+        dstrect.y = 565;
         dstrect.w = textArr[P2_WIN].w;
         dstrect.h = textArr[P2_WIN].h;
 
         SDL_RenderCopy(renderer, textArr[P2_WIN].textTex, NULL, &dstrect);
+        winner = "P2";
     }
+    else if(team2[0].getDead() && team2[1].getDead() && team2[2].getDead())
+    {
+        dstrect.x = 120;
+        dstrect.y = 565;
+        dstrect.w = textArr[P1_WIN].w;
+        dstrect.h = textArr[P1_WIN].h;
+
+        SDL_RenderCopy(renderer, textArr[P1_WIN].textTex, NULL, &dstrect);
+        winner = "P1";
+    }
+    // SDL_RenderPresent(renderer);
 }
 
 void Game::heal(std::string whomst)
@@ -630,7 +636,15 @@ void Game::attack(string whomst)
             }
             else
             {
-                team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(0).getDamage());
+                if(team2[active2].getHP() - team1[active1].getMove(0).getDamage() <= 0) // move 1 kills pokemon 2
+                {
+                    team2[active2].setHP(0);
+                    team2[active2].setDead(true);
+                }
+                else
+                {
+                    team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(0).getDamage());
+                }
                 std::cout << team2[active2].getHP() << std::endl;
             }
         }
@@ -666,7 +680,15 @@ void Game::attack(string whomst)
             }
             else
             {
-                team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(1).getDamage());
+                if(team2[active2].getHP() - team1[active1].getMove(1).getDamage() <= 0) // move 1 kills pokemon 2
+                {
+                    team2[active2].setHP(0);
+                    team2[active2].setDead(true);
+                }
+                else
+                {
+                    team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(1).getDamage());
+                }
             }
         }
         if(p1Choice == "move3")
@@ -701,7 +723,15 @@ void Game::attack(string whomst)
             }
             else
             {
-                team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(2).getDamage());
+                if(team2[active2].getHP() - team1[active1].getMove(2).getDamage() <= 0) // move 1 kills pokemon 2
+                {
+                    team2[active2].setHP(0);
+                    team2[active2].setDead(true);
+                }
+                else
+                {
+                    team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(2).getDamage());
+                }
             }
         }
         if(p1Choice == "move4")
@@ -736,7 +766,15 @@ void Game::attack(string whomst)
             }
             else
             {
-                team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(3).getDamage());
+                if(team2[active2].getHP() - team1[active1].getMove(3).getDamage() <= 0) // move 1 kills pokemon 2
+                {
+                    team2[active2].setHP(0);
+                    team2[active2].setDead(true);
+                }
+                else
+                {
+                    team2[active2].setHP(team2[active2].getHP() - team1[active1].getMove(3).getDamage());
+                }
             }
         }
     }
@@ -775,7 +813,15 @@ void Game::attack(string whomst)
             }
             else
             {
-                team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(0).getDamage());
+                if(team1[active1].getHP() - team2[active2].getMove(0).getDamage() <= 0) // move 1 kills pokemon 2
+                {
+                    team1[active1].setHP(0);
+                    team1[active1].setDead(true);
+                }
+                else
+                {
+                    team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(0).getDamage());
+                }
                 std::cout << "Perfection\n";
             }
         }
@@ -811,8 +857,15 @@ void Game::attack(string whomst)
             }
             else
             {
-                team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(1).getDamage());
-            }
+                if(team1[active1].getHP() - team2[active2].getMove(1).getDamage() <= 0) // move 1 kills pokemon 2
+                {
+                    team1[active1].setHP(0);
+                    team1[active1].setDead(true);
+                }
+                else
+                {
+                    team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(1).getDamage());
+                }            }
         }
         if(p2Choice == "move3")
         {
@@ -846,7 +899,15 @@ void Game::attack(string whomst)
             }
             else
             {
-                team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(2).getDamage());
+                if(team1[active1].getHP() - team2[active2].getMove(2).getDamage() <= 0) // move 1 kills pokemon 2
+                {
+                    team1[active1].setHP(0);
+                    team1[active1].setDead(true);
+                }
+                else
+                {
+                    team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(2).getDamage());
+                }
             }
         }
         if(p2Choice == "move4")
@@ -881,7 +942,15 @@ void Game::attack(string whomst)
             }
             else
             {
-                team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(3).getDamage());
+                if(team1[active1].getHP() - team2[active2].getMove(3).getDamage() <= 0) // move 1 kills pokemon 2
+                {
+                    team1[active1].setHP(0);
+                    team1[active1].setDead(true);
+                }
+                else
+                {
+                    team1[active1].setHP(team1[active1].getHP() - team2[active2].getMove(3).getDamage());
+                }
             }
         }
     }
@@ -1328,22 +1397,26 @@ void Game::update()
                     p1SwapTo = 1;
                     p1Done = true;
                     turn = "P2";
+                    p2Choice = "fight";
                 }
                 if(arrowXPos == 290 && arrowYPos == 565)
                 {
                     p1SwapTo = 0;
                     p1Done = true;
                     turn = "P2";
+                    p2Choice = "fight";
                 }
                 if(arrowXPos == 550 && arrowYPos == 565)
                 {
                     p1SwapTo = 2;
                     p1Done = true;
                     turn = "P2";
+                    p2Choice = "fight";
                 }
                 // swap functionality
                 userInput = 0;
                 menuState = "start";
+                
             }
         }
         if(turn == "P2")
@@ -1393,7 +1466,7 @@ void Game::update()
                     p2Done = true;
                     turn = "P1";
                     // menuState = "start";
-
+                    hold = p1Choice;
                 }
                 if(arrowXPos == 290 && arrowYPos == 565)
                 {
@@ -1401,7 +1474,7 @@ void Game::update()
                     p2Done = true;
                     turn = "P1";
                     // menuState = "start";
-
+                    hold = p1Choice;
                 }
                 if(arrowXPos == 550 && arrowYPos == 565)
                 {
@@ -1409,7 +1482,7 @@ void Game::update()
                     p2Done = true;
                     turn = "P1";
                     // menuState = "start";
-
+                    hold = p1Choice;
                 }
                 userInput = 0;
                 menuState = "start";
@@ -1432,6 +1505,141 @@ void Game::update()
         }
         userInput = 0;
     }
+    if(menuState == "death")
+    {
+        if(p2Choice == "death")
+        {
+            std::cout << "yeetf\n";
+            if(!team2[1].getDead())
+            {
+                if(userInput == USER_DN)
+                {
+                    arrowXPos = 430;
+                    arrowYPos = 620;
+                    userInput = 0;
+                }
+                
+            }
+            if(!team2[0].getDead())
+            {
+                if(userInput == USER_LT)
+                {
+                    arrowXPos = 290;
+                    arrowYPos = 565;
+                    userInput = 0;
+                }
+                
+            }
+            if(!team2[2].getDead())
+            {
+                if(userInput == USER_RT)
+                {
+                    arrowXPos = 550;
+                    arrowYPos = 565;
+                    userInput = 0;
+                }
+                
+            }
+            if(userInput == USER_EN)
+            { 
+                if(arrowXPos == 430 && arrowYPos == 620)
+                {
+                    active2 = 1;
+                    p2Choice = "deciding";
+                    menuState = "start";
+                    p1Done = false;
+                    p2Done = false;
+                    team2[1].setIsActive(true);
+                }
+                else if(arrowXPos == 290 && arrowYPos == 565)
+                {
+                    active2 = 0;
+                    p2Choice = "deciding";
+                    menuState = "start";
+                    p1Done = false;
+                    p2Done = false;
+                    team2[0].setIsActive(true);
+                }
+                else if(arrowXPos == 550 && arrowYPos == 565)
+                {
+                    active2 = 2;
+                    p2Choice = "deciding";
+                    menuState = "start";
+                    p1Done = false;
+                    p2Done = false;
+                    team2[2].setIsActive(true);
+                }
+            }
+            userInput = 0;
+
+        }
+        else if(p1Choice == "death")
+        {
+            std::cout << "yeetf\n";
+            if(!team1[1].getDead())
+            {
+                if(userInput == USER_DN)
+                {
+                    arrowXPos = 430;
+                    arrowYPos = 620;
+                    userInput = 0;
+                }
+                
+            }
+            if(!team1[0].getDead())
+            {
+                if(userInput == USER_LT)
+                {
+                    arrowXPos = 290;
+                    arrowYPos = 565;
+                    userInput = 0;
+                }
+                
+            }
+            if(!team1[2].getDead())
+            {
+                if(userInput == USER_RT)
+                {
+                    arrowXPos = 550;
+                    arrowYPos = 565;
+                    userInput = 0;
+                }
+                
+            }
+            if(userInput == USER_EN)
+            { 
+                if(arrowXPos == 430 && arrowYPos == 620)
+                {
+                    active1 = 1;
+                    p1Choice = "deciding";
+                    menuState = "start";
+                    p1Done = false;
+                    p2Done = false;
+                    team1[1].setIsActive(true);
+                }
+                else if(arrowXPos == 290 && arrowYPos == 565)
+                {
+                    active1 = 0;
+                    p1Choice = "deciding";
+                    menuState = "start";
+                    p1Done = false;
+                    p2Done = false;
+                    team1[0].setIsActive(true);
+                }
+                else if(arrowXPos == 550 && arrowYPos == 565)
+                {
+                    active1 = 2;
+                    p1Choice = "deciding";
+                    menuState = "start";
+                    p1Done = false;
+                    p2Done = false;
+                    team1[2].setIsActive(true);
+                }
+            }
+            userInput = 0;
+
+        }
+    }   
 }
 void Game::input()
 {
@@ -1445,9 +1653,9 @@ void Game::input()
     if(keystates[SDL_SCANCODE_F11]) fullscreen = !fullscreen;
     if(menuState == "start")
     {
-        // std::cout << "P1 choice: " << p1Choice << std::endl;
-        // std::cout << "P2 choice: " << p2Choice << std::endl;
-        // std::cout << "menuState: " << menuState << std::endl;
+        std::cout << "P1 choice: " << p1Choice << std::endl;
+        std::cout << "P2 choice: " << p2Choice << std::endl;
+        std::cout << "menuState: " << menuState << std::endl;
         if(keystates[SDL_SCANCODE_UP]) 
         {
             userInput |= USER_UP;
@@ -1616,6 +1824,21 @@ void Game::input()
             userInput |= USER_RT;
         }
     }
+    if(menuState == "death")
+    {
+        if(keystates[SDL_SCANCODE_DOWN]) 
+        {    
+            userInput |= USER_DN;
+        }
+        if(keystates[SDL_SCANCODE_LEFT])
+        {
+            userInput |= USER_LT;
+        } 
+        if(keystates[SDL_SCANCODE_RIGHT]) 
+        {
+            userInput |= USER_RT;
+        }
+    }
     if(keystates[SDL_SCANCODE_RETURN]) userInput |= USER_EN;
     if(keystates[SDL_SCANCODE_BACKSPACE]) userInput |= USER_BK;
     
@@ -1623,7 +1846,16 @@ void Game::input()
 }
 void Game::draw()
 {
-    
+    if(winner != "none")
+    {
+
+        SDL_RenderClear(renderer);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        assignWinner();
+        // SDL_RenderCopy(renderer, menuText, &menu, &dstrect);
+    }
+    else
+    {
         SDL_RenderCopy(renderer, bgTexture, NULL, NULL); // background render
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // colors something
 
@@ -1725,952 +1957,1089 @@ void Game::draw()
         dstrect.y = 517;
         dstrect.w = menu.w;
         dstrect.h = menu.h;
-    if(p1Done && p2Done)
-    {
-        SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
-        if(p1Choice == "potion" || p1Choice == "restore" || p1Choice == "soda")
+        if(p1Done && p2Done)
         {
-            if(timer++ == 200) timer = 0;
-            if(timer != 0)
+            SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
+            if(p2Choice == "swap" && p1Choice != "swap" && p1Choice != "deciding")
             {
-                dstrect.x = 120;
-                dstrect.y = 565;
-                dstrect.w = textArr[P1_HEAL].w;
-                dstrect.h = textArr[P1_HEAL].h;
-                SDL_RenderCopy(renderer, textArr[P1_HEAL].textTex, NULL, &dstrect);
-            }
-            else
-            {
-                std::cout << "P1 Health Before: " << team1[active1].getHP() << std::endl;
-                heal("P1");
-                // setting team 1 hp
-                if(active1 == 0)
+                // p1Choice = hold;
+                std::cout << "Whoopty\n";
+                if(timer++ == 200) timer = 0;
+                // SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
+                if(p2SwapTo != -1)
                 {
-                    std::string tempHeal1 = to_string(team1[0].getHP()) + "/" + to_string(team1[0].getHP());
-                    strArr[CHIKORITA_HP] = tempHeal1.c_str();
-                    image = TTF_RenderText_Blended(font, strArr[CHIKORITA_HP], (SDL_Color){0, 0, 0, 255});
-                    textArr[CHIKORITA_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
-                    if (TTF_SizeText(font, strArr[CHIKORITA_HP], &textArr[CHIKORITA_HP].w, &textArr[CHIKORITA_HP].h) != 0) {
-                        std::cout << "Size Fail\n";
-                    }
-                    dstrect.x = 0;
-                    dstrect.y = 1;
-                    dstrect.w = textArr[CHIKORITA_HP].w;
-                    dstrect.h = textArr[CHIKORITA_HP].h;
+                    team2[active2].setIsActive(false);
+                    active2 = p2SwapTo;
+                    team2[active2].setIsActive(true);
+                    p2SwapTo = -1;
+                }
+                spriteRect2.x = 0; // start at x = 0
+                spriteRect2.y = 0; // start at y = 0
+                spriteRect2.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
+                spriteRect2.h = SPRITE_SIZE;  // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
+                
+                // destination rectangle to position and size sprite rectangle
+                dstrect.x = 800 - SPRITE_SIZE;
+                dstrect.y = (475 - SPRITE_SIZE) / 2;
+                dstrect.w = spriteRect2.w * 3;
+                dstrect.h = spriteRect2.h * 3;
 
-                    SDL_RenderCopy(renderer, textArr[CHIKORITA_HP].textTex, NULL, &dstrect);
+                // if (timer != 0)
+                SDL_RenderCopy(renderer, playerTwo[active2], &spriteRect1, &dstrect); // player 1 pokemon render
+                if(timer != 0)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 600;
+                    dstrect.w = textArr[P2_SWAP].w;
+                    dstrect.h = textArr[P2_SWAP].h;
+                    SDL_RenderCopy(renderer, textArr[P2_SWAP].textTex, NULL, &dstrect);
+                }
+                else
+                { 
+                    p2Choice = "deciding";
+                    p2SwapTo = -1;
+                    p1Choice = hold;
+                    hold = "";
+                }
+            }
+            if((p1Choice == "potion" || p1Choice == "restore" || p1Choice == "soda") && p2Choice != "swap")
+            {
+                if(timer++ == 200) timer = 0;
+                if(timer != 0)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[P1_HEAL].w;
+                    dstrect.h = textArr[P1_HEAL].h;
+                    SDL_RenderCopy(renderer, textArr[P1_HEAL].textTex, NULL, &dstrect);
+                }
+                else
+                {
+                    std::cout << "P1 Health Before: " << team1[active1].getHP() << std::endl;
+                    heal("P1");
+                    // setting team 1 hp
+                    if(active1 == 0)
+                    {
+                        std::string tempHeal1 = to_string(team1[0].getHP()) + "/" + to_string(team1[0].getFullHealth());
+                        strArr[CHIKORITA_HP] = tempHeal1.c_str();
+                        image = TTF_RenderText_Blended(font, strArr[CHIKORITA_HP], (SDL_Color){0, 0, 0, 255});
+                        textArr[CHIKORITA_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                        if (TTF_SizeText(font, strArr[CHIKORITA_HP], &textArr[CHIKORITA_HP].w, &textArr[CHIKORITA_HP].h) != 0) {
+                            std::cout << "Size Fail\n";
+                        }
+                        dstrect.x = 0;
+                        dstrect.y = 1;
+                        dstrect.w = textArr[CHIKORITA_HP].w;
+                        dstrect.h = textArr[CHIKORITA_HP].h;
+
+                        SDL_RenderCopy(renderer, textArr[CHIKORITA_HP].textTex, NULL, &dstrect);
+                        
+                    } 
+                    if(active1 == 1)
+                    {
+                        std::string tempHeal2 = to_string(team1[1].getHP()) + "/" + to_string(team1[1].getFullHealth());
+                        strArr[TOTODILE_HP] = tempHeal2.c_str();
+                        image = TTF_RenderText_Blended(font, strArr[TOTODILE_HP], (SDL_Color){0, 0, 0, 255});
+                        textArr[TOTODILE_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                        if (TTF_SizeText(font, strArr[TOTODILE_HP], &textArr[TOTODILE_HP].w, &textArr[TOTODILE_HP].h) != 0) {
+                            std::cout << "Size Fail\n";
+                        }
+                        dstrect.x = 0;
+                        dstrect.y = 1;
+                        dstrect.w = textArr[TOTODILE_HP].w;
+                        dstrect.h = textArr[TOTODILE_HP].h;
+
+                        SDL_RenderCopy(renderer, textArr[TOTODILE_HP].textTex, NULL, &dstrect);
+                    } 
+                    if(active1 == 2)
+                    {
+                        std::string tempHeal3 = to_string(team1[2].getHP()) + "/" + to_string(team1[2].getFullHealth());
+                        strArr[CYNDAQUIL_HP] = tempHeal3.c_str();
+                        image = TTF_RenderText_Blended(font, strArr[CYNDAQUIL_HP], (SDL_Color){0, 0, 0, 255});
+                        textArr[CYNDAQUIL_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                        if (TTF_SizeText(font, strArr[CYNDAQUIL_HP], &textArr[CYNDAQUIL_HP].w, &textArr[CYNDAQUIL_HP].h) != 0) {
+                            std::cout << "Size Fail\n";
+                        }
+                        dstrect.x = 0;
+                        dstrect.y = 1;
+                        dstrect.w = textArr[CYNDAQUIL_HP].w;
+                        dstrect.h = textArr[CYNDAQUIL_HP].h;
+
+                        SDL_RenderCopy(renderer, textArr[CYNDAQUIL_HP].textTex, NULL, &dstrect);
+                    } 
                     
-                } 
-                if(active1 == 1)
-                {
-                    std::string tempHeal2 = to_string(team1[1].getHP()) + "/" + to_string(team1[1].getHP());
-                    strArr[TOTODILE_HP] = tempHeal2.c_str();
-                    image = TTF_RenderText_Blended(font, strArr[TOTODILE_HP], (SDL_Color){0, 0, 0, 255});
-                    textArr[TOTODILE_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
-                    if (TTF_SizeText(font, strArr[TOTODILE_HP], &textArr[TOTODILE_HP].w, &textArr[TOTODILE_HP].h) != 0) {
-                        std::cout << "Size Fail\n";
-                    }
-                    dstrect.x = 0;
-                    dstrect.y = 1;
-                    dstrect.w = textArr[TOTODILE_HP].w;
-                    dstrect.h = textArr[TOTODILE_HP].h;
-
-                    SDL_RenderCopy(renderer, textArr[TOTODILE_HP].textTex, NULL, &dstrect);
-                } 
-                if(active1 == 2)
-                {
-                    std::string tempHeal3 = to_string(team1[2].getHP()) + "/" + to_string(team1[2].getHP());
-                    strArr[CYNDAQUIL_HP] = tempHeal3.c_str();
-                    image = TTF_RenderText_Blended(font, strArr[CYNDAQUIL_HP], (SDL_Color){0, 0, 0, 255});
-                    textArr[CYNDAQUIL_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
-                    if (TTF_SizeText(font, strArr[CYNDAQUIL_HP], &textArr[CYNDAQUIL_HP].w, &textArr[CYNDAQUIL_HP].h) != 0) {
-                        std::cout << "Size Fail\n";
-                    }
-                    dstrect.x = 0;
-                    dstrect.y = 1;
-                    dstrect.w = textArr[CYNDAQUIL_HP].w;
-                    dstrect.h = textArr[CYNDAQUIL_HP].h;
-
-                    SDL_RenderCopy(renderer, textArr[CYNDAQUIL_HP].textTex, NULL, &dstrect);
-                } 
-                
-                
-                
-                
-                // SDL_RenderCopy(renderer, textArr[CHIKORITA_HP].textTex, NULL, &dstrect);
-                
-                std::cout << "P1 Health After: " << team1[active1].getHP() << std::endl;
-                p1Choice = "deciding";
-            }
-        }
-        if(p1Choice == "move1" || p1Choice == "move2" || p1Choice == "move3" || p1Choice == "move4")
-        {
-            if(timer++ == 200) timer = 0;
-            if(timer != 0)
-            {
-                // Chikorita Actives
-                if(p1Choice == "move1" && active1 == 0)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CHIK_TACKLE_1].w;
-                    dstrect.h = textArr[CHIK_TACKLE_1].h;
-                    SDL_RenderCopy(renderer, textArr[CHIK_TACKLE_1].textTex, NULL, &dstrect);
-                }
-                else if(p1Choice == "move2" && active1 == 0)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CHIK_RAZOR_2].w;
-                    dstrect.h = textArr[CHIK_RAZOR_2].h;
-                    SDL_RenderCopy(renderer, textArr[CHIK_RAZOR_2].textTex, NULL, &dstrect);
-                }
-                else if(p1Choice == "move3" && active1 == 0)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CHIK_MAGIC_3].w;
-                    dstrect.h = textArr[CHIK_MAGIC_3].h;
-                    SDL_RenderCopy(renderer, textArr[CHIK_MAGIC_3].textTex, NULL, &dstrect);
-                }
-                else if(p1Choice == "move4" && active1 == 0)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CHIK_SLAM_4].w;
-                    dstrect.h = textArr[CHIK_SLAM_4].h;
-                    SDL_RenderCopy(renderer, textArr[CHIK_SLAM_4].textTex, NULL, &dstrect);
-                }
-
-                // Totodile Actives
-                if(p1Choice == "move1" && active1 == 1)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[TOTO_SCRATCH_1].w;
-                    dstrect.h = textArr[TOTO_SCRATCH_1].h;
-                    SDL_RenderCopy(renderer, textArr[TOTO_SCRATCH_1].textTex, NULL, &dstrect);
-                }
-                else if(p1Choice == "move2" && active1 == 1)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[TOTO_GUN_2].w;
-                    dstrect.h = textArr[TOTO_GUN_2].h;
-                    SDL_RenderCopy(renderer, textArr[TOTO_GUN_2].textTex, NULL, &dstrect);
-                }
-                else if(p1Choice == "move3" && active1 == 1)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[TOTO_SLASH_3].w;
-                    dstrect.h = textArr[TOTO_SLASH_3].h;
-                    SDL_RenderCopy(renderer, textArr[TOTO_SLASH_3].textTex, NULL, &dstrect);
-                }
-                else if(p1Choice == "move4" && active1 == 1)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[TOTO_TAIL_4].w;
-                    dstrect.h = textArr[TOTO_TAIL_4].h;
-                    SDL_RenderCopy(renderer, textArr[TOTO_TAIL_4].textTex, NULL, &dstrect);
-                }
-
-                // Cyndaquil Actives
-                if(p1Choice == "move1" && active1 == 2)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CYNDA_EMBER_1].w;
-                    dstrect.h = textArr[CYNDA_EMBER_1].h;
-                    SDL_RenderCopy(renderer, textArr[CYNDA_EMBER_1].textTex, NULL, &dstrect);
-                }
-                else if(p1Choice == "move2" && active1 == 2)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CYNDA_QUICK_2].w;
-                    dstrect.h = textArr[CYNDA_QUICK_2].h;
-                    SDL_RenderCopy(renderer, textArr[CYNDA_QUICK_2].textTex, NULL, &dstrect);
-                }
-                else if(p1Choice == "move3" && active1 == 2)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CYNDA_WHEEL_3].w;
-                    dstrect.h = textArr[CYNDA_WHEEL_3].h;
-                    SDL_RenderCopy(renderer, textArr[CYNDA_WHEEL_3].textTex, NULL, &dstrect);
-                }
-                else if(p1Choice == "move4" && active1 == 2)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CYNDA_EDGE_4].w;
-                    dstrect.h = textArr[CYNDA_EDGE_4].h;
-                    SDL_RenderCopy(renderer, textArr[CYNDA_EDGE_4].textTex, NULL, &dstrect);
-                }
-            }
-            else
-            {
-                attack("P1");
-                if(active2 == 0)
-                {
-                    std::string tempAtt4 = to_string(team2[0].getHP()) + "/" + to_string(team2[0].getFullHealth());
-                    strArr[BULBASAUR_HP] = tempAtt4.c_str();
-                    image = TTF_RenderText_Blended(font, strArr[BULBASAUR_HP], (SDL_Color){0, 0, 0, 255});
-                    textArr[BULBASAUR_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
-                    if (TTF_SizeText(font, strArr[BULBASAUR_HP], &textArr[BULBASAUR_HP].w, &textArr[BULBASAUR_HP].h) != 0) {
-                        std::cout << "Size Fail\n";
-                    }
-                    dstrect.x = 0;
-                    dstrect.y = 1;
-                    dstrect.w = textArr[BULBASAUR_HP].w;
-                    dstrect.h = textArr[BULBASAUR_HP].h;
-
-                    SDL_RenderCopy(renderer, textArr[BULBASAUR_HP].textTex, NULL, &dstrect);
                     
-                } 
-                if(active2 == 1)
-                {
-                    std::string tempAtt5 = to_string(team2[1].getHP()) + "/" + to_string(team2[1].getFullHealth());
-                    strArr[SQUIRTLE_HP] = tempAtt5.c_str();
-                    image = TTF_RenderText_Blended(font, strArr[SQUIRTLE_HP], (SDL_Color){0, 0, 0, 255});
-                    textArr[SQUIRTLE_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
-                    if (TTF_SizeText(font, strArr[SQUIRTLE_HP], &textArr[SQUIRTLE_HP].w, &textArr[SQUIRTLE_HP].h) != 0) {
-                        std::cout << "Size Fail\n";
-                    }
-                    dstrect.x = 0;
-                    dstrect.y = 1;
-                    dstrect.w = textArr[SQUIRTLE_HP].w;
-                    dstrect.h = textArr[SQUIRTLE_HP].h;
-
-                    SDL_RenderCopy(renderer, textArr[SQUIRTLE_HP].textTex, NULL, &dstrect);
-                } 
-                if(active2 == 2)
-                {
-                    std::string tempAtt6 = to_string(team2[2].getHP()) + "/" + to_string(team2[2].getFullHealth());
-                    strArr[CHARMANDER_HP] = tempAtt6.c_str();
-                    image = TTF_RenderText_Blended(font, strArr[CHARMANDER_HP], (SDL_Color){0, 0, 0, 255});
-                    textArr[CHARMANDER_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
-                    if (TTF_SizeText(font, strArr[CHARMANDER_HP], &textArr[CHARMANDER_HP].w, &textArr[CHARMANDER_HP].h) != 0) {
-                        std::cout << "Size Fail\n";
-                    }
-                    dstrect.x = 0;
-                    dstrect.y = 1;
-                    dstrect.w = textArr[CHARMANDER_HP].w;
-                    dstrect.h = textArr[CHARMANDER_HP].h;
-
-                    SDL_RenderCopy(renderer, textArr[CHARMANDER_HP].textTex, NULL, &dstrect);
-                }
-                p1Choice = "deciding";
-            }
-        }
-        // if(p1Choice == "move1" || p1Choice == "move2" || p1Choice == "move3" || p1Choice == "move4")
-        if((p2Choice == "potion" || p2Choice == "restore" || p2Choice == "soda") && (p1Choice == "deciding"))
-        {
-            if(timer++ == 200) timer = 0;
-            if(timer != 0)
-            {
-                dstrect.x = 120;
-                dstrect.y = 565;
-                dstrect.w = textArr[P2_HEAL].w;
-                dstrect.h = textArr[P2_HEAL].h;
-                SDL_RenderCopy(renderer, textArr[P2_HEAL].textTex, NULL, &dstrect);
-            }
-            else
-            {
-                std::cout << "P2 Health Before: " << team1[active2].getHP() << std::endl;
-                heal("P2");
-                if(active2 == 0)
-                {
-                    // setting team 2 hp
-                    std::string tempHeal4 = to_string(team2[0].getHP()) + "/" + to_string(team2[0].getFullHealth());
-                    strArr[BULBASAUR_HP] = tempHeal4.c_str();
-                    image = TTF_RenderText_Blended(font, strArr[BULBASAUR_HP], (SDL_Color){0, 0, 0, 255});
-                    textArr[BULBASAUR_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
-                    if (TTF_SizeText(font, strArr[BULBASAUR_HP], &textArr[BULBASAUR_HP].w, &textArr[BULBASAUR_HP].h) != 0) {
-                        std::cout << "Size Fail\n";
-                    }
-                    dstrect.x = WIDTH - textArr[BULBASAUR_HP].w;
-                    dstrect.y = 1;
-                    dstrect.w = textArr[BULBASAUR_HP].w;
-                    dstrect.h = textArr[BULBASAUR_HP].h;
-
-                    SDL_RenderCopy(renderer, textArr[BULBASAUR_HP].textTex, NULL, &dstrect);
-                }
-                if(active2 == 1)
-                {
-                    std::string tempHeal5 = to_string(team2[1].getHP()) + "/" + to_string(team2[1].getFullHealth());
-                    strArr[SQUIRTLE_HP] = tempHeal5.c_str();
-                    image = TTF_RenderText_Blended(font, strArr[SQUIRTLE_HP], (SDL_Color){0, 0, 0, 255});
-                    textArr[SQUIRTLE_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
-                    if (TTF_SizeText(font, strArr[SQUIRTLE_HP], &textArr[SQUIRTLE_HP].w, &textArr[SQUIRTLE_HP].h) != 0) {
-                        std::cout << "Size Fail\n";
-                    }
-                    dstrect.x = WIDTH - textArr[SQUIRTLE_HP].w;
-                    dstrect.y = 1;
-                    dstrect.w = textArr[SQUIRTLE_HP].w;
-                    dstrect.h = textArr[SQUIRTLE_HP].h;
-
-                    SDL_RenderCopy(renderer, textArr[SQUIRTLE_HP].textTex, NULL, &dstrect);
-                }
-                if(active2 == 2)
-                {
-                    std::string tempHeal6 = to_string(team2[2].getHP()) + "/" + to_string(team2[2].getFullHealth());
-                    strArr[CHARMANDER_HP] = tempHeal6.c_str();
-                    image = TTF_RenderText_Blended(font, strArr[CHARMANDER_HP], (SDL_Color){0, 0, 0, 255});
-                    textArr[CHARMANDER_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
-                    if (TTF_SizeText(font, strArr[CHARMANDER_HP], &textArr[CHARMANDER_HP].w, &textArr[CHARMANDER_HP].h) != 0) {
-                        std::cout << "Size Fail\n";
-                    }
-                    dstrect.x = WIDTH - textArr[CHARMANDER_HP].w;
-                    dstrect.y = 1;
-                    dstrect.w = textArr[CHARMANDER_HP].w;
-                    dstrect.h = textArr[CHARMANDER_HP].h;
-
-                    SDL_RenderCopy(renderer, textArr[CHARMANDER_HP].textTex, NULL, &dstrect);
-                }
-                
-                std::cout << "P2 Health After: " << team1[active2].getHP() << std::endl;
-                p2Choice = "deciding";
-                p1Done = false;
-                p2Done = false;
-                menuState = "start";
-
-            }
-        }
-        if((p2Choice == "move1" || p2Choice == "move2" || p2Choice == "move3" || p2Choice == "move4") && p1Choice == "deciding")
-        {
-            if(timer++ == 200) timer = 0;
-            if(timer != 0)
-            {
-                // Bulbasaur Actives
-                if(p2Choice == "move1" && active2 == 0)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[BULBA_VINE_1].w;
-                    dstrect.h = textArr[BULBA_VINE_1].h;
-                    SDL_RenderCopy(renderer, textArr[BULBA_VINE_1].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move2" && active2 == 0)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[BULBA_TAKE_2].w;
-                    dstrect.h = textArr[BULBA_TAKE_2].h;
-                    SDL_RenderCopy(renderer, textArr[BULBA_TAKE_2].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move3" && active2 == 0)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[BULBA_POWER_3].w;
-                    dstrect.h = textArr[BULBA_POWER_3].h;
-                    SDL_RenderCopy(renderer, textArr[BULBA_POWER_3].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move4" && active2 == 0)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[BULBA_FACADE_4].w;
-                    dstrect.h = textArr[BULBA_FACADE_4].h;
-                    SDL_RenderCopy(renderer, textArr[BULBA_FACADE_4].textTex, NULL, &dstrect);
-                }
-
-                // Squirtle Actives
-                if(p2Choice == "move1" && active2 == 1)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[SQUI_SPIN_1].w;
-                    dstrect.h = textArr[SQUI_SPIN_1].h;
-                    SDL_RenderCopy(renderer, textArr[SQUI_SPIN_1].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move2" && active2 == 1)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[SQUI_PULSE_2].w;
-                    dstrect.h = textArr[SQUI_PULSE_2].h;
-                    SDL_RenderCopy(renderer, textArr[SQUI_PULSE_2].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move3" && active2 == 1)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[SQUI_PUMP_3].w;
-                    dstrect.h = textArr[SQUI_PUMP_3].h;
-                    SDL_RenderCopy(renderer, textArr[SQUI_PUMP_3].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move4" && active2 == 1)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[SQUI_JET_4].w;
-                    dstrect.h = textArr[SQUI_JET_4].h;
-                    SDL_RenderCopy(renderer, textArr[SQUI_JET_4].textTex, NULL, &dstrect);
-                }
-
-                // Charmander Actives
-                if(p2Choice == "move1" && active2 == 2)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CHARM_FANG_1].w;
-                    dstrect.h = textArr[CHARM_FANG_1].h;
-                    SDL_RenderCopy(renderer, textArr[CHARM_FANG_1].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move2" && active2 == 2)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CHARM_THROWER_2].w;
-                    dstrect.h = textArr[CHARM_THROWER_2].h;
-                    SDL_RenderCopy(renderer, textArr[CHARM_THROWER_2].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move3" && active2 == 2)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CHARM_SWIPE_3].w;
-                    dstrect.h = textArr[CHARM_SWIPE_3].h;
-                    SDL_RenderCopy(renderer, textArr[CHARM_SWIPE_3].textTex, NULL, &dstrect);
-                }
-                else if(p2Choice == "move4" && active2 == 2)
-                {
-                    dstrect.x = 120;
-                    dstrect.y = 565;
-                    dstrect.w = textArr[CHARM_BLITZ_4].w;
-                    dstrect.h = textArr[CHARM_BLITZ_4].h;
-                    SDL_RenderCopy(renderer, textArr[CHARM_BLITZ_4].textTex, NULL, &dstrect);
-                }
-            }
-            else
-            {
-                attack("P2");
-                if(active1 == 0)
-                {
-                    std::string tempAtt1 = to_string(team1[0].getHP()) + "/" + to_string(team1[0].getFullHealth());
-                    strArr[CHIKORITA_HP] = tempAtt1.c_str();
-                    image = TTF_RenderText_Blended(font, strArr[CHIKORITA_HP], (SDL_Color){0, 0, 0, 255});
-                    textArr[CHIKORITA_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
-                    if (TTF_SizeText(font, strArr[CHIKORITA_HP], &textArr[CHIKORITA_HP].w, &textArr[CHIKORITA_HP].h) != 0) {
-                        std::cout << "Size Fail\n";
-                    }
-                    dstrect.x = 0;
-                    dstrect.y = 1;
-                    dstrect.w = textArr[CHIKORITA_HP].w;
-                    dstrect.h = textArr[CHIKORITA_HP].h;
-
-                    SDL_RenderCopy(renderer, textArr[CHIKORITA_HP].textTex, NULL, &dstrect);
                     
-                } 
-                if(active1 == 1)
-                {
-                    std::string tempAtt2 = to_string(team1[1].getHP()) + "/" + to_string(team1[1].getFullHealth());
-                    strArr[TOTODILE_HP] = tempAtt2.c_str();
-                    image = TTF_RenderText_Blended(font, strArr[TOTODILE_HP], (SDL_Color){0, 0, 0, 255});
-                    textArr[TOTODILE_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
-                    if (TTF_SizeText(font, strArr[TOTODILE_HP], &textArr[TOTODILE_HP].w, &textArr[TOTODILE_HP].h) != 0) {
-                        std::cout << "Size Fail\n";
+                    
+                    // SDL_RenderCopy(renderer, textArr[CHIKORITA_HP].textTex, NULL, &dstrect);
+                    
+                    std::cout << "P1 Health After: " << team1[active1].getHP() << std::endl;
+                    if(p2Choice == "deciding")
+                    {
+                        p1Done = false;
+                        p2Done = false;
+                        menuState = "start";
+                        p1Choice = "deciding";
                     }
-                    dstrect.x = 0;
-                    dstrect.y = 1;
-                    dstrect.w = textArr[TOTODILE_HP].w;
-                    dstrect.h = textArr[TOTODILE_HP].h;
-
-                    SDL_RenderCopy(renderer, textArr[TOTODILE_HP].textTex, NULL, &dstrect);
-                } 
-                if(active1 == 2)
-                {
-                    std::string tempAtt3 = to_string(team1[2].getHP()) + "/" + to_string(team1[2].getFullHealth());
-                    strArr[CYNDAQUIL_HP] = tempAtt3.c_str();
-                    image = TTF_RenderText_Blended(font, strArr[CYNDAQUIL_HP], (SDL_Color){0, 0, 0, 255});
-                    textArr[CYNDAQUIL_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
-                    if (TTF_SizeText(font, strArr[CYNDAQUIL_HP], &textArr[CYNDAQUIL_HP].w, &textArr[CYNDAQUIL_HP].h) != 0) {
-                        std::cout << "Size Fail\n";
-                    }
-                    dstrect.x = 0;
-                    dstrect.y = 1;
-                    dstrect.w = textArr[CYNDAQUIL_HP].w;
-                    dstrect.h = textArr[CYNDAQUIL_HP].h;
-
-                    SDL_RenderCopy(renderer, textArr[CYNDAQUIL_HP].textTex, NULL, &dstrect);
+                    else p1Choice = "deciding";
+                    
                 }
-                p2Choice = "deciding";
-                p1Done = false;
-                p2Done = false;
-                menuState = "start";
             }
-        }
-        if(p1Choice == "swap")
-        {
-            if(timer++ == 200) timer = 0;
-            team1[active1].setIsActive(false);
-            active1 = p1SwapTo;
-            team1[active1].setIsActive(true);
-            spriteRect1.x = 0; // start at x = 0
-            spriteRect1.y = 0; // start at y = 0
-            spriteRect1.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
-            spriteRect1.h = SPRITE_SIZE;  // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
+            if((p1Choice == "move1" || p1Choice == "move2" || p1Choice == "move3" || p1Choice == "move4") && p2Choice != "swap" && !team2[active2].getDead())
+            {
+                if(timer++ == 200) timer = 0;
+                if(timer != 0)
+                {
+                    // Chikorita Actives
+                    if(p1Choice == "move1" && active1 == 0)
+                    {
+                        std::cout << "wowowo\n";
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[CHIK_TACKLE_1].w;
+                        dstrect.h = textArr[CHIK_TACKLE_1].h;
+                        SDL_RenderCopy(renderer, textArr[CHIK_TACKLE_1].textTex, NULL, &dstrect);
+                    }
+                    else if(p1Choice == "move2" && active1 == 0)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[CHIK_RAZOR_2].w;
+                        dstrect.h = textArr[CHIK_RAZOR_2].h;
+                        SDL_RenderCopy(renderer, textArr[CHIK_RAZOR_2].textTex, NULL, &dstrect);
+                    }
+                    else if(p1Choice == "move3" && active1 == 0)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[CHIK_MAGIC_3].w;
+                        dstrect.h = textArr[CHIK_MAGIC_3].h;
+                        SDL_RenderCopy(renderer, textArr[CHIK_MAGIC_3].textTex, NULL, &dstrect);
+                    }
+                    else if(p1Choice == "move4" && active1 == 0)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[CHIK_SLAM_4].w;
+                        dstrect.h = textArr[CHIK_SLAM_4].h;
+                        SDL_RenderCopy(renderer, textArr[CHIK_SLAM_4].textTex, NULL, &dstrect);
+                    }
+
+                    // Totodile Actives
+                    if(p1Choice == "move1" && active1 == 1)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[TOTO_SCRATCH_1].w;
+                        dstrect.h = textArr[TOTO_SCRATCH_1].h;
+                        SDL_RenderCopy(renderer, textArr[TOTO_SCRATCH_1].textTex, NULL, &dstrect);
+                    }
+                    else if(p1Choice == "move2" && active1 == 1)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[TOTO_GUN_2].w;
+                        dstrect.h = textArr[TOTO_GUN_2].h;
+                        SDL_RenderCopy(renderer, textArr[TOTO_GUN_2].textTex, NULL, &dstrect);
+                    }
+                    else if(p1Choice == "move3" && active1 == 1)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[TOTO_SLASH_3].w;
+                        dstrect.h = textArr[TOTO_SLASH_3].h;
+                        SDL_RenderCopy(renderer, textArr[TOTO_SLASH_3].textTex, NULL, &dstrect);
+                    }
+                    else if(p1Choice == "move4" && active1 == 1)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[TOTO_TAIL_4].w;
+                        dstrect.h = textArr[TOTO_TAIL_4].h;
+                        SDL_RenderCopy(renderer, textArr[TOTO_TAIL_4].textTex, NULL, &dstrect);
+                    }
+
+                    // Cyndaquil Actives
+                    if(p1Choice == "move1" && active1 == 2)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[CYNDA_EMBER_1].w;
+                        dstrect.h = textArr[CYNDA_EMBER_1].h;
+                        SDL_RenderCopy(renderer, textArr[CYNDA_EMBER_1].textTex, NULL, &dstrect);
+                    }
+                    else if(p1Choice == "move2" && active1 == 2)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[CYNDA_QUICK_2].w;
+                        dstrect.h = textArr[CYNDA_QUICK_2].h;
+                        SDL_RenderCopy(renderer, textArr[CYNDA_QUICK_2].textTex, NULL, &dstrect);
+                    }
+                    else if(p1Choice == "move3" && active1 == 2)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[CYNDA_WHEEL_3].w;
+                        dstrect.h = textArr[CYNDA_WHEEL_3].h;
+                        SDL_RenderCopy(renderer, textArr[CYNDA_WHEEL_3].textTex, NULL, &dstrect);
+                    }
+                    else if(p1Choice == "move4" && active1 == 2)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[CYNDA_EDGE_4].w;
+                        dstrect.h = textArr[CYNDA_EDGE_4].h;
+                        SDL_RenderCopy(renderer, textArr[CYNDA_EDGE_4].textTex, NULL, &dstrect);
+                    }
+                }
+                else
+                {
+                    attack("P1");
+                    if(active2 == 0)
+                    {
+                        std::string tempAtt4 = to_string(team2[0].getHP()) + "/" + to_string(team2[0].getFullHealth());
+                        strArr[BULBASAUR_HP] = tempAtt4.c_str();
+                        image = TTF_RenderText_Blended(font, strArr[BULBASAUR_HP], (SDL_Color){0, 0, 0, 255});
+                        textArr[BULBASAUR_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                        if (TTF_SizeText(font, strArr[BULBASAUR_HP], &textArr[BULBASAUR_HP].w, &textArr[BULBASAUR_HP].h) != 0) {
+                            std::cout << "Size Fail\n";
+                        }
+                        dstrect.x = 0;
+                        dstrect.y = 1;
+                        dstrect.w = textArr[BULBASAUR_HP].w;
+                        dstrect.h = textArr[BULBASAUR_HP].h;
+
+                        SDL_RenderCopy(renderer, textArr[BULBASAUR_HP].textTex, NULL, &dstrect);
+                        
+                    } 
+                    if(active2 == 1)
+                    {
+                        std::string tempAtt5 = to_string(team2[1].getHP()) + "/" + to_string(team2[1].getFullHealth());
+                        strArr[SQUIRTLE_HP] = tempAtt5.c_str();
+                        image = TTF_RenderText_Blended(font, strArr[SQUIRTLE_HP], (SDL_Color){0, 0, 0, 255});
+                        textArr[SQUIRTLE_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                        if (TTF_SizeText(font, strArr[SQUIRTLE_HP], &textArr[SQUIRTLE_HP].w, &textArr[SQUIRTLE_HP].h) != 0) {
+                            std::cout << "Size Fail\n";
+                        }
+                        dstrect.x = 0;
+                        dstrect.y = 1;
+                        dstrect.w = textArr[SQUIRTLE_HP].w;
+                        dstrect.h = textArr[SQUIRTLE_HP].h;
+
+                        SDL_RenderCopy(renderer, textArr[SQUIRTLE_HP].textTex, NULL, &dstrect);
+                    } 
+                    if(active2 == 2)
+                    {
+                        std::string tempAtt6 = to_string(team2[2].getHP()) + "/" + to_string(team2[2].getFullHealth());
+                        strArr[CHARMANDER_HP] = tempAtt6.c_str();
+                        image = TTF_RenderText_Blended(font, strArr[CHARMANDER_HP], (SDL_Color){0, 0, 0, 255});
+                        textArr[CHARMANDER_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                        if (TTF_SizeText(font, strArr[CHARMANDER_HP], &textArr[CHARMANDER_HP].w, &textArr[CHARMANDER_HP].h) != 0) {
+                            std::cout << "Size Fail\n";
+                        }
+                        dstrect.x = 0;
+                        dstrect.y = 1;
+                        dstrect.w = textArr[CHARMANDER_HP].w;
+                        dstrect.h = textArr[CHARMANDER_HP].h;
+
+                        SDL_RenderCopy(renderer, textArr[CHARMANDER_HP].textTex, NULL, &dstrect);
+                    }
+                    if(team2[active2].getDead()) 
+                    {
+                        menuState = "death";
+                        p2Choice = "death";
+
+                    }
+                    else if(p2Choice == "deciding")
+                    {
+                        p1Choice = "deciding";
+                        menuState = "start";
+                        p1Done = false;
+                        p2Done = false;
+                    }
+                    else p1Choice = "deciding";
+                }
+            }
+            if((p2Choice == "potion" || p2Choice == "restore" || p2Choice == "soda") && (p1Choice == "deciding"))
+            {
+                if(timer++ == 200) timer = 0;
+                if(timer != 0)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[P2_HEAL].w;
+                    dstrect.h = textArr[P2_HEAL].h;
+                    SDL_RenderCopy(renderer, textArr[P2_HEAL].textTex, NULL, &dstrect);
+                }
+                else
+                {
+                    std::cout << "P2 Health Before: " << team1[active2].getHP() << std::endl;
+                    heal("P2");
+                    if(active2 == 0)
+                    {
+                        // setting team 2 hp
+                        std::string tempHeal4 = to_string(team2[0].getHP()) + "/" + to_string(team2[0].getFullHealth());
+                        strArr[BULBASAUR_HP] = tempHeal4.c_str();
+                        image = TTF_RenderText_Blended(font, strArr[BULBASAUR_HP], (SDL_Color){0, 0, 0, 255});
+                        textArr[BULBASAUR_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                        if (TTF_SizeText(font, strArr[BULBASAUR_HP], &textArr[BULBASAUR_HP].w, &textArr[BULBASAUR_HP].h) != 0) {
+                            std::cout << "Size Fail\n";
+                        }
+                        dstrect.x = WIDTH - textArr[BULBASAUR_HP].w;
+                        dstrect.y = 1;
+                        dstrect.w = textArr[BULBASAUR_HP].w;
+                        dstrect.h = textArr[BULBASAUR_HP].h;
+
+                        SDL_RenderCopy(renderer, textArr[BULBASAUR_HP].textTex, NULL, &dstrect);
+                    }
+                    if(active2 == 1)
+                    {
+                        std::string tempHeal5 = to_string(team2[1].getHP()) + "/" + to_string(team2[1].getFullHealth());
+                        strArr[SQUIRTLE_HP] = tempHeal5.c_str();
+                        image = TTF_RenderText_Blended(font, strArr[SQUIRTLE_HP], (SDL_Color){0, 0, 0, 255});
+                        textArr[SQUIRTLE_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                        if (TTF_SizeText(font, strArr[SQUIRTLE_HP], &textArr[SQUIRTLE_HP].w, &textArr[SQUIRTLE_HP].h) != 0) {
+                            std::cout << "Size Fail\n";
+                        }
+                        dstrect.x = WIDTH - textArr[SQUIRTLE_HP].w;
+                        dstrect.y = 1;
+                        dstrect.w = textArr[SQUIRTLE_HP].w;
+                        dstrect.h = textArr[SQUIRTLE_HP].h;
+
+                        SDL_RenderCopy(renderer, textArr[SQUIRTLE_HP].textTex, NULL, &dstrect);
+                    }
+                    if(active2 == 2)
+                    {
+                        std::string tempHeal6 = to_string(team2[2].getHP()) + "/" + to_string(team2[2].getFullHealth());
+                        strArr[CHARMANDER_HP] = tempHeal6.c_str();
+                        image = TTF_RenderText_Blended(font, strArr[CHARMANDER_HP], (SDL_Color){0, 0, 0, 255});
+                        textArr[CHARMANDER_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                        if (TTF_SizeText(font, strArr[CHARMANDER_HP], &textArr[CHARMANDER_HP].w, &textArr[CHARMANDER_HP].h) != 0) {
+                            std::cout << "Size Fail\n";
+                        }
+                        dstrect.x = WIDTH - textArr[CHARMANDER_HP].w;
+                        dstrect.y = 1;
+                        dstrect.w = textArr[CHARMANDER_HP].w;
+                        dstrect.h = textArr[CHARMANDER_HP].h;
+
+                        SDL_RenderCopy(renderer, textArr[CHARMANDER_HP].textTex, NULL, &dstrect);
+                    }
+                    
+                    std::cout << "P2 Health After: " << team1[active2].getHP() << std::endl;
+                    p2Choice = "deciding";
+                    p1Done = false;
+                    p2Done = false;
+                    menuState = "start";
+
+                }
+            }
+            if(team2[active2].getDead())
+            {
+                assignWinner();
+                if(timer++ == 200) timer = 0;
+                if(timer != 0)
+                {
+                    std::cout << menuState << "1\n";
+                    std::cout << p2Choice << "2\n";
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[P2_FAINTED].w/2;
+                    dstrect.h = textArr[P2_FAINTED].h/2;
+                    SDL_RenderCopy(renderer, textArr[P2_FAINTED].textTex, NULL, &dstrect);
+                    
+                    arrow.x = 0;
+                    arrow.y = 0;
+                    arrow.w = 750;
+                    arrow.h = 750;
+
+                    dstrect.x = arrowXPos;// 580, 970
+                                    // 85 
+                    
+                    dstrect.y = arrowYPos; // 555, 620
+                                        // 545
+                    dstrect.w = arrow.w / 12;
+                    dstrect.h = arrow.h / 9;
+                    SDL_RenderCopy(renderer, arrowText, &arrow, &dstrect);
+
+                    if(!team2[0].getDead())
+                    {
+                        dstrect.x = 350;
+                        dstrect.y = 575;
+                        dstrect.w = textArr[BULBASAUR_NAME].w / 1;
+                        dstrect.h = textArr[BULBASAUR_NAME].h / 1;
+                        SDL_RenderCopy(renderer, textArr[BULBASAUR_NAME].textTex, NULL, &dstrect);
+                    }
+                    if(!team2[1].getDead())
+                    {
+                        dstrect.x = 500;
+                        dstrect.y = 630;
+                        dstrect.w = textArr[SQUIRTLE_NAME].w / 1;
+                        dstrect.h = textArr[SQUIRTLE_NAME].h / 1;
+                        SDL_RenderCopy(renderer, textArr[SQUIRTLE_NAME].textTex, NULL, &dstrect);
+                    }
+                    if(!team2[2].getDead())
+                    {
+                        dstrect.x = 620;
+                        dstrect.y = 575;
+                        dstrect.w = textArr[CHARMANDER_NAME].w / 1;
+                        dstrect.h = textArr[CHARMANDER_NAME].h / 1;
+                        SDL_RenderCopy(renderer, textArr[CHARMANDER_NAME].textTex, NULL, &dstrect);
+                    }
+                }
+            }
+            else if((p2Choice == "move1" || p2Choice == "move2" || p2Choice == "move3" || p2Choice == "move4") && p1Choice == "deciding")
+            {
+                if(timer++ == 200) timer = 0;
+                if(timer != 0)
+                {
+                    // Bulbasaur Actives
+                    if(p2Choice == "move1" && active2 == 0)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[BULBA_VINE_1].w;
+                        dstrect.h = textArr[BULBA_VINE_1].h;
+                        SDL_RenderCopy(renderer, textArr[BULBA_VINE_1].textTex, NULL, &dstrect);
+                    }
+                    else if(p2Choice == "move2" && active2 == 0)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[BULBA_TAKE_2].w;
+                        dstrect.h = textArr[BULBA_TAKE_2].h;
+                        SDL_RenderCopy(renderer, textArr[BULBA_TAKE_2].textTex, NULL, &dstrect);
+                    }
+                    else if(p2Choice == "move3" && active2 == 0)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[BULBA_POWER_3].w;
+                        dstrect.h = textArr[BULBA_POWER_3].h;
+                        SDL_RenderCopy(renderer, textArr[BULBA_POWER_3].textTex, NULL, &dstrect);
+                    }
+                    else if(p2Choice == "move4" && active2 == 0)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[BULBA_FACADE_4].w;
+                        dstrect.h = textArr[BULBA_FACADE_4].h;
+                        SDL_RenderCopy(renderer, textArr[BULBA_FACADE_4].textTex, NULL, &dstrect);
+                    }
+
+                    // Squirtle Actives
+                    if(p2Choice == "move1" && active2 == 1)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[SQUI_SPIN_1].w;
+                        dstrect.h = textArr[SQUI_SPIN_1].h;
+                        SDL_RenderCopy(renderer, textArr[SQUI_SPIN_1].textTex, NULL, &dstrect);
+                    }
+                    else if(p2Choice == "move2" && active2 == 1)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[SQUI_PULSE_2].w;
+                        dstrect.h = textArr[SQUI_PULSE_2].h;
+                        SDL_RenderCopy(renderer, textArr[SQUI_PULSE_2].textTex, NULL, &dstrect);
+                    }
+                    else if(p2Choice == "move3" && active2 == 1)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[SQUI_PUMP_3].w;
+                        dstrect.h = textArr[SQUI_PUMP_3].h;
+                        SDL_RenderCopy(renderer, textArr[SQUI_PUMP_3].textTex, NULL, &dstrect);
+                    }
+                    else if(p2Choice == "move4" && active2 == 1)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[SQUI_JET_4].w;
+                        dstrect.h = textArr[SQUI_JET_4].h;
+                        SDL_RenderCopy(renderer, textArr[SQUI_JET_4].textTex, NULL, &dstrect);
+                    }
+
+                    // Charmander Actives
+                    if(p2Choice == "move1" && active2 == 2)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[CHARM_FANG_1].w;
+                        dstrect.h = textArr[CHARM_FANG_1].h;
+                        SDL_RenderCopy(renderer, textArr[CHARM_FANG_1].textTex, NULL, &dstrect);
+                    }
+                    else if(p2Choice == "move2" && active2 == 2)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[CHARM_THROWER_2].w;
+                        dstrect.h = textArr[CHARM_THROWER_2].h;
+                        SDL_RenderCopy(renderer, textArr[CHARM_THROWER_2].textTex, NULL, &dstrect);
+                    }
+                    else if(p2Choice == "move3" && active2 == 2)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[CHARM_SWIPE_3].w;
+                        dstrect.h = textArr[CHARM_SWIPE_3].h;
+                        SDL_RenderCopy(renderer, textArr[CHARM_SWIPE_3].textTex, NULL, &dstrect);
+                    }
+                    else if(p2Choice == "move4" && active2 == 2)
+                    {
+                        dstrect.x = 120;
+                        dstrect.y = 565;
+                        dstrect.w = textArr[CHARM_BLITZ_4].w;
+                        dstrect.h = textArr[CHARM_BLITZ_4].h;
+                        SDL_RenderCopy(renderer, textArr[CHARM_BLITZ_4].textTex, NULL, &dstrect);
+                    }
+                }
+                else
+                {
+                    attack("P2");
+                    if(active1 == 0)
+                    {
+                        std::string tempAtt1 = to_string(team1[0].getHP()) + "/" + to_string(team1[0].getFullHealth());
+                        strArr[CHIKORITA_HP] = tempAtt1.c_str();
+                        image = TTF_RenderText_Blended(font, strArr[CHIKORITA_HP], (SDL_Color){0, 0, 0, 255});
+                        textArr[CHIKORITA_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                        if (TTF_SizeText(font, strArr[CHIKORITA_HP], &textArr[CHIKORITA_HP].w, &textArr[CHIKORITA_HP].h) != 0) {
+                            std::cout << "Size Fail\n";
+                        }
+                        dstrect.x = 0;
+                        dstrect.y = 1;
+                        dstrect.w = textArr[CHIKORITA_HP].w;
+                        dstrect.h = textArr[CHIKORITA_HP].h;
+
+                        SDL_RenderCopy(renderer, textArr[CHIKORITA_HP].textTex, NULL, &dstrect);
+                        
+                    } 
+                    if(active1 == 1)
+                    {
+                        std::string tempAtt2 = to_string(team1[1].getHP()) + "/" + to_string(team1[1].getFullHealth());
+                        strArr[TOTODILE_HP] = tempAtt2.c_str();
+                        image = TTF_RenderText_Blended(font, strArr[TOTODILE_HP], (SDL_Color){0, 0, 0, 255});
+                        textArr[TOTODILE_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                        if (TTF_SizeText(font, strArr[TOTODILE_HP], &textArr[TOTODILE_HP].w, &textArr[TOTODILE_HP].h) != 0) {
+                            std::cout << "Size Fail\n";
+                        }
+                        dstrect.x = 0;
+                        dstrect.y = 1;
+                        dstrect.w = textArr[TOTODILE_HP].w;
+                        dstrect.h = textArr[TOTODILE_HP].h;
+
+                        SDL_RenderCopy(renderer, textArr[TOTODILE_HP].textTex, NULL, &dstrect);
+                    } 
+                    if(active1 == 2)
+                    {
+                        std::string tempAtt3 = to_string(team1[2].getHP()) + "/" + to_string(team1[2].getFullHealth());
+                        strArr[CYNDAQUIL_HP] = tempAtt3.c_str();
+                        image = TTF_RenderText_Blended(font, strArr[CYNDAQUIL_HP], (SDL_Color){0, 0, 0, 255});
+                        textArr[CYNDAQUIL_HP].textTex = SDL_CreateTextureFromSurface(renderer, image);
+                        if (TTF_SizeText(font, strArr[CYNDAQUIL_HP], &textArr[CYNDAQUIL_HP].w, &textArr[CYNDAQUIL_HP].h) != 0) {
+                            std::cout << "Size Fail\n";
+                        }
+                        dstrect.x = 0;
+                        dstrect.y = 1;
+                        dstrect.w = textArr[CYNDAQUIL_HP].w;
+                        dstrect.h = textArr[CYNDAQUIL_HP].h;
+
+                        SDL_RenderCopy(renderer, textArr[CYNDAQUIL_HP].textTex, NULL, &dstrect);
+                    }
+                    if(team1[active1].getDead()) 
+                    {
+                        menuState = "death";
+                        p1Choice = "death";
+
+                    }
+                    else if(p1Choice == "deciding")
+                    {
+                        menuState = "start";
+                        p1Done = false;
+                        p2Done = false;
+                    }
+                }
+            }
+            if(team1[active1].getDead())
+            {
+                assignWinner();
+                if(timer++ == 200) timer = 0;
+                if(timer != 0)
+                {
+                    std::cout << menuState << "1\n";
+                    std::cout << p2Choice << "2\n";
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[P1_FAINTED].w/2;
+                    dstrect.h = textArr[P1_FAINTED].h/2;
+                    SDL_RenderCopy(renderer, textArr[P1_FAINTED].textTex, NULL, &dstrect);
+                    
+                    arrow.x = 0;
+                    arrow.y = 0;
+                    arrow.w = 750;
+                    arrow.h = 750;
+
+                    dstrect.x = arrowXPos;// 580, 970
+                                    // 85 
+                    
+                    dstrect.y = arrowYPos; // 555, 620
+                                        // 545
+                    dstrect.w = arrow.w / 12;
+                    dstrect.h = arrow.h / 9;
+                    SDL_RenderCopy(renderer, arrowText, &arrow, &dstrect);
+
+                    if(!team1[0].getDead())
+                    {
+                        dstrect.x = 350;
+                        dstrect.y = 575;
+                        dstrect.w = textArr[CHIKORITA_NAME].w / 1;
+                        dstrect.h = textArr[CHIKORITA_NAME].h / 1;
+                        SDL_RenderCopy(renderer, textArr[CHIKORITA_NAME].textTex, NULL, &dstrect);
+                    }
+                    if(!team1[1].getDead())
+                    {
+                        dstrect.x = 500;
+                        dstrect.y = 630;
+                        dstrect.w = textArr[TOTODILE_NAME].w / 1;
+                        dstrect.h = textArr[TOTODILE_NAME].h / 1;
+                        SDL_RenderCopy(renderer, textArr[TOTODILE_NAME].textTex, NULL, &dstrect);
+                    }
+                    if(!team1[2].getDead())
+                    {
+                        dstrect.x = 620;
+                        dstrect.y = 575;
+                        dstrect.w = textArr[CYNDAQUIL_NAME].w / 1;
+                        dstrect.h = textArr[CYNDAQUIL_NAME].h / 1;
+                        SDL_RenderCopy(renderer, textArr[CYNDAQUIL_NAME].textTex, NULL, &dstrect);
+                    }
+                }
+            }
+            if(p1Choice == "swap")
+            {
+                if(timer++ == 200) timer = 0;
+                if(p1SwapTo != -1)
+                {
+                    team1[active1].setIsActive(false);
+                    active1 = p1SwapTo;
+                    team1[active1].setIsActive(true);
+                    p1SwapTo = -1;
+                }
+                spriteRect1.x = 0; // start at x = 0
+                spriteRect1.y = 0; // start at y = 0
+                spriteRect1.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
+                spriteRect1.h = SPRITE_SIZE;  // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
+                
+                // destination rectangle to position and size sprite rectangle
+                dstrect.x = 350 - SPRITE_SIZE;
+                dstrect.y = 500 - SPRITE_SIZE;
+                dstrect.w = spriteRect1.w * 2;
+                dstrect.h = spriteRect1.h * 2;
+
+                // if (timer != 0)
+                SDL_RenderCopy(renderer, playerOne[active1], &spriteRect1, &dstrect); // player 1 pokemon render
+                if(timer != 0)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[P1_SWAP].w;
+                    dstrect.h = textArr[P1_SWAP].h;
+                    SDL_RenderCopy(renderer, textArr[P1_SWAP].textTex, NULL, &dstrect);
+                }
+                else
+                { 
+                    p1Choice = "deciding";
+                    // p1SwapTo = -1;
+                }
+            }
+            if(p2Choice == "swap" && (p1Choice == "deciding"))
+            {
+                if(timer++ == 200) timer = 0;
+
+                // SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
+                if(p2SwapTo != -1)
+                {
+                    team2[active2].setIsActive(false);
+                    active2 = p2SwapTo;
+                    team2[active2].setIsActive(true);
+                    p2SwapTo = -1;
+                }
+                spriteRect2.x = 0; // start at x = 0
+                spriteRect2.y = 0; // start at y = 0
+                spriteRect2.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
+                spriteRect2.h = SPRITE_SIZE;  // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
+                
+                // destination rectangle to position and size sprite rectangle
+                dstrect.x = 800 - SPRITE_SIZE;
+                dstrect.y = (475 - SPRITE_SIZE) / 2;
+                dstrect.w = spriteRect2.w * 3;
+                dstrect.h = spriteRect2.h * 3;
+
+                // if (timer != 0)
+                SDL_RenderCopy(renderer, playerTwo[active2], &spriteRect1, &dstrect); // player 1 pokemon render
+                if(timer != 0)
+                {
+                    dstrect.x = 120;
+                    dstrect.y = 565;
+                    dstrect.w = textArr[P2_SWAP].w;
+                    dstrect.h = textArr[P2_SWAP].h;
+                    SDL_RenderCopy(renderer, textArr[P2_SWAP].textTex, NULL, &dstrect);
+
+                }
+                else
+                { 
+                    p2Choice = "deciding";
+                    p2SwapTo = -1;
+                    p1Done = false;
+                    p2Done = false;
+                    menuState = "start";
+                    std::cout << "WHoop\n";
+                    // arrowXPos = 580;
+                    // arrowYPos = 555;
+                    // p1Choice = "fight";
+                }
+            }
             
-            // destination rectangle to position and size sprite rectangle
-            dstrect.x = 350 - SPRITE_SIZE;
-            dstrect.y = 500 - SPRITE_SIZE;
-            dstrect.w = spriteRect1.w * 2;
-            dstrect.h = spriteRect1.h * 2;
-
-            // if (timer != 0)
-            SDL_RenderCopy(renderer, playerOne[active1], &spriteRect1, &dstrect); // player 1 pokemon render
-            if(timer != 0)
-            {
-                dstrect.x = 120;
-                dstrect.y = 565;
-                dstrect.w = textArr[P1_SWAP].w;
-                dstrect.h = textArr[P1_SWAP].h;
-                SDL_RenderCopy(renderer, textArr[P1_SWAP].textTex, NULL, &dstrect);
-            }
-            else
-            { 
-                p1Choice = "deciding";
-                p1SwapTo = -1;
-            }
-        }
-        if(p2Choice == "swap" && (p1Choice == "deciding"))
-        {
-            if(timer++ == 200) timer = 0;
-
-            // SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
-            team2[active2].setIsActive(false);
-            active2 = p2SwapTo;
-            team2[active2].setIsActive(true);
-            spriteRect2.x = 0; // start at x = 0
-            spriteRect2.y = 0; // start at y = 0
-            spriteRect2.w = SPRITE_SIZE; // capture SPRITE_SIZE amount of pixels outward from (0, 0)
-            spriteRect2.h = SPRITE_SIZE;  // capture SPRITE_SIZE amount of pixels downward from (SPRITESIZE, 0)
-            
-            // destination rectangle to position and size sprite rectangle
-            dstrect.x = 800 - SPRITE_SIZE;
-            dstrect.y = (475 - SPRITE_SIZE) / 2;
-            dstrect.w = spriteRect2.w * 3;
-            dstrect.h = spriteRect2.h * 3;
-
-            // if (timer != 0)
-            SDL_RenderCopy(renderer, playerTwo[active2], &spriteRect1, &dstrect); // player 1 pokemon render
-            if(timer != 0)
-            {
-                dstrect.x = 120;
-                dstrect.y = 565;
-                dstrect.w = textArr[P2_SWAP].w;
-                dstrect.h = textArr[P2_SWAP].h;
-                SDL_RenderCopy(renderer, textArr[P2_SWAP].textTex, NULL, &dstrect);
-            }
-            else
-            { 
-                p2Choice = "deciding";
-                p2SwapTo = -1;
-                p1Done = false;
-                p2Done = false;
-                menuState = "start";
-            }
-        }
-        // COMMENT THIS OUT IF YOU'RE GOING TO RUN WHAT WE GOT SO FAR vvvvvv
-        if(menuState == "swapMenu" && turn == "P1")
-        {
-            if(!team1[0].getIsActive() && !team1[0].getDead())
-            {
-                dstrect.x = 350;
-                dstrect.y = 575;
-                dstrect.w = textArr[CHIKORITA_NAME].w / 1;
-                dstrect.h = textArr[CHIKORITA_NAME].h / 1;
-                SDL_RenderCopy(renderer, textArr[CHIKORITA_NAME].textTex, NULL, &dstrect);
-            }
-            if(!team1[1].getIsActive() && !team1[1].getDead())
-            {
-                dstrect.x = 500;
-                dstrect.y = 630;
-                dstrect.w = textArr[TOTODILE_NAME].w / 1;
-                dstrect.h = textArr[TOTODILE_NAME].h / 1;
-                SDL_RenderCopy(renderer, textArr[TOTODILE_NAME].textTex, NULL, &dstrect);
-            }
-            if(!team1[2].getIsActive() && !team1[2].getDead())
-            {
-                dstrect.x = 620;
-                dstrect.y = 575;
-                dstrect.w = textArr[CYNDAQUIL_NAME].w / 1;
-                dstrect.h = textArr[CYNDAQUIL_NAME].h / 1;
-                SDL_RenderCopy(renderer, textArr[CYNDAQUIL_NAME].textTex, NULL, &dstrect);
-            }
-        }
-        if(menuState == "swapMenu" && turn == "P2")
-        {
-            if(!team2[0].getIsActive() && !team2[0].getDead())
-            {
-                dstrect.x = 350;
-                dstrect.y = 575;
-                dstrect.w = textArr[BULBASAUR_NAME].w / 1;
-                dstrect.h = textArr[BULBASAUR_NAME].h / 1;
-                SDL_RenderCopy(renderer, textArr[BULBASAUR_NAME].textTex, NULL, &dstrect);
-            }
-            if(!team2[1].getIsActive() && !team2[1].getDead())
-            {
-                dstrect.x = 500;
-                dstrect.y = 630;
-                dstrect.w = textArr[SQUIRTLE_NAME].w / 1;
-                dstrect.h = textArr[SQUIRTLE_NAME].h / 1;
-                SDL_RenderCopy(renderer, textArr[SQUIRTLE_NAME].textTex, NULL, &dstrect);
-            }
-            if(!team2[2].getIsActive() && !team2[2].getDead())
-            {
-                dstrect.x = 620;
-                dstrect.y = 575;
-                dstrect.w = textArr[CHARMANDER_NAME].w / 1;
-                dstrect.h = textArr[CHARMANDER_NAME].h / 1;
-                SDL_RenderCopy(renderer, textArr[CHARMANDER_NAME].textTex, NULL, &dstrect);
-            }
-        }
-        // COMMENT THIS OUT IF YOU'RE GOING TO RUN WHAT WE GOT SO FAR ^^^^^
-    }
-    else
-    {
-        // left text
-        if(menuState == "start")
-        {
-            SDL_RenderCopy(renderer, menuText, &menu, &dstrect);
         }
         else
         {
-            SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
-        }
-        // arrow sprite
-        arrow.x = 0;
-        arrow.y = 0;
-        arrow.w = 750;
-        arrow.h = 750;
-
-        dstrect.x = arrowXPos;// 580, 970
-                        // 85 
-        
-        dstrect.y = arrowYPos; // 555, 620
-                            // 545
-        dstrect.w = arrow.w / 12;
-        dstrect.h = arrow.h / 9;
-        SDL_RenderCopy(renderer, arrowText, &arrow, &dstrect);
-
-        // prompt text
-        if(turn == "P1" && menuState == "start")
-        {
-            dstrect.x = 90;
-            dstrect.y = 565;
-            dstrect.w = textArr[PROMPT_P1].w;
-            dstrect.h = textArr[PROMPT_P1].h;
-            SDL_RenderCopy(renderer, textArr[PROMPT_P1].textTex, NULL, &dstrect);
-        }
-        else if(turn == "P2" && menuState == "start")
-        {
-            dstrect.x = 90;
-            dstrect.y = 565;
-            dstrect.w = textArr[PROMPT_P2].w;
-            dstrect.h = textArr[PROMPT_P2].h;
-            SDL_RenderCopy(renderer, textArr[PROMPT_P2].textTex, NULL, &dstrect);
-        }
-        if(menuState == "itemMenu")
-        {
-            // item sprites
-            potion.x = 0;
-            potion.y = 0;
-            potion.w = 24;
-            potion.h = 24;
-
-            dstrect.x = 125;
-            dstrect.y = 575;
-            dstrect.w = potion.w;
-            dstrect.h = potion.h;
-            SDL_RenderCopy(renderer, itemText[0], &potion, &dstrect);
-
-            fullRestore.x = 0;
-            fullRestore.y = 0;
-            fullRestore.w = 24;
-            fullRestore.h = 24;
-
-            dstrect.x = 325;
-            dstrect.y = 575;
-            dstrect.w = fullRestore.w;
-            dstrect.h = fullRestore.h;
-            SDL_RenderCopy(renderer, itemText[1], &fullRestore, &dstrect);
-
-            sodaPop.x = 0;
-            sodaPop.y = 0;
-            sodaPop.w = 24;
-            sodaPop.h = 24;
-
-            dstrect.x = 125;
-            dstrect.y = 600;
-            dstrect.w = sodaPop.w;
-            dstrect.h = sodaPop.h;
-            SDL_RenderCopy(renderer, itemText[2], &sodaPop, &dstrect);
-            if(turn == "P1")
+            // left text
+            if(menuState == "start")
             {
-                // item fonts
-                dstrect.x = 160;
-                dstrect.y = 575;
-                dstrect.w = textArr[POTIONS1].w / 2;
-                dstrect.h = textArr[POTIONS1].h / 2;
-                SDL_RenderCopy(renderer, textArr[POTIONS1].textTex, NULL, &dstrect);
-                
-                dstrect.x = 350;
-                dstrect.y = 575;
-                dstrect.w = textArr[FULL_RESTORES1].w / 2; 
-                dstrect.h = textArr[FULL_RESTORES1].h / 2;
-                SDL_RenderCopy(renderer, textArr[FULL_RESTORES1].textTex, NULL, &dstrect);
-
-                dstrect.x = 160;
-                dstrect.y = 600;
-                dstrect.w = textArr[SODA_POPS1].w / 2;
-                dstrect.h = textArr[SODA_POPS1].h / 2;
-                SDL_RenderCopy(renderer, textArr[SODA_POPS1].textTex, NULL, &dstrect);
+                SDL_RenderCopy(renderer, menuText, &menu, &dstrect);
             }
-            if(turn == "P2")
+            else
             {
-                // item fonts
-                dstrect.x = 160;
-                dstrect.y = 575;
-                dstrect.w = textArr[POTIONS2].w / 2;
-                dstrect.h = textArr[POTIONS2].h / 2;
-                SDL_RenderCopy(renderer, textArr[POTIONS2].textTex, NULL, &dstrect);
-                
-                dstrect.x = 350;
-                dstrect.y = 575;
-                dstrect.w = textArr[FULL_RESTORES2].w / 2; 
-                dstrect.h = textArr[FULL_RESTORES2].h / 2;
-                SDL_RenderCopy(renderer, textArr[FULL_RESTORES2].textTex, NULL, &dstrect);
-
-                dstrect.x = 160;
-                dstrect.y = 600;
-                dstrect.w = textArr[SODA_POPS2].w / 2;
-                dstrect.h = textArr[SODA_POPS2].h / 2;
-                SDL_RenderCopy(renderer, textArr[SODA_POPS2].textTex, NULL, &dstrect);
+                SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
             }
-        }
+            // arrow sprite
+            arrow.x = 0;
+            arrow.y = 0;
+            arrow.w = 750;
+            arrow.h = 750;
 
-        // IM pretty sure this works now vvvv
-        if(active1 == 0 && turn == "P1" && menuState == "fightMenu") // chikorita Moves
-        {   
-            dstrect.x = 150;
-            dstrect.y = 575;
-            dstrect.w = textArr[TACKLE].w / 3;
-            dstrect.h = textArr[TACKLE].h / 3;
-            SDL_RenderCopy(renderer, textArr[TACKLE].textTex, NULL, &dstrect);
-
-            dstrect.x = 350;
-            dstrect.y = 575;
-            dstrect.w = textArr[RAZOR_LEAF].w / 3;
-            dstrect.h = textArr[RAZOR_LEAF].h / 3;
-            SDL_RenderCopy(renderer, textArr[RAZOR_LEAF].textTex, NULL, &dstrect);
-
-            dstrect.x = 150;
-            dstrect.y = 625;
-            dstrect.w = textArr[MAGICAL_LEAF].w / 3;
-            dstrect.h = textArr[MAGICAL_LEAF].h / 3;
-            SDL_RenderCopy(renderer, textArr[MAGICAL_LEAF].textTex, NULL, &dstrect);
-
-            dstrect.x = 350;
-            dstrect.y = 625;
-            dstrect.w = textArr[BODY_SLAM].w / 3;
-            dstrect.h = textArr[BODY_SLAM].h / 3;
-            SDL_RenderCopy(renderer, textArr[BODY_SLAM].textTex, NULL, &dstrect);
+            dstrect.x = arrowXPos;// 580, 970
+                            // 85 
             
-        }
-        if(active1 == 1 && turn == "P1" && menuState == "fightMenu") // Totodile Moves
-        {   
-            dstrect.x = 150;
-            dstrect.y = 575;
-            dstrect.w = textArr[SCRATCH].w / 3;
-            dstrect.h = textArr[SCRATCH].h / 3;
-            SDL_RenderCopy(renderer, textArr[SCRATCH].textTex, NULL, &dstrect);
+            dstrect.y = arrowYPos; // 555, 620
+                                // 545
+            dstrect.w = arrow.w / 12;
+            dstrect.h = arrow.h / 9;
+            SDL_RenderCopy(renderer, arrowText, &arrow, &dstrect);
 
-            dstrect.x = 350;
-            dstrect.y = 575;
-            dstrect.w = textArr[WATER_GUN].w / 3;
-            dstrect.h = textArr[WATER_GUN].h / 3;
-            SDL_RenderCopy(renderer, textArr[WATER_GUN].textTex, NULL, &dstrect);
-
-            dstrect.x = 150;
-            dstrect.y = 625;
-            dstrect.w = textArr[SLASH].w / 3;
-            dstrect.h = textArr[SLASH].h / 3;
-            SDL_RenderCopy(renderer, textArr[SLASH].textTex, NULL, &dstrect);
-
-            dstrect.x = 350;
-            dstrect.y = 625;
-            dstrect.w = textArr[AQUA_TAIL].w / 3;
-            dstrect.h = textArr[AQUA_TAIL].h / 3;
-            SDL_RenderCopy(renderer, textArr[AQUA_TAIL].textTex, NULL, &dstrect);
-        }
-        if(active1 == 2 && turn == "P1" && menuState == "fightMenu") // Cyndaquil Moves
-        {   
-            dstrect.x = 150;
-            dstrect.y = 575;
-            dstrect.w = textArr[EMBER].w / 3;
-            dstrect.h = textArr[EMBER].h / 3;
-            SDL_RenderCopy(renderer, textArr[EMBER].textTex, NULL, &dstrect);
-
-            dstrect.x = 350;
-            dstrect.y = 575;
-            dstrect.w = textArr[QUICK_ATTACK].w / 3;
-            dstrect.h = textArr[QUICK_ATTACK].h / 3;
-            SDL_RenderCopy(renderer, textArr[QUICK_ATTACK].textTex, NULL, &dstrect);
-
-            dstrect.x = 150;
-            dstrect.y = 625;
-            dstrect.w = textArr[FLAME_WHEEL].w / 3;
-            dstrect.h = textArr[FLAME_WHEEL].h / 3;
-            SDL_RenderCopy(renderer, textArr[FLAME_WHEEL].textTex, NULL, &dstrect);
-
-            dstrect.x = 350;
-            dstrect.y = 625;
-            dstrect.w = textArr[DOUBLE_EDGE].w / 3;
-            dstrect.h = textArr[DOUBLE_EDGE].h / 3;
-            SDL_RenderCopy(renderer, textArr[DOUBLE_EDGE].textTex, NULL, &dstrect);
-        }
-        if(active2 == 0 && turn == "P2" && menuState == "fightMenu") // Bulbasaur Moves
-        {   
-            dstrect.x = 150;
-            dstrect.y = 575;
-            dstrect.w = textArr[VINE_WHIP].w / 3;
-            dstrect.h = textArr[VINE_WHIP].h / 3;
-            SDL_RenderCopy(renderer, textArr[VINE_WHIP].textTex, NULL, &dstrect);
-
-            dstrect.x = 350;
-            dstrect.y = 575;
-            dstrect.w = textArr[TAKE_DOWN].w / 3;
-            dstrect.h = textArr[TAKE_DOWN].h / 3;
-            SDL_RenderCopy(renderer, textArr[TAKE_DOWN].textTex, NULL, &dstrect);
-
-            dstrect.x = 150;
-            dstrect.y = 625;
-            dstrect.w = textArr[POWER_WHIP].w / 3;
-            dstrect.h = textArr[POWER_WHIP].h / 3;
-            SDL_RenderCopy(renderer, textArr[POWER_WHIP].textTex, NULL, &dstrect);
-
-            dstrect.x = 350;
-            dstrect.y = 625;
-            dstrect.w = textArr[FACADE].w / 3;
-            dstrect.h = textArr[FACADE].h / 3;
-            SDL_RenderCopy(renderer, textArr[FACADE].textTex, NULL, &dstrect);
-        }
-        if(active2 == 1 && turn == "P2" && menuState == "fightMenu") // Squirtle Moves
-        {   
-            dstrect.x = 150;
-            dstrect.y = 575;
-            dstrect.w = textArr[RAPID_SPIN].w / 3;
-            dstrect.h = textArr[RAPID_SPIN].h / 3;
-            SDL_RenderCopy(renderer, textArr[RAPID_SPIN].textTex, NULL, &dstrect);
-
-            dstrect.x = 350;
-            dstrect.y = 575;
-            dstrect.w = textArr[WATER_PULSE].w / 3;
-            dstrect.h = textArr[WATER_PULSE].h / 3;
-            SDL_RenderCopy(renderer, textArr[WATER_PULSE].textTex, NULL, &dstrect);
-
-            dstrect.x = 150;
-            dstrect.y = 625;
-            dstrect.w = textArr[HYDRO_PUMP].w / 3;
-            dstrect.h = textArr[HYDRO_PUMP].h / 3;
-            SDL_RenderCopy(renderer, textArr[HYDRO_PUMP].textTex, NULL, &dstrect);
-
-            dstrect.x = 350;
-            dstrect.y = 625;
-            dstrect.w = textArr[AQUA_JET].w / 3;
-            dstrect.h = textArr[AQUA_JET].h / 3;
-            SDL_RenderCopy(renderer, textArr[AQUA_JET].textTex, NULL, &dstrect);
-        }
-        if(active2 == 2 && turn == "P2" && menuState == "fightMenu") // Charmander Moves
-        {   
-            dstrect.x = 150;
-            dstrect.y = 575;
-            dstrect.w = textArr[FIRE_FANG].w / 3;
-            dstrect.h = textArr[FIRE_FANG].h / 3;
-            SDL_RenderCopy(renderer, textArr[FIRE_FANG].textTex, NULL, &dstrect);
-
-            dstrect.x = 350;
-            dstrect.y = 575;
-            dstrect.w = textArr[FLAMETHROWER].w / 3;
-            dstrect.h = textArr[FLAMETHROWER].h / 3;
-            SDL_RenderCopy(renderer, textArr[FLAMETHROWER].textTex, NULL, &dstrect);
-
-            dstrect.x = 150;
-            dstrect.y = 625;
-            dstrect.w = textArr[FALSE_SWIPE].w / 3;
-            dstrect.h = textArr[FALSE_SWIPE].h / 3;
-            SDL_RenderCopy(renderer, textArr[FALSE_SWIPE].textTex, NULL, &dstrect);
-
-            dstrect.x = 350;
-            dstrect.y = 625;
-            dstrect.w = textArr[FLARE_BLITZ].w / 3;
-            dstrect.h = textArr[FLARE_BLITZ].h / 3;
-            SDL_RenderCopy(renderer, textArr[FLARE_BLITZ].textTex, NULL, &dstrect);
-        }
-        // IM pretty sure this works now ^^^^
-
-        // swap menu
-        if(menuState == "swapMenu" && turn == "P1")
-        {
-            if(!team1[0].getIsActive() && !team1[0].getDead())
+            // prompt text
+            if(turn == "P1" && menuState == "start")
             {
+                dstrect.x = 90;
+                dstrect.y = 565;
+                dstrect.w = textArr[PROMPT_P1].w/2;
+                dstrect.h = textArr[PROMPT_P1].h/2;
+                SDL_RenderCopy(renderer, textArr[PROMPT_P1].textTex, NULL, &dstrect);
+            }
+            else if(turn == "P2" && menuState == "start")
+            {
+                dstrect.x = 90;
+                dstrect.y = 565;
+                dstrect.w = textArr[PROMPT_P2].w/2;
+                dstrect.h = textArr[PROMPT_P2].h/2;
+                SDL_RenderCopy(renderer, textArr[PROMPT_P2].textTex, NULL, &dstrect);
+            }
+            if(menuState == "itemMenu")
+            {
+                // item sprites
+                potion.x = 0;
+                potion.y = 0;
+                potion.w = 24;
+                potion.h = 24;
+
+                dstrect.x = 125;
+                dstrect.y = 575;
+                dstrect.w = potion.w;
+                dstrect.h = potion.h;
+                SDL_RenderCopy(renderer, itemText[0], &potion, &dstrect);
+
+                fullRestore.x = 0;
+                fullRestore.y = 0;
+                fullRestore.w = 24;
+                fullRestore.h = 24;
+
+                dstrect.x = 325;
+                dstrect.y = 575;
+                dstrect.w = fullRestore.w;
+                dstrect.h = fullRestore.h;
+                SDL_RenderCopy(renderer, itemText[1], &fullRestore, &dstrect);
+
+                sodaPop.x = 0;
+                sodaPop.y = 0;
+                sodaPop.w = 24;
+                sodaPop.h = 24;
+
+                dstrect.x = 125;
+                dstrect.y = 600;
+                dstrect.w = sodaPop.w;
+                dstrect.h = sodaPop.h;
+                SDL_RenderCopy(renderer, itemText[2], &sodaPop, &dstrect);
+                if(turn == "P1")
+                {
+                    // item fonts
+                    dstrect.x = 160;
+                    dstrect.y = 575;
+                    dstrect.w = textArr[POTIONS1].w / 2;
+                    dstrect.h = textArr[POTIONS1].h / 2;
+                    SDL_RenderCopy(renderer, textArr[POTIONS1].textTex, NULL, &dstrect);
+                    
+                    dstrect.x = 350;
+                    dstrect.y = 575;
+                    dstrect.w = textArr[FULL_RESTORES1].w / 2; 
+                    dstrect.h = textArr[FULL_RESTORES1].h / 2;
+                    SDL_RenderCopy(renderer, textArr[FULL_RESTORES1].textTex, NULL, &dstrect);
+
+                    dstrect.x = 160;
+                    dstrect.y = 600;
+                    dstrect.w = textArr[SODA_POPS1].w / 2;
+                    dstrect.h = textArr[SODA_POPS1].h / 2;
+                    SDL_RenderCopy(renderer, textArr[SODA_POPS1].textTex, NULL, &dstrect);
+                }
+                if(turn == "P2")
+                {
+                    // item fonts
+                    dstrect.x = 160;
+                    dstrect.y = 575;
+                    dstrect.w = textArr[POTIONS2].w / 2;
+                    dstrect.h = textArr[POTIONS2].h / 2;
+                    SDL_RenderCopy(renderer, textArr[POTIONS2].textTex, NULL, &dstrect);
+                    
+                    dstrect.x = 350;
+                    dstrect.y = 575;
+                    dstrect.w = textArr[FULL_RESTORES2].w / 2; 
+                    dstrect.h = textArr[FULL_RESTORES2].h / 2;
+                    SDL_RenderCopy(renderer, textArr[FULL_RESTORES2].textTex, NULL, &dstrect);
+
+                    dstrect.x = 160;
+                    dstrect.y = 600;
+                    dstrect.w = textArr[SODA_POPS2].w / 2;
+                    dstrect.h = textArr[SODA_POPS2].h / 2;
+                    SDL_RenderCopy(renderer, textArr[SODA_POPS2].textTex, NULL, &dstrect);
+                }
+            }
+
+            // IM pretty sure this works now vvvv
+            if(active1 == 0 && turn == "P1" && menuState == "fightMenu") // chikorita Moves
+            {   
+                dstrect.x = 150;
+                dstrect.y = 575;
+                dstrect.w = textArr[TACKLE].w / 3;
+                dstrect.h = textArr[TACKLE].h / 3;
+                SDL_RenderCopy(renderer, textArr[TACKLE].textTex, NULL, &dstrect);
+
                 dstrect.x = 350;
                 dstrect.y = 575;
-                dstrect.w = textArr[CHIKORITA_NAME].w / 1;
-                dstrect.h = textArr[CHIKORITA_NAME].h / 1;
-                SDL_RenderCopy(renderer, textArr[CHIKORITA_NAME].textTex, NULL, &dstrect);
+                dstrect.w = textArr[RAZOR_LEAF].w / 3;
+                dstrect.h = textArr[RAZOR_LEAF].h / 3;
+                SDL_RenderCopy(renderer, textArr[RAZOR_LEAF].textTex, NULL, &dstrect);
+
+                dstrect.x = 150;
+                dstrect.y = 625;
+                dstrect.w = textArr[MAGICAL_LEAF].w / 3;
+                dstrect.h = textArr[MAGICAL_LEAF].h / 3;
+                SDL_RenderCopy(renderer, textArr[MAGICAL_LEAF].textTex, NULL, &dstrect);
+
+                dstrect.x = 350;
+                dstrect.y = 625;
+                dstrect.w = textArr[BODY_SLAM].w / 3;
+                dstrect.h = textArr[BODY_SLAM].h / 3;
+                SDL_RenderCopy(renderer, textArr[BODY_SLAM].textTex, NULL, &dstrect);
+                
             }
-            if(!team1[1].getIsActive() && !team1[1].getDead())
-            {
-                dstrect.x = 500;
-                dstrect.y = 630;
-                dstrect.w = textArr[TOTODILE_NAME].w / 1;
-                dstrect.h = textArr[TOTODILE_NAME].h / 1;
-                SDL_RenderCopy(renderer, textArr[TOTODILE_NAME].textTex, NULL, &dstrect);
-            }
-            if(!team1[2].getIsActive() && !team1[2].getDead())
-            {
-                dstrect.x = 620;
+            if(active1 == 1 && turn == "P1" && menuState == "fightMenu") // Totodile Moves
+            {   
+                dstrect.x = 150;
                 dstrect.y = 575;
-                dstrect.w = textArr[CYNDAQUIL_NAME].w / 1;
-                dstrect.h = textArr[CYNDAQUIL_NAME].h / 1;
-                SDL_RenderCopy(renderer, textArr[CYNDAQUIL_NAME].textTex, NULL, &dstrect);
-            }
-        }
-        if(menuState == "swapMenu" && turn == "P2")
-        {
-            if(!team2[0].getIsActive() && !team2[0].getDead())
-            {
+                dstrect.w = textArr[SCRATCH].w / 3;
+                dstrect.h = textArr[SCRATCH].h / 3;
+                SDL_RenderCopy(renderer, textArr[SCRATCH].textTex, NULL, &dstrect);
+
                 dstrect.x = 350;
                 dstrect.y = 575;
-                dstrect.w = textArr[BULBASAUR_NAME].w / 1;
-                dstrect.h = textArr[BULBASAUR_NAME].h / 1;
-                SDL_RenderCopy(renderer, textArr[BULBASAUR_NAME].textTex, NULL, &dstrect);
+                dstrect.w = textArr[WATER_GUN].w / 3;
+                dstrect.h = textArr[WATER_GUN].h / 3;
+                SDL_RenderCopy(renderer, textArr[WATER_GUN].textTex, NULL, &dstrect);
+
+                dstrect.x = 150;
+                dstrect.y = 625;
+                dstrect.w = textArr[SLASH].w / 3;
+                dstrect.h = textArr[SLASH].h / 3;
+                SDL_RenderCopy(renderer, textArr[SLASH].textTex, NULL, &dstrect);
+
+                dstrect.x = 350;
+                dstrect.y = 625;
+                dstrect.w = textArr[AQUA_TAIL].w / 3;
+                dstrect.h = textArr[AQUA_TAIL].h / 3;
+                SDL_RenderCopy(renderer, textArr[AQUA_TAIL].textTex, NULL, &dstrect);
             }
-            if(!team2[1].getIsActive() && !team2[1].getDead())
-            {
-                dstrect.x = 500;
-                dstrect.y = 630;
-                dstrect.w = textArr[SQUIRTLE_NAME].w / 1;
-                dstrect.h = textArr[SQUIRTLE_NAME].h / 1;
-                SDL_RenderCopy(renderer, textArr[SQUIRTLE_NAME].textTex, NULL, &dstrect);
-            }
-            if(!team2[2].getIsActive() && !team2[2].getDead())
-            {
-                dstrect.x = 620;
+            if(active1 == 2 && turn == "P1" && menuState == "fightMenu") // Cyndaquil Moves
+            {   
+                dstrect.x = 150;
                 dstrect.y = 575;
-                dstrect.w = textArr[CHARMANDER_NAME].w / 1;
-                dstrect.h = textArr[CHARMANDER_NAME].h / 1;
-                SDL_RenderCopy(renderer, textArr[CHARMANDER_NAME].textTex, NULL, &dstrect);
+                dstrect.w = textArr[EMBER].w / 3;
+                dstrect.h = textArr[EMBER].h / 3;
+                SDL_RenderCopy(renderer, textArr[EMBER].textTex, NULL, &dstrect);
+
+                dstrect.x = 350;
+                dstrect.y = 575;
+                dstrect.w = textArr[QUICK_ATTACK].w / 3;
+                dstrect.h = textArr[QUICK_ATTACK].h / 3;
+                SDL_RenderCopy(renderer, textArr[QUICK_ATTACK].textTex, NULL, &dstrect);
+
+                dstrect.x = 150;
+                dstrect.y = 625;
+                dstrect.w = textArr[FLAME_WHEEL].w / 3;
+                dstrect.h = textArr[FLAME_WHEEL].h / 3;
+                SDL_RenderCopy(renderer, textArr[FLAME_WHEEL].textTex, NULL, &dstrect);
+
+                dstrect.x = 350;
+                dstrect.y = 625;
+                dstrect.w = textArr[DOUBLE_EDGE].w / 3;
+                dstrect.h = textArr[DOUBLE_EDGE].h / 3;
+                SDL_RenderCopy(renderer, textArr[DOUBLE_EDGE].textTex, NULL, &dstrect);
+            }
+            if(active2 == 0 && turn == "P2" && menuState == "fightMenu") // Bulbasaur Moves
+            {   
+                dstrect.x = 150;
+                dstrect.y = 575;
+                dstrect.w = textArr[VINE_WHIP].w / 3;
+                dstrect.h = textArr[VINE_WHIP].h / 3;
+                SDL_RenderCopy(renderer, textArr[VINE_WHIP].textTex, NULL, &dstrect);
+
+                dstrect.x = 350;
+                dstrect.y = 575;
+                dstrect.w = textArr[TAKE_DOWN].w / 3;
+                dstrect.h = textArr[TAKE_DOWN].h / 3;
+                SDL_RenderCopy(renderer, textArr[TAKE_DOWN].textTex, NULL, &dstrect);
+
+                dstrect.x = 150;
+                dstrect.y = 625;
+                dstrect.w = textArr[POWER_WHIP].w / 3;
+                dstrect.h = textArr[POWER_WHIP].h / 3;
+                SDL_RenderCopy(renderer, textArr[POWER_WHIP].textTex, NULL, &dstrect);
+
+                dstrect.x = 350;
+                dstrect.y = 625;
+                dstrect.w = textArr[FACADE].w / 3;
+                dstrect.h = textArr[FACADE].h / 3;
+                SDL_RenderCopy(renderer, textArr[FACADE].textTex, NULL, &dstrect);
+            }
+            if(active2 == 1 && turn == "P2" && menuState == "fightMenu") // Squirtle Moves
+            {   
+                dstrect.x = 150;
+                dstrect.y = 575;
+                dstrect.w = textArr[RAPID_SPIN].w / 3;
+                dstrect.h = textArr[RAPID_SPIN].h / 3;
+                SDL_RenderCopy(renderer, textArr[RAPID_SPIN].textTex, NULL, &dstrect);
+
+                dstrect.x = 350;
+                dstrect.y = 575;
+                dstrect.w = textArr[WATER_PULSE].w / 3;
+                dstrect.h = textArr[WATER_PULSE].h / 3;
+                SDL_RenderCopy(renderer, textArr[WATER_PULSE].textTex, NULL, &dstrect);
+
+                dstrect.x = 150;
+                dstrect.y = 625;
+                dstrect.w = textArr[HYDRO_PUMP].w / 3;
+                dstrect.h = textArr[HYDRO_PUMP].h / 3;
+                SDL_RenderCopy(renderer, textArr[HYDRO_PUMP].textTex, NULL, &dstrect);
+
+                dstrect.x = 350;
+                dstrect.y = 625;
+                dstrect.w = textArr[AQUA_JET].w / 3;
+                dstrect.h = textArr[AQUA_JET].h / 3;
+                SDL_RenderCopy(renderer, textArr[AQUA_JET].textTex, NULL, &dstrect);
+            }
+            if(active2 == 2 && turn == "P2" && menuState == "fightMenu") // Charmander Moves
+            {   
+                dstrect.x = 150;
+                dstrect.y = 575;
+                dstrect.w = textArr[FIRE_FANG].w / 3;
+                dstrect.h = textArr[FIRE_FANG].h / 3;
+                SDL_RenderCopy(renderer, textArr[FIRE_FANG].textTex, NULL, &dstrect);
+
+                dstrect.x = 350;
+                dstrect.y = 575;
+                dstrect.w = textArr[FLAMETHROWER].w / 3;
+                dstrect.h = textArr[FLAMETHROWER].h / 3;
+                SDL_RenderCopy(renderer, textArr[FLAMETHROWER].textTex, NULL, &dstrect);
+
+                dstrect.x = 150;
+                dstrect.y = 625;
+                dstrect.w = textArr[FALSE_SWIPE].w / 3;
+                dstrect.h = textArr[FALSE_SWIPE].h / 3;
+                SDL_RenderCopy(renderer, textArr[FALSE_SWIPE].textTex, NULL, &dstrect);
+
+                dstrect.x = 350;
+                dstrect.y = 625;
+                dstrect.w = textArr[FLARE_BLITZ].w / 3;
+                dstrect.h = textArr[FLARE_BLITZ].h / 3;
+                SDL_RenderCopy(renderer, textArr[FLARE_BLITZ].textTex, NULL, &dstrect);
+            }
+            // IM pretty sure this works now ^^^^
+
+            // swap menu
+            if(menuState == "swapMenu" && turn == "P1")
+            {
+                if(!team1[0].getIsActive() && !team1[0].getDead())
+                {
+                    dstrect.x = 350;
+                    dstrect.y = 575;
+                    dstrect.w = textArr[CHIKORITA_NAME].w / 1;
+                    dstrect.h = textArr[CHIKORITA_NAME].h / 1;
+                    SDL_RenderCopy(renderer, textArr[CHIKORITA_NAME].textTex, NULL, &dstrect);
+                }
+                if(!team1[1].getIsActive() && !team1[1].getDead())
+                {
+                    dstrect.x = 500;
+                    dstrect.y = 630;
+                    dstrect.w = textArr[TOTODILE_NAME].w / 1;
+                    dstrect.h = textArr[TOTODILE_NAME].h / 1;
+                    SDL_RenderCopy(renderer, textArr[TOTODILE_NAME].textTex, NULL, &dstrect);
+                }
+                if(!team1[2].getIsActive() && !team1[2].getDead())
+                {
+                    dstrect.x = 620;
+                    dstrect.y = 575;
+                    dstrect.w = textArr[CYNDAQUIL_NAME].w / 1;
+                    dstrect.h = textArr[CYNDAQUIL_NAME].h / 1;
+                    SDL_RenderCopy(renderer, textArr[CYNDAQUIL_NAME].textTex, NULL, &dstrect);
+                }
+            }
+            if(menuState == "swapMenu" && turn == "P2")
+            {
+                if(!team2[0].getIsActive() && !team2[0].getDead())
+                {
+                    dstrect.x = 350;
+                    dstrect.y = 575;
+                    dstrect.w = textArr[BULBASAUR_NAME].w / 1;
+                    dstrect.h = textArr[BULBASAUR_NAME].h / 1;
+                    SDL_RenderCopy(renderer, textArr[BULBASAUR_NAME].textTex, NULL, &dstrect);
+                }
+                if(!team2[1].getIsActive() && !team2[1].getDead())
+                {
+                    dstrect.x = 500;
+                    dstrect.y = 630;
+                    dstrect.w = textArr[SQUIRTLE_NAME].w / 1;
+                    dstrect.h = textArr[SQUIRTLE_NAME].h / 1;
+                    SDL_RenderCopy(renderer, textArr[SQUIRTLE_NAME].textTex, NULL, &dstrect);
+                }
+                if(!team2[2].getIsActive() && !team2[2].getDead())
+                {
+                    dstrect.x = 620;
+                    dstrect.y = 575;
+                    dstrect.w = textArr[CHARMANDER_NAME].w / 1;
+                    dstrect.h = textArr[CHARMANDER_NAME].h / 1;
+                    SDL_RenderCopy(renderer, textArr[CHARMANDER_NAME].textTex, NULL, &dstrect);
+                }
             }
         }
     }
-
 
 
 
@@ -2709,7 +3078,7 @@ void Game::kill()
         SDL_DestroyTexture(playerTwo[i]);
     }
 
-    for (int i = 0; i < 79; i++) {
+    for (int i = 0; i < 81; i++) {
         SDL_DestroyTexture(textArr[i].textTex);
     }
     for(int i = 0; i < 3; i++)
@@ -2737,7 +3106,7 @@ void Game::kill()
 
 void Game::initFont() {
     if(font == NULL) std::cout << "Error Loading Font" << TTF_GetError() << std::endl;
-    for (int i = 0; i < 79; i++) {
+    for (int i = 0; i < 81; i++) {
         image = TTF_RenderText_Blended(font, strArr[i], (SDL_Color){0, 0, 0, 255});
         // std::cout << strArr[i] << std::endl;
         textArr[i].textTex = SDL_CreateTextureFromSurface(renderer, image);
