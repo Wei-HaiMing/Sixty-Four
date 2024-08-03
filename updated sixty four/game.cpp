@@ -400,10 +400,6 @@ Game::Game(SDL_Renderer* renderer, SDL_Window* window)
 
     setSurface(IMG_Load("res/empty-start-menu.png"));
     emptyMenuText = SDL_CreateTextureFromSurface(renderer, image);
-    // for(int i = 0; i < 49; i++)
-    // {
-    //     std::cout << strArr[i] << " " << (i + 1) << std::endl;
-    // }
     initFont();
     
 
@@ -955,17 +951,10 @@ void Game::attack(string whomst)
         }
     }
 }
-void Game::swap()
-{
 
-}
 
 void Game::update()
 {
-    // if(p1Done && p2Done)
-    // {    
-    //     
-    // }
     if(fullscreen) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     if(!fullscreen) SDL_SetWindowFullscreen(window, 0);
     if(menuState == "start") // start menu functionality
@@ -1013,8 +1002,6 @@ void Game::update()
                 {
                     menuState = "fightMenu";
                 }
-                // p1Choice = "deciding";
-                // p2Choice = "deciding";
             }
             else if((p1Choice == "items" && turn == "P1") || (p2Choice == "items" && turn == "P2"))
             {
@@ -1031,8 +1018,6 @@ void Game::update()
                     menuState = "itemMenu";
                     p2Choice = "potion";
                 }
-                // p1Choice = "deciding";
-                // p2Choice = "deciding";
             }
             else if((p1Choice == "swap" && turn == "P1") || (p2Choice == "swap" && turn == "P2"))
             {
@@ -1041,15 +1026,11 @@ void Game::update()
                 if(turn == "P1")
                 {
                     menuState = "swapMenu";
-                    // p1Choice = "swap";
                 }
                 else 
                 {
                     menuState = "swapMenu";
-                    // p2Choice = "swap";
                 }
-                // p1Choice = "deciding";
-                // p2Choice = "deciding";
             }
             userInput = 0;
 
@@ -1057,8 +1038,6 @@ void Game::update()
     }
     if(menuState == "fightMenu")
     {
-        // (85, 545) (285, 545)
-        // (85, 590) (285, 590)
         if(userInput == USER_UP) 
         {
             std::cout << "UP\n";
@@ -1067,8 +1046,6 @@ void Game::update()
                 arrowShiftY = -45;
                 arrowYPos += arrowShiftY;
             }
-            // arrowXPos = 85;
-            // arrowYPos = 545;
             userInput = 0;
         } 
         if(userInput == USER_DN) 
@@ -1079,8 +1056,6 @@ void Game::update()
                 arrowShiftY = 45;
                 arrowYPos += arrowShiftY;
             }
-            // arrowXPos = 580;
-            // arrowYPos = 620;
             userInput = 0;
         }
         if(userInput == USER_LT) 
@@ -1092,8 +1067,6 @@ void Game::update()
                 arrowXPos += arrowShiftX;
 
             }
-            // arrowXPos = 580;
-            // arrowYPos = 555;
             userInput = 0;
         }
         if(userInput == USER_RT) 
@@ -1105,8 +1078,6 @@ void Game::update()
                 arrowXPos += arrowShiftX;
 
             }
-            // arrowXPos = 970;
-            // arrowYPos = 555;
             userInput = 0;
         }
         if(userInput == USER_EN) 
@@ -1207,14 +1178,6 @@ void Game::update()
                     p1Done = true;
                     turn = "P2";
                     menuState = "start";
-                    // p1Done = true;
-                    // turn = "P2";
-                    // menuState = "start";
-                    // for(int i = 0; i < 49; i++)
-                    // {
-                    //     std::cout << strArr[i] << std::endl;
-                    // }
-                    // initFont();
                 }
                 if(p1Choice == "soda" && (inventory1.getSodaPops() != 0))
                 {   
@@ -1229,11 +1192,6 @@ void Game::update()
                     p1Done = true;
                     turn = "P2";
                     menuState = "start";
-                    // p1Done = true;
-                    // turn = "P2";
-                    // menuState = "start";
-
-                    // initFont();
                 }
                 if(p1Choice == "restore" && (inventory1.getFullRestores() != 0))
                 {
@@ -1249,11 +1207,6 @@ void Game::update()
                     p1Done = true;
                     turn = "P2";
                     menuState = "start";
-                    // p1Done = true;
-                    // turn = "P2";
-                    // menuState = "start";
-
-                    // initFont();
                 }
                 std::cout << "P2 has (" << inventory2.getPotions() << ", " << inventory2.getFullRestores() << ", " << inventory2.getSodaPops() << std::endl;
 
@@ -1275,11 +1228,6 @@ void Game::update()
                     p2Done = true;
                     turn = "P1";
                     menuState = "start";
-                    // p2Done = true;
-                    // turn = "P1";
-                    // menuState = "start";
-
-                    // initFont();
                 }
                 if(p2Choice == "soda" && (inventory2.getSodaPops() != 0))
                 {
@@ -1295,11 +1243,6 @@ void Game::update()
                     p2Done = true;
                     turn = "P1";
                     menuState = "start";
-                    // p2Done = true;
-                    // turn = "P1";
-                    // menuState = "start";
-
-                    // initFont();
                 }
                 if(p2Choice == "restore" && (inventory2.getFullRestores() != 0))
                 {
@@ -1315,11 +1258,6 @@ void Game::update()
                     p2Done = true;
                     turn = "P1";
                     menuState = "start";
-                    // p2Done = true;
-                    // turn = "P1";
-                    // menuState = "start";
-
-                    // initFont();
                 }
                 std::cout << "P1 has (" << inventory1.getPotions() << ", " << inventory1.getFullRestores() << ", " << inventory1.getSodaPops() << std::endl;
             }
@@ -1345,11 +1283,7 @@ void Game::update()
     }
     if(menuState == "swapMenu")
     {
-        // if(turn == "P1")
-        // {
         std::cout << "WE ARE IN SWAP MENU" << std::endl;
-        // std::cout << p1Choice << std::endl;
-        // std::cout << (userInput > 0) << std::endl;
         if(turn == "P1")
         {
             if(!team1[1].getIsActive())
@@ -1365,7 +1299,6 @@ void Game::update()
             }
             if(!team1[0].getIsActive())
             {
-                std::cout << "balls" << std::endl;
                 if(userInput == USER_LT) 
                 {
                     std::cout << "two" << std::endl;
@@ -1377,7 +1310,6 @@ void Game::update()
             }
             if(!team1[2].getIsActive())
             {
-                std::cout << "yeet" << std::endl;
                 if(userInput == USER_RT) 
                 {
                     std::cout << "three" << std::endl;
@@ -1390,8 +1322,6 @@ void Game::update()
             if(userInput == USER_EN) 
             {
                 std::cout << "ENTER\n";
-                // if(turn == "P1")
-                // {
                 if(arrowXPos == 430 && arrowYPos == 620)
                 {
                     p1SwapTo = 1;
@@ -1434,7 +1364,6 @@ void Game::update()
             }
             if(!team2[0].getIsActive())
             {
-                std::cout << "balls" << std::endl;
                 if(userInput == USER_LT) 
                 {
                     std::cout << "two" << std::endl;
@@ -1446,7 +1375,6 @@ void Game::update()
             }
             if(!team2[2].getIsActive())
             {
-                std::cout << "yeet" << std::endl;
                 if(userInput == USER_RT) 
                 {
                     std::cout << "three" << std::endl;
@@ -1465,7 +1393,6 @@ void Game::update()
                     p2SwapTo = 1;
                     p2Done = true;
                     turn = "P1";
-                    // menuState = "start";
                     hold = p1Choice;
                 }
                 if(arrowXPos == 290 && arrowYPos == 565)
@@ -1473,7 +1400,6 @@ void Game::update()
                     p2SwapTo = 0;
                     p2Done = true;
                     turn = "P1";
-                    // menuState = "start";
                     hold = p1Choice;
                 }
                 if(arrowXPos == 550 && arrowYPos == 565)
@@ -1481,7 +1407,6 @@ void Game::update()
                     p2SwapTo = 2;
                     p2Done = true;
                     turn = "P1";
-                    // menuState = "start";
                     hold = p1Choice;
                 }
                 userInput = 0;
@@ -1509,7 +1434,6 @@ void Game::update()
     {
         if(p2Choice == "death")
         {
-            std::cout << "yeetf\n";
             if(!team2[1].getDead())
             {
                 if(userInput == USER_DN)
@@ -1575,7 +1499,6 @@ void Game::update()
         }
         else if(p1Choice == "death")
         {
-            std::cout << "yeetf\n";
             if(!team1[1].getDead())
             {
                 if(userInput == USER_DN)
@@ -1707,8 +1630,6 @@ void Game::input()
     }
     if(menuState == "fightMenu")
     {
-        // p1Choice = "deciding";
-        // p2Choice = "deciding";
         if(keystates[SDL_SCANCODE_UP]) 
         {
             userInput |= USER_UP;
@@ -1728,24 +1649,18 @@ void Game::input()
     }
     if(menuState == "itemMenu")
     {
-        // p1Choice = "deciding";
-        // p2Choice = "deciding";
         if(keystates[SDL_SCANCODE_UP]) 
         {
             userInput |= USER_UP;
             if(turn == "P1")
             {
-                // if(inventory1.getPotions() != 0)
-                // {
-                    p1Choice = "potion";
-            //     }
+                
+                p1Choice = "potion";
+
             }
             else
             {
-                // if(inventory2.getPotions() != 0)
-                // {
-                    p2Choice = "potion";
-                // }
+                p2Choice = "potion";
             }
         }
         if(keystates[SDL_SCANCODE_DOWN]) 
@@ -1753,17 +1668,11 @@ void Game::input()
             userInput |= USER_DN;
             if(turn == "P1")
             {
-                // if(inventory1.getSodaPops() != 0)
-                // {
-                    p1Choice = "soda";
-                // }
+                p1Choice = "soda";
             }
             else
             {
-                // if(inventory2.getSodaPops() != 0)
-                // {
-                    p2Choice = "soda";
-                // }
+                p2Choice = "soda";
             } 
         }
         if(keystates[SDL_SCANCODE_LEFT])
@@ -1771,17 +1680,11 @@ void Game::input()
             userInput |= USER_LT;
             if(turn == "P1")
             {
-                // if(inventory1.getPotions() != 0)
-                // {
-                    p1Choice = "potion";
-                // }
+                p1Choice = "potion";
             }
             else
             {
-                // if(inventory2.getPotions() != 0)
-                // {
-                    p2Choice = "potion";
-                // }
+                p2Choice = "potion";
             }
         } 
         if(keystates[SDL_SCANCODE_RIGHT]) 
@@ -1789,28 +1692,16 @@ void Game::input()
             userInput |= USER_RT;
             if(turn == "P1")
             {
-                // if(inventory1.getFullRestores() != 0)
-                // {
-                    p1Choice = "restore";
-                // }
+                p1Choice = "restore";
             }
             else
             {
-                // if(inventory2.getFullRestores() != 0)
-                // {
-                    p2Choice = "restore";
-                // }
+                p2Choice = "restore";
             }
         }
     }
     if(menuState == "swapMenu")
     {
-        // p1Choice = "deciding";
-        // p2Choice = "deciding";
-        // if(keystates[SDL_SCANCODE_UP]) 
-        // {
-        //     userInput |= USER_UP;
-        // }
         if(keystates[SDL_SCANCODE_DOWN]) 
         {    
             userInput |= USER_DN;
@@ -1852,7 +1743,6 @@ void Game::draw()
         SDL_RenderClear(renderer);
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         assignWinner();
-        // SDL_RenderCopy(renderer, menuText, &menu, &dstrect);
     }
     else
     {
@@ -1962,10 +1852,8 @@ void Game::draw()
             SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
             if(p2Choice == "swap" && p1Choice != "swap" && p1Choice != "deciding")
             {
-                // p1Choice = hold;
                 std::cout << "Whoopty\n";
                 if(timer++ == 200) timer = 0;
-                // SDL_RenderCopy(renderer, emptyMenuText, &menu, &dstrect);
                 if(p2SwapTo != -1)
                 {
                     team2[active2].setIsActive(false);
@@ -2067,11 +1955,6 @@ void Game::draw()
 
                         SDL_RenderCopy(renderer, textArr[CYNDAQUIL_HP].textTex, NULL, &dstrect);
                     } 
-                    
-                    
-                    
-                    
-                    // SDL_RenderCopy(renderer, textArr[CHIKORITA_HP].textTex, NULL, &dstrect);
                     
                     std::cout << "P1 Health After: " << team1[active1].getHP() << std::endl;
                     if(p2Choice == "deciding")
@@ -2693,10 +2576,6 @@ void Game::draw()
                     p1Done = false;
                     p2Done = false;
                     menuState = "start";
-                    std::cout << "WHoop\n";
-                    // arrowXPos = 580;
-                    // arrowYPos = 555;
-                    // p1Choice = "fight";
                 }
             }
             
@@ -3041,8 +2920,6 @@ void Game::draw()
         }
     }
 
-
-
     SDL_RenderPresent(renderer);
 }
 
@@ -3117,10 +2994,3 @@ void Game::initFont() {
     }
     std::cout << "ran" << std::endl;
 }
-// void Game::printArr(const char *arr[], int arr_size)
-// {
-//     for(int i = 0; i < arr_size; i++)
-//     {
-//         std::cout << arr[i] << std::endl;
-//     }
-// }
